@@ -3,7 +3,7 @@ from __future__ import annotations
 import argparse, pathlib, shutil, subprocess, zipfile
 
 ROOT=pathlib.Path(__file__).resolve().parents[1]
-EXCLUDE={".git",".github","dist","docs","scripts","brand","__pycache__"}
+EXCLUDE={".git",".github","dist","test-builds","docs","scripts","brand","__pycache__"}
 
 def main():
     ap=argparse.ArgumentParser()

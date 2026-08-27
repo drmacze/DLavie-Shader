@@ -43,6 +43,12 @@ DLavie Shader is a long-term Minecraft Bedrock shader/resource-pack project buil
 5. Open the pack's **gear / Pack Settings** and choose Low, Medium, High, or Ultra.
 6. Restart/reload the world after changing a subpack if Minecraft does not refresh it immediately.
 
+## Immediate mobile smoke-test build
+
+A directly downloadable compatibility build is tracked at `test-builds/DLavie-Shader-v0.1.0-mobile-test.mcpack`. It contains the complete DLavie base renderer and all Low/Medium/High/Ultra subpacks, but intentionally omits the generated vanilla-biome binding layer. Use it to confirm import, Vibrant Visuals activation, Pack Settings and device performance.
+
+The full reproducible build adds preserved current vanilla biome bindings through `scripts/sync_vanilla_biomes.py`.
+
 ## Developer build
 
 ```bash
