@@ -1,11 +1,26 @@
 (() => {
   'use strict';
-  const core = document.createElement('script');
-  core.src = 'community-core.js';
-  core.onload = () => {
-    const patch = document.createElement('script');
-    patch.src = 'community-patch.js';
-    document.head.appendChild(patch);
-  };
-  document.head.appendChild(core);
+
+  function load(src){
+    return new Promise((resolve,reject)=>{
+      const script=document.createElement('script');
+      script.src=src;
+      script.onload=resolve;
+      script.onerror=()=>reject(new Error(`Failed to load ${src}`));
+      document.head.appendChild(script);
+    });
+  }
+
+  (async()=>{
+    try{
+      await load('community-auth-bridge.js');
+      if(window.DLavieAuthBridge?.ready) await window.DLavieAuthBridge.ready;
+      await load('community-core.js');
+      await load('community-patch.js');
+    }catch(error){
+      console.error('[DLavie Community]',error);
+      const loading=document.querySelector('#chatLoading');
+      if(loading) loading.innerHTML='<p>Community could not start. Refresh the page or sign in again.</p>';
+    }
+  })();
 })();
