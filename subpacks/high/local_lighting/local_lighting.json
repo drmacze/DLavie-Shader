@@ -1,0 +1,65 @@
+{
+  "format_version": "1.21.120",
+  "minecraft:local_light_settings": {
+    "minecraft:torch": {
+      "light_color": "#FFD3A0",
+      "light_type": "point_light"
+    },
+    "minecraft:wall_torch": {
+      "light_color": "#FFD3A0",
+      "light_type": "point_light"
+    },
+    "minecraft:soul_torch": {
+      "light_color": "#8FDBFF",
+      "light_type": "point_light"
+    },
+    "minecraft:soul_wall_torch": {
+      "light_color": "#8FDBFF",
+      "light_type": "point_light"
+    },
+    "minecraft:lantern": {
+      "light_color": "#FFC98A",
+      "light_type": "point_light"
+    },
+    "minecraft:soul_lantern": {
+      "light_color": "#78D8FF",
+      "light_type": "point_light"
+    },
+    "minecraft:glowstone": {
+      "light_color": "#FFD18B",
+      "light_type": "point_light"
+    },
+    "minecraft:sea_lantern": {
+      "light_color": "#BFEAFF",
+      "light_type": "point_light"
+    },
+    "minecraft:shroomlight": {
+      "light_color": "#FFAA73",
+      "light_type": "point_light"
+    },
+    "minecraft:ochre_froglight": {
+      "light_color": "#FFF0A1",
+      "light_type": "point_light"
+    },
+    "minecraft:pearlescent_froglight": {
+      "light_color": "#EABFFF",
+      "light_type": "point_light"
+    },
+    "minecraft:verdant_froglight": {
+      "light_color": "#BFFFC9",
+      "light_type": "point_light"
+    },
+    "minecraft:redstone_lamp": {
+      "light_color": "#FF9B61",
+      "light_type": "point_light"
+    },
+    "minecraft:campfire": {
+      "light_color": "#FFB36D",
+      "light_type": "point_light"
+    },
+    "minecraft:soul_campfire": {
+      "light_color": "#73D7FF",
+      "light_type": "point_light"
+    }
+  }
+}

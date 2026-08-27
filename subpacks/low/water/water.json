@@ -1,0 +1,31 @@
+{
+  "format_version": "1.21.120",
+  "minecraft:water_settings": {
+    "description": {
+      "identifier": "dlavie:default_water"
+    },
+    "particle_concentrations": {
+      "chlorophyll": 0.35,
+      "suspended_sediment": 0.3,
+      "cdom": 0.65
+    },
+    "waves": {
+      "enabled": false,
+      "depth": 0.2,
+      "frequency": 1.0,
+      "frequency_scaling": 1.2,
+      "mix": 0.08,
+      "octaves": 1,
+      "pull": 0.08,
+      "shape": 1.35,
+      "speed": 0.45,
+      "speed_scaling": 1.03
+    },
+    "caustics": {
+      "enabled": false,
+      "frame_length": 0.05,
+      "power": 0.7,
+      "scale": 0.9
+    }
+  }
+}

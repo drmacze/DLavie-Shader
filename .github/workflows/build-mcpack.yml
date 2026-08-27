@@ -1,0 +1,31 @@
+name: Build DLavie Shader
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  validate-and-build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Validate DLavie pack
+        run: python scripts/validate_pack.py
+      - name: Generate preserved biome bindings
+        run: python scripts/sync_vanilla_biomes.py --out biomes
+      - name: Build mcpack
+        run: python scripts/build_mcpack.py --skip-biome-sync --output dist/DLavie-Shader-v0.1.0.mcpack
+      - name: Upload mcpack artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: DLavie-Shader-v0.1.0
+          path: dist/DLavie-Shader-v0.1.0.mcpack
+          if-no-files-found: error

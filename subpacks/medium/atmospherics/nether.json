@@ -1,0 +1,20 @@
+{
+  "format_version": "1.21.40",
+  "minecraft:atmosphere_settings": {
+    "description": {
+      "identifier": "dlavie:nether_atmospherics"
+    },
+    "horizon_blend_stops": {
+      "min": 0.01,
+      "start": 0.23,
+      "mie_start": 0.08,
+      "max": 0.9
+    },
+    "rayleigh_strength": 0.33599999999999997,
+    "sun_mie_strength": 0.72,
+    "moon_mie_strength": 0.2,
+    "sun_glare_shape": 4.0,
+    "sky_zenith_color": "#32121C",
+    "sky_horizon_color": "#A33D29"
+  }
+}

@@ -1,0 +1,5 @@
+dist/
+biomes/
+__pycache__/
+*.pyc
+.DS_Store

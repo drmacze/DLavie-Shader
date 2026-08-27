@@ -1,0 +1,40 @@
+{
+  "format_version": "1.21.40",
+  "minecraft:atmosphere_settings": {
+    "description": {
+      "identifier": "dlavie:default_atmospherics"
+    },
+    "horizon_blend_stops": {
+      "min": 0.0,
+      "start": 0.25,
+      "mie_start": 0.08,
+      "max": 1.0
+    },
+    "rayleigh_strength": 0.8184,
+    "sun_mie_strength": 0.5456,
+    "moon_mie_strength": 0.2992,
+    "sun_glare_shape": 3.5,
+    "sky_zenith_color": {
+      "0.0": "#4E8EDC",
+      "0.20": "#5F95D7",
+      "0.25": "#6586B8",
+      "0.31": "#53637E",
+      "0.5": "#10192E",
+      "0.69": "#56657E",
+      "0.75": "#6D8BBB",
+      "0.80": "#6198DA",
+      "1.0": "#4E8EDC"
+    },
+    "sky_horizon_color": {
+      "0.0": "#A7D3F4",
+      "0.20": "#BDD9EE",
+      "0.25": "#F39A72",
+      "0.31": "#7A6F85",
+      "0.5": "#263049",
+      "0.69": "#786E84",
+      "0.75": "#F3A27D",
+      "0.80": "#C2DDF1",
+      "1.0": "#A7D3F4"
+    }
+  }
+}

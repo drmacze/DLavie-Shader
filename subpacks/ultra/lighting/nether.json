@@ -1,0 +1,35 @@
+{
+  "format_version": "1.21.80",
+  "minecraft:lighting_settings": {
+    "description": {
+      "identifier": "dlavie:nether_lighting"
+    },
+    "directional_lights": {
+      "orbital": {
+        "sun": {
+          "illuminance": 6000.0,
+          "color": "#FF7251"
+        },
+        "moon": {
+          "illuminance": 0.1,
+          "color": "#764563"
+        },
+        "orbital_offset_degrees": 3.0
+      },
+      "flash": {
+        "illuminance": 5.0,
+        "color": "#FF9B74"
+      }
+    },
+    "emissive": {
+      "desaturation": 0.04
+    },
+    "ambient": {
+      "illuminance": 0.042,
+      "color": "#6B3029"
+    },
+    "sky": {
+      "intensity": 0.66
+    }
+  }
+}

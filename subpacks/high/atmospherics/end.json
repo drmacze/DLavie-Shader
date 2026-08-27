@@ -1,0 +1,20 @@
+{
+  "format_version": "1.21.40",
+  "minecraft:atmosphere_settings": {
+    "description": {
+      "identifier": "dlavie:end_atmospherics"
+    },
+    "horizon_blend_stops": {
+      "min": 0.0,
+      "start": 0.28,
+      "mie_start": 0.12,
+      "max": 1.0
+    },
+    "rayleigh_strength": 0.546,
+    "sun_mie_strength": 0.21000000000000002,
+    "moon_mie_strength": 0.5775000000000001,
+    "sun_glare_shape": 2.7,
+    "sky_zenith_color": "#130F2B",
+    "sky_horizon_color": "#5B477D"
+  }
+}

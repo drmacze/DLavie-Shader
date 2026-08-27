@@ -1,0 +1,65 @@
+{
+  "format_version": 2,
+  "header": {
+    "name": "DLavie Shader",
+    "description": "Vibrant Visuals + PBR Enhanced | Mobile-first cinematic shader | v0.1.0",
+    "uuid": "d1a3e7b6-2f63-4d65-9c8b-6a4d3c9e7f11",
+    "version": [
+      0,
+      1,
+      0
+    ],
+    "min_engine_version": [
+      1,
+      21,
+      120
+    ]
+  },
+  "modules": [
+    {
+      "description": "DLavie Shader resources",
+      "type": "resources",
+      "uuid": "0b92a7cf-37d2-47a8-b622-eefb071532ad",
+      "version": [
+        0,
+        1,
+        0
+      ]
+    }
+  ],
+  "capabilities": [
+    "pbr"
+  ],
+  "subpacks": [
+    {
+      "folder_name": "ultra",
+      "name": "Ultra — Cinematic",
+      "memory_tier": 1
+    },
+    {
+      "folder_name": "high",
+      "name": "High — Enhanced",
+      "memory_tier": 1
+    },
+    {
+      "folder_name": "medium",
+      "name": "Medium — Balanced",
+      "memory_tier": 1
+    },
+    {
+      "folder_name": "low",
+      "name": "Low — Performance",
+      "memory_tier": 1
+    }
+  ],
+  "settings": [
+    {
+      "type": "label",
+      "text": "DLavie Shader quality preset. Change it with the pack gear icon."
+    },
+    {
+      "type": "label",
+      "text": "Low = performance, Medium = balanced mobile, High = enhanced, Ultra = cinematic."
+    }
+  ]
+}
