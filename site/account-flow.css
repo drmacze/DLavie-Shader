@@ -1,0 +1,58 @@
+/* DLavie Account flow override — one task/section at a time */
+[hidden]{display:none!important}
+.auth-form[hidden],.dashboard[hidden],.auth-layout[hidden],.account-panel:not(.active){display:none!important}
+.account-panel.active{display:block!important}
+
+/* Auth should have one obvious action, not a marketing page + every form at once. */
+.account-shell{max-width:1180px}
+.auth-layout{display:block;min-height:calc(100vh - 220px)}
+.auth-intro{display:none!important}
+.auth-card{position:relative;top:auto;width:min(100%,480px);margin:28px auto 0;padding:10px 28px 30px}
+.auth-card:before{content:"DLAVIE ACCOUNT";display:block;margin:18px 0 20px;font-family:"JetBrains Mono",monospace;font-size:10px;font-weight:700;letter-spacing:.14em;color:#aeb3bc}
+.auth-tabs{margin-bottom:26px}
+.auth-form{animation:accountEnter .24s ease both}
+@keyframes accountEnter{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+
+/* Signed-in account: compact identity + one settings surface. */
+.dashboard{width:min(100%,980px);margin:0 auto}
+.profile-header{padding:18px 0 24px;margin-bottom:12px;border-bottom:1px solid var(--line)}
+.profile-avatar{width:82px;height:82px;border-radius:22px;font-size:27px}
+.profile-heading h1{font-size:36px}
+.account-tabs{position:sticky;top:88px;z-index:10;width:100%;display:grid;grid-template-columns:repeat(4,1fr);border-radius:17px;margin:18px 0 20px;background:rgba(35,37,42,.92);backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px)}
+.account-tabs button{min-width:0;padding:12px 14px;border-radius:12px;font-size:13px}
+.dashboard-grid{display:grid;grid-template-columns:minmax(0,1fr) 245px;gap:18px;align-items:start}
+.account-panel{min-height:410px;padding:28px;animation:accountEnter .22s ease both}
+.panel-head{margin-bottom:24px}
+.panel-head h2{font-size:34px}
+.account-side{top:164px}
+
+/* Make hierarchy obvious. */
+.settings-section,.settings-form,.privacy-action,.danger-zone{max-width:680px}
+.account-panel hr{margin:26px 0}
+.side-card{border-radius:18px}
+
+@media(max-width:900px){
+  .account-shell{padding-top:28px}
+  .dashboard{width:100%}
+  .account-tabs{top:76px}
+  .dashboard-grid{grid-template-columns:1fr}
+  .account-side{position:static;grid-template-columns:1fr 1fr}
+}
+
+@media(max-width:640px){
+  .account-shell{padding-top:18px}
+  .auth-layout{min-height:auto}
+  .auth-card{margin-top:8px;padding:8px 18px 22px;border-radius:20px}
+  .auth-card:before{margin:16px 0 18px}
+  .form-head h2{font-size:28px}
+  .profile-header{grid-template-columns:68px minmax(0,1fr);gap:13px;padding:8px 0 18px}
+  .profile-avatar{width:68px;height:68px;border-radius:18px;font-size:22px}
+  .profile-heading h1{font-size:26px}
+  .profile-heading p{margin-top:6px}
+  .profile-header>.secondary-button{margin-top:0}
+  .account-tabs{top:68px;grid-template-columns:1fr 1fr;gap:4px;padding:5px;border-radius:16px;overflow:visible}
+  .account-tabs button{font-size:12px;padding:11px 8px}
+  .account-panel{padding:20px;min-height:0;border-radius:18px}
+  .panel-head h2{font-size:29px}
+  .account-side{grid-template-columns:1fr}
+}
