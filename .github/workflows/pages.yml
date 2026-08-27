@@ -32,7 +32,7 @@ jobs:
           rm -rf _site
           mkdir -p _site/site _site/brand
 
-          # Restore the original polished SPA as the canonical root Home.
+          # Keep the polished SPA/UI exactly as the canonical site.
           cp -R site/. _site/
 
           # Keep old /site/... URLs working for backwards compatibility.
@@ -41,8 +41,10 @@ jobs:
           cp brand/dlavie-logo.svg _site/brand/dlavie-logo.svg
           touch _site/.nojekyll
 
-          # Keep the previous visual design, but remove render-blocking third-party
-          # animation/font requests on the initial Home load.
+          # Preserve the existing visual/layout while making first paint independent
+          # from third-party font/animation CDNs. Touch devices already use native
+          # scrolling in modrinth.js, so removing these requests does not remove any
+          # iPhone-only interaction logic.
           for html in _site/index.html _site/site/index.html; do
             sed -i '/fonts.googleapis.com/d' "$html"
             sed -i '/fonts.gstatic.com/d' "$html"
@@ -50,18 +52,59 @@ jobs:
             sed -i '/cdnjs.cloudflare.com\/ajax\/libs\/gsap\/3.13.0\/gsap.min.js/d' "$html"
             sed -i '/cdnjs.cloudflare.com\/ajax\/libs\/gsap\/3.13.0\/ScrollTrigger.min.js/d' "$html"
             sed -i '/unpkg.com\/lenis@1.3.26\/dist\/lenis.min.js/d' "$html"
+            sed -i 's#\.\./pack_icon.png#assets/dlavie-shader.svg#g' "$html"
             sed -i 's/<img src="https:\/\/cdn.simpleicons.org\//<img loading="lazy" decoding="async" src="https:\/\/cdn.simpleicons.org\//g' "$html"
           done
 
-          # Repository/release metadata is useful but is not a render dependency.
-          # Start it after initial paint so API latency cannot block Home.
+          # Do not load Supabase just to decide whether Home should say Account or
+          # Sign in. Auth is now resolved only when the user actually performs a
+          # gated action (download/vote/feedback), or opens Account/Community.
+          for js in _site/modrinth.js _site/site/modrinth.js; do
+            python3 - "$js" <<'PY'
+          import pathlib, sys
+          path = pathlib.Path(sys.argv[1])
+          text = path.read_text()
+          old = "    scheduleIdle(()=>ensureSession(), IS_TOUCH ? 2200 : 1200);"
+          new = "    // No automatic Supabase request on Home. Auth resolves on demand."
+          if old in text:
+              text = text.replace(old, new, 1)
+          path.write_text(text)
+          PY
+          done
+
+          # GitHub repository/release metadata is only needed on the project page.
+          # Home, Projects list, News, etc. must not start api.github.com requests in
+          # the background, because iOS keeps the navigation progress indicator alive.
           for js in _site/modrinth-core.js _site/site/modrinth-core.js; do
             python3 - "$js" <<'PY'
           import pathlib, sys
           path = pathlib.Path(sys.argv[1])
           text = path.read_text()
-          old = "bindTabs();bindProjectActions();bindProjectSearch();bindFeedback();bindSearch();bindMobileSheet();renderVotes();renderVersions();loadProjectMeta();"
-          new = "bindTabs();bindProjectActions();bindProjectSearch();bindFeedback();bindSearch();bindMobileSheet();renderVotes();renderVersions();window.addEventListener('load',()=>{const run=()=>loadProjectMeta();if('requestIdleCallback' in window)requestIdleCallback(run,{timeout:2500});else setTimeout(run,1200)},{once:true});"
+
+          old_init = "bindTabs();bindProjectActions();bindProjectSearch();bindFeedback();bindSearch();bindMobileSheet();renderVotes();renderVersions();loadProjectMeta();"
+          new_init = "bindTabs();bindProjectActions();bindProjectSearch();bindFeedback();bindSearch();bindMobileSheet();renderVotes();renderVersions();if(parseHash().route==='project')loadProjectMeta();"
+          if old_init in text:
+              text = text.replace(old_init, new_init, 1)
+
+          old_hash = "window.addEventListener('hashchange',route);route();"
+          new_hash = "window.addEventListener('hashchange',()=>{route();if(parseHash().route==='project'&&!state.repo)loadProjectMeta();});route();"
+          if old_hash in text:
+              text = text.replace(old_hash, new_hash, 1)
+
+          path.write_text(text)
+          PY
+          done
+
+          # Account used to warm Home by fetching local files plus GSAP/Lenis CDNs in
+          # the background. That competes with navigation on iPhone and can keep the
+          # in-app browser progress bar active, so disable the warmup entirely.
+          for js in _site/account-flow.js _site/site/account-flow.js; do
+            python3 - "$js" <<'PY'
+          import pathlib, sys
+          path = pathlib.Path(sys.argv[1])
+          text = path.read_text()
+          old = "    scheduleIdle(warmHomeCache);"
+          new = "    // Home navigation uses history/BFCache; no background prefetch network."
           if old in text:
               text = text.replace(old, new, 1)
           path.write_text(text)
