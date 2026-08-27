@@ -35,6 +35,19 @@ def validate_manifest() -> None:
         fail(f'subpacks must be exactly {sorted(EXPECTED_PRESETS)}; got {sorted(names)}')
 
 
+def validate_atmosphere_file(path: Path) -> None:
+    d = load(path)
+    settings = d.get('minecraft:atmosphere_settings', {})
+    mie = settings.get('sun_mie_strength')
+    glare = settings.get('sun_glare_shape')
+    if not isinstance(mie, dict) or len(mie) < 5:
+        fail(f'{path.relative_to(ROOT)}: sun_mie_strength must be time-keyframed')
+    if not isinstance(glare, dict) or len(glare) < 5:
+        fail(f'{path.relative_to(ROOT)}: sun_glare_shape must be time-keyframed')
+    if float(mie.get('0.50', mie.get('0.5', 1.0))) > 0.05:
+        fail(f'{path.relative_to(ROOT)}: sun Mie must fall near zero at midnight')
+
+
 def validate_visual_jsons() -> None:
     for p in ROOT.rglob('*.json'):
         if 'biomes' in p.parts:
@@ -60,6 +73,13 @@ def validate_visual_jsons() -> None:
             for block,cfg in d.get('minecraft:local_light_settings',{}).items():
                 if cfg.get('light_type') not in ALLOWED_LIGHT_TYPES:
                     fail(f'{rel}: {block} has invalid light_type')
+        if '/fogs/' in f'/{rel}' or rel.startswith('fogs/'):
+            fog=d.get('minecraft:fog_settings',{})
+            air=fog.get('volumetric',{}).get('henyey_greenstein_g',{}).get('air',{})
+            if air:
+                g=air.get('henyey_greenstein_g')
+                if not isinstance(g,(int,float)) or not -1.0 <= g <= 1.0:
+                    fail(f'{rel}: invalid Henyey-Greenstein g {g!r}')
 
 
 def validate_required_files() -> None:
@@ -73,16 +93,22 @@ def validate_required_files() -> None:
         for rel in common:
             if not (ROOT/'subpacks'/preset/rel).is_file():
                 fail(f'{preset}: missing override {rel}')
+    validate_atmosphere_file(ROOT/'atmospherics/atmospherics.json')
+    for preset in EXPECTED_PRESETS:
+        validate_atmosphere_file(ROOT/'subpacks'/preset/'atmospherics/atmospherics.json')
 
 
-def validate_biome_script() -> None:
-    text=(ROOT/'scripts/sync_vanilla_biomes.py').read_text(encoding='utf-8')
+def validate_generators() -> None:
+    biome=(ROOT/'scripts/sync_vanilla_biomes.py').read_text(encoding='utf-8')
     for token in ('minecraft:hell','minecraft:the_end','minecraft:water_identifier'):
-        if token not in text: fail(f'biome generator missing {token}')
+        if token not in biome: fail(f'biome generator missing {token}')
+    fog=(ROOT/'scripts/sync_vanilla_fogs.py').read_text(encoding='utf-8')
+    for token in ('henyey_greenstein_g','max_density','media_coefficients','low','medium','high','ultra'):
+        if token not in fog: fail(f'fog generator missing {token}')
 
 
 def main() -> None:
-    validate_manifest(); validate_required_files(); validate_visual_jsons(); validate_biome_script()
+    validate_manifest(); validate_required_files(); validate_visual_jsons(); validate_generators()
     print('DLavie Shader validation passed.')
 
 if __name__ == '__main__':
