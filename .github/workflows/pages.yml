@@ -41,10 +41,10 @@ jobs:
           cp brand/dlavie-logo.svg _site/brand/dlavie-logo.svg
           touch _site/.nojekyll
 
-          # Preserve the existing visual/layout while making first paint independent
-          # from third-party font/animation CDNs. Touch devices already use native
-          # scrolling in modrinth.js, so removing these requests does not remove any
-          # iPhone-only interaction logic.
+          # Preserve the fast v42 network behavior, but make the previous polished
+          # Home visual layer part of the initial document instead of loading it
+          # later from modrinth.js. This prevents the simpler base Home from flashing
+          # before the preferred design appears.
           for html in _site/index.html _site/site/index.html; do
             sed -i '/fonts.googleapis.com/d' "$html"
             sed -i '/fonts.gstatic.com/d' "$html"
@@ -54,11 +54,35 @@ jobs:
             sed -i '/unpkg.com\/lenis@1.3.26\/dist\/lenis.min.js/d' "$html"
             sed -i 's#\.\./pack_icon.png#assets/dlavie-shader.svg#g' "$html"
             sed -i 's/<img src="https:\/\/cdn.simpleicons.org\//<img loading="lazy" decoding="async" src="https:\/\/cdn.simpleicons.org\//g' "$html"
+
+            python3 - "$html" <<'PY'
+          import pathlib, sys
+          path = pathlib.Path(sys.argv[1])
+          text = path.read_text()
+
+          css = '<link rel="stylesheet" href="home-polish.css" data-dlavie-home-polish="true">'
+          if css not in text:
+              text = text.replace(
+                  '<link rel="stylesheet" href="modrinth.css">',
+                  '<link rel="stylesheet" href="modrinth.css">\n  ' + css,
+                  1,
+              )
+
+          js = '<script src="home-polish.js" data-dlavie-home-polish="true"></script>'
+          if js not in text:
+              text = text.replace(
+                  '<script src="modrinth.js"></script>',
+                  js + '\n  <script src="modrinth.js"></script>',
+                  1,
+              )
+
+          path.write_text(text)
+          PY
           done
 
           # Do not load Supabase just to decide whether Home should say Account or
-          # Sign in. Auth is now resolved only when the user actually performs a
-          # gated action (download/vote/feedback), or opens Account/Community.
+          # Sign in. Auth is resolved only when the user performs a gated action or
+          # explicitly opens Account/Community.
           for js in _site/modrinth.js _site/site/modrinth.js; do
             python3 - "$js" <<'PY'
           import pathlib, sys
@@ -96,8 +120,7 @@ jobs:
           done
 
           # Account used to warm Home by fetching local files plus GSAP/Lenis CDNs in
-          # the background. That competes with navigation on iPhone and can keep the
-          # in-app browser progress bar active, so disable the warmup entirely.
+          # the background. Keep that disabled so returning Home stays instant.
           for js in _site/account-flow.js _site/site/account-flow.js; do
             python3 - "$js" <<'PY'
           import pathlib, sys
