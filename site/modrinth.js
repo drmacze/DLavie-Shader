@@ -33,6 +33,35 @@
 
   const esc = v => String(v ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 
+  function repairPublishedAssets(){
+    $$('img').forEach(img => {
+      const src = img.getAttribute('src') || '';
+      if(src === '../pack_icon.png' || src.endsWith('/pack_icon.png')){
+        img.src = 'assets/dlavie-shader.svg';
+      }
+    });
+  }
+
+  function resetBlockingOverlays(){
+    document.body.style.overflow = '';
+    const back = $('#sheetBackdrop');
+    const sheet = $('#mobileSheet');
+    const search = $('#searchOverlay');
+    if(back){
+      back.hidden = true;
+      back.style.display = 'none';
+      back.style.pointerEvents = 'none';
+      back.setAttribute('aria-hidden','true');
+    }
+    if(sheet){
+      sheet.classList.remove('open');
+      sheet.setAttribute('aria-hidden','true');
+    }
+    if(search && search.hidden){
+      search.style.pointerEvents = 'none';
+    }
+  }
+
   function parseHash(){
     const raw = location.hash.replace(/^#\/?/, '') || 'home';
     const [path, queryString=''] = raw.split('?');
@@ -206,8 +235,21 @@
     {title:'Vote',sub:'Shader roadmap',href:'#vote',keys:'vote roadmap feature pbr water weather'}
   ];
 
-  function openSearch(){const o=$('#searchOverlay');o.hidden=false;document.body.style.overflow='hidden';setTimeout(()=>$('#globalSearch')?.focus(),40)}
-  function closeSearch(){const o=$('#searchOverlay');o.hidden=true;document.body.style.overflow=''}
+  function openSearch(){
+    const o=$('#searchOverlay');
+    if(!o) return;
+    o.hidden=false;
+    o.style.pointerEvents='auto';
+    document.body.style.overflow='hidden';
+    setTimeout(()=>$('#globalSearch')?.focus(),40);
+  }
+  function closeSearch(){
+    const o=$('#searchOverlay');
+    if(!o) return;
+    o.hidden=true;
+    o.style.pointerEvents='none';
+    document.body.style.overflow='';
+  }
   function bindSearch(){
     $('#searchOpen')?.addEventListener('click',openSearch);$('#mobileSearch')?.addEventListener('click',openSearch);$('#searchClose')?.addEventListener('click',closeSearch);
     $('#searchOverlay')?.addEventListener('click',e=>{if(e.target.id==='searchOverlay')closeSearch()});
@@ -216,12 +258,44 @@
 
   function bindMobileSheet(){
     const sheet=$('#mobileSheet'),back=$('#sheetBackdrop');
-    const open=()=>{back.hidden=false;sheet.classList.add('open');sheet.setAttribute('aria-hidden','false')};
-    const close=()=>{sheet.classList.remove('open');sheet.setAttribute('aria-hidden','true');setTimeout(()=>back.hidden=true,320)};
-    $('#mobileMenuOpen')?.addEventListener('click',open);back?.addEventListener('click',close);$$('.sheet-action',sheet).forEach(a=>a.addEventListener('click',close));
+    if(back){
+      back.hidden=true;
+      back.style.display='none';
+      back.style.pointerEvents='none';
+      back.setAttribute('aria-hidden','true');
+    }
+    if(sheet){
+      sheet.classList.remove('open');
+      sheet.setAttribute('aria-hidden','true');
+    }
+    const open=()=>{
+      if(!sheet || !back) return;
+      back.hidden=false;
+      back.style.display='block';
+      back.style.pointerEvents='auto';
+      back.setAttribute('aria-hidden','false');
+      sheet.classList.add('open');
+      sheet.setAttribute('aria-hidden','false');
+    };
+    const close=()=>{
+      if(!sheet || !back) return;
+      sheet.classList.remove('open');
+      sheet.setAttribute('aria-hidden','true');
+      back.style.pointerEvents='none';
+      back.setAttribute('aria-hidden','true');
+      setTimeout(()=>{
+        back.hidden=true;
+        back.style.display='none';
+      },320);
+    };
+    $('#mobileMenuOpen')?.addEventListener('click',open);
+    back?.addEventListener('click',close);
+    $$('.sheet-action',sheet || document).forEach(a=>a.addEventListener('click',close));
   }
 
   function init(){
+    repairPublishedAssets();
+    resetBlockingOverlays();
     initSmoothScroll();
     bindTabs();bindProjectActions();bindProjectSearch();bindFeedback();bindSearch();bindMobileSheet();renderVotes();renderVersions();loadProjectMeta();
     window.addEventListener('hashchange',route);route();
