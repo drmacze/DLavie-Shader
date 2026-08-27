@@ -12,6 +12,57 @@
     document.head.appendChild(script);
   }
 
+  function scheduleIdle(fn, timeout=1400){
+    if('requestIdleCallback' in window) window.requestIdleCallback(fn,{timeout});
+    else setTimeout(fn,650);
+  }
+
+  function warmHomeCache(){
+    const connection=navigator.connection||navigator.mozConnection||navigator.webkitConnection;
+    if(connection?.saveData) return;
+    const local=[
+      './',
+      'modrinth.css',
+      'modrinth.js',
+      'modrinth-core.js',
+      'home-polish.css',
+      'home-polish.js',
+      'assets/dlavie-mark.svg',
+      'assets/dlavie-shader.svg'
+    ];
+    const remote=[
+      'https://cdnjs.cloudflare.com/ajax/libs/gsap/3.13.0/gsap.min.js',
+      'https://cdnjs.cloudflare.com/ajax/libs/gsap/3.13.0/ScrollTrigger.min.js',
+      'https://unpkg.com/lenis@1.3.26/dist/lenis.min.js',
+      'https://unpkg.com/lenis@1.3.26/dist/lenis.css'
+    ];
+    local.forEach(url=>fetch(url,{cache:'force-cache',credentials:'same-origin'}).catch(()=>{}));
+    remote.forEach(url=>fetch(url,{mode:'no-cors',cache:'force-cache'}).catch(()=>{}));
+  }
+
+  function cameFromMainApp(){
+    if(!document.referrer) return false;
+    try{
+      const ref=new URL(document.referrer);
+      if(ref.origin!==location.origin) return false;
+      const here=location.pathname.replace(/account\.html$/,'');
+      return ref.pathname===here || ref.pathname===`${here}index.html`;
+    }catch{return false;}
+  }
+
+  function fastHomeReturn(event){
+    const link=event.target.closest('a[href="./#home"]');
+    if(!link) return;
+    if(!cameFromMainApp()) return;
+    event.preventDefault();
+    let left=false;
+    window.addEventListener('pagehide',()=>{left=true},{once:true});
+    history.back();
+    setTimeout(()=>{
+      if(!left && document.visibilityState==='visible') location.href='./#home';
+    },420);
+  }
+
   function activeSectionFromHash(){
     const raw = location.hash.replace(/^#/, '').toLowerCase();
     return valid.has(raw) ? raw : 'profile';
@@ -51,6 +102,9 @@
 
   function bind(){
     loadEasyUsername();
+    scheduleIdle(warmHomeCache);
+
+    document.addEventListener('click', fastHomeReturn, true);
     document.addEventListener('click', event => {
       const button = event.target.closest('[data-panel]');
       if(!button) return;
