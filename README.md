@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="brand/dlavie-logo.svg" alt="DLavie Shader" width="760">
+  <img src="brand/dlavie-brand.png" alt="DLavie Shader" width="480">
 </p>
 
 <h1 align="center">DLavie Shader</h1>
