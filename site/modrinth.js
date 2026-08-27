@@ -4,6 +4,15 @@
   const SUPABASE_URL = 'https://ydaeukhqwishlrjyfktk.supabase.co';
   const SUPABASE_KEY = 'sb_publishable_XNXU6SVeM-D477Ymy1ORsw_4hCHOll9';
   const authState = { checked:false, session:null, client:null, promise:null };
+  const IS_TOUCH = matchMedia('(pointer: coarse)').matches || navigator.maxTouchPoints > 0;
+
+  const scheduleIdle = (fn, timeout=1600) => {
+    if('requestIdleCallback' in window){
+      window.requestIdleCallback(() => fn(), {timeout});
+    }else{
+      setTimeout(fn, Math.min(timeout, 700));
+    }
+  };
 
   const isCommunityRoute = () => {
     const hash = (location.hash || '').replace(/^#\/?/, '').toLowerCase();
@@ -26,6 +35,7 @@
     if(!document.querySelector('script[data-dlavie-home-polish]')){
       const script=document.createElement('script');
       script.src='home-polish.js';
+      script.async=true;
       script.dataset.dlavieHomePolish='true';
       document.head.appendChild(script);
     }
@@ -199,6 +209,15 @@
     else requestAnimationFrame(updateAccountUI);
   },{passive:true});
 
+  // On iPhone/touch devices, native scrolling and instant route swaps are much
+  // faster than rebuilding GSAP/ScrollTrigger state on every tab change.
+  if(IS_TOUCH){
+    try{ window.Lenis = undefined; }catch{}
+    try{ window.ScrollTrigger = undefined; }catch{}
+    try{ window.gsap = undefined; }catch{}
+    document.documentElement.dataset.fastTouch = 'true';
+  }
+
   const core=document.createElement('script');
   core.src='modrinth-core.js';
   core.defer=true;
@@ -206,7 +225,8 @@
     injectAccountLinks();
     const observer=new MutationObserver(injectAccountLinks);
     observer.observe(document.body,{childList:true,subtree:true});
-    ensureSession();
+    // Auth is background state, not a render dependency. Let Home paint first.
+    scheduleIdle(()=>ensureSession(), IS_TOUCH ? 2200 : 1200);
   };
   document.head.appendChild(core);
 })();
