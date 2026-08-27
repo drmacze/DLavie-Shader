@@ -1,20 +1,57 @@
-/* DLavie Account flow override — one task/section at a time */
+/* DLavie Account — focused identity flow */
 [hidden]{display:none!important}
 .auth-form[hidden],.dashboard[hidden],.auth-layout[hidden],.account-panel:not(.active){display:none!important}
 .account-panel.active{display:block!important}
 
-/* Auth should have one obvious action, not a marketing page + every form at once. */
-.account-shell{max-width:1180px}
-.auth-layout{display:block;min-height:calc(100vh - 220px)}
-.auth-intro{display:none!important}
-.auth-card{position:relative;top:auto;width:min(100%,480px);margin:28px auto 0;padding:10px 28px 30px}
-.auth-card:before{content:"DLAVIE ACCOUNT";display:block;margin:18px 0 20px;font-family:"JetBrains Mono",monospace;font-size:10px;font-weight:700;letter-spacing:.14em;color:#aeb3bc}
-.auth-tabs{margin-bottom:26px}
-.auth-form{animation:accountEnter .24s ease both}
-@keyframes accountEnter{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+/* ---------- AUTH / LOGIN / REGISTER ---------- */
+.account-shell{width:min(1380px,calc(100% - 48px));max-width:none;padding:34px 0 90px}
+#authView.auth-layout{display:grid;grid-template-columns:minmax(0,1.22fr) minmax(390px,.78fr);gap:0;min-height:calc(100svh - 150px);border-top:1px solid rgba(255,255,255,.08);border-bottom:1px solid rgba(255,255,255,.08);overflow:hidden;position:relative}
 
-/* Signed-in account: compact identity + one settings surface. */
-.dashboard{width:min(100%,980px);margin:0 auto}
+.auth-intro{display:flex!important;flex-direction:column;justify-content:flex-end;position:relative;min-height:720px;padding:64px 74px 58px;overflow:hidden;isolation:isolate;background:
+radial-gradient(circle at 74% 24%,rgba(70,151,255,.13),transparent 22%),
+radial-gradient(circle at 89% 47%,rgba(255,83,139,.10),transparent 19%),
+radial-gradient(circle at 64% 69%,rgba(246,198,67,.08),transparent 18%),
+linear-gradient(145deg,#15161a 0%,#101114 55%,#0c0d0f 100%)}
+.auth-intro:before{content:"";position:absolute;z-index:-1;width:min(64vw,760px);aspect-ratio:1;right:-115px;top:-145px;background:url('assets/dlavie-mark.svg') center/contain no-repeat;opacity:.92;filter:drop-shadow(0 44px 80px rgba(0,0,0,.35));transform:rotate(-4deg)}
+.auth-intro:after{content:"DLAVIE";position:absolute;z-index:-2;left:54px;top:54px;font-size:clamp(110px,15vw,230px);font-weight:900;letter-spacing:-.085em;line-height:.8;color:transparent;-webkit-text-stroke:1px rgba(255,255,255,.065);white-space:nowrap}
+.auth-intro>.kicker{display:inline-flex;width:max-content;align-items:center;gap:10px;margin-bottom:18px;color:#d8dbe0}
+.auth-intro>.kicker:before{content:"";width:34px;height:1px;background:#fff}
+.auth-intro h1{max-width:770px;font-size:clamp(58px,6.5vw,98px);line-height:.91;letter-spacing:-.072em;margin:0 0 24px;text-wrap:balance}
+.auth-intro>p{max-width:610px;margin:0;color:#b3b8c1;font-size:17px;line-height:1.65}
+.feature-stack{margin:52px 0 0;display:grid;grid-template-columns:repeat(3,1fr);gap:0;border-top:1px solid rgba(255,255,255,.12)}
+.feature-stack>div{display:block;padding:19px 20px 2px 0;border:0;border-right:1px solid rgba(255,255,255,.10)}
+.feature-stack>div:last-child{border-right:0;padding-left:20px}.feature-stack>div:nth-child(2){padding-left:20px}
+.feature-stack>div>span{display:block;margin-bottom:10px;font-family:"JetBrains Mono",monospace;color:#747b85;font-size:9px;letter-spacing:.12em}
+.feature-stack strong{display:block;font-size:13px;letter-spacing:-.01em}.feature-stack p{display:none}
+
+.auth-card{position:relative;top:auto;width:auto;margin:0;padding:62px 58px 56px;border:0;border-left:1px solid rgba(255,255,255,.08);border-radius:0;background:rgba(13,14,16,.72);box-shadow:none;backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px);align-self:stretch}
+.auth-card:before{content:"MEMBER ACCESS";display:block;margin:0 0 38px;font-family:"JetBrains Mono",monospace;font-size:9px;font-weight:700;letter-spacing:.16em;color:#767d87}
+.auth-tabs{display:flex;gap:28px;width:100%;margin:0 0 42px;padding:0 0 12px;border:0;border-bottom:1px solid #2d3036;border-radius:0;background:transparent}
+.auth-tabs button{position:relative;height:auto;padding:0 0 12px;border:0;border-radius:0;background:transparent!important;color:#767d87;font-size:13px;font-weight:800;text-align:left}
+.auth-tabs button.active{color:#fff}
+.auth-tabs button.active:after{content:"";position:absolute;left:0;right:0;bottom:-13px;height:2px;background:#fff}
+.auth-message{margin:-14px 0 24px;border:0;border-left:2px solid #777;border-radius:0;background:transparent;padding:6px 0 6px 14px}
+.auth-message.error{border-color:#ff5577}.auth-message.success{border-color:#32d583}
+.auth-form{display:grid;gap:20px;animation:accountEnter .28s cubic-bezier(.2,.8,.2,1) both}
+@keyframes accountEnter{from{opacity:0;transform:translateY(9px)}to{opacity:1;transform:none}}
+.form-head{margin:0 0 18px}.form-head h2{font-size:clamp(34px,3vw,48px);line-height:1;letter-spacing:-.055em;margin:0 0 10px}.form-head p{font-size:13px;color:#8e949e}
+.auth-form label{gap:7px}.auth-form label>span{font-size:10px;letter-spacing:.06em;text-transform:uppercase;color:#8d939c}
+.auth-form input,.auth-form textarea{border:0!important;border-bottom:1px solid #35383e!important;border-radius:0!important;background:transparent!important;padding:13px 0!important;box-shadow:none!important;font-size:15px}
+.auth-form input:focus{border-bottom-color:#f6f6f7!important;box-shadow:none!important}
+.auth-form input::placeholder{color:#555b64}
+.password-field,.username-field{border:0;border-bottom:1px solid #35383e;border-radius:0;background:transparent;overflow:visible}
+.password-field:focus-within,.username-field:focus-within{border-color:#f6f6f7}
+.password-field input,.username-field input{border:0!important;padding-left:0!important}
+.password-field button{padding:0 0 0 14px;color:#9ca2ab}.username-field>span{padding-left:0;padding-right:8px;color:#777e87}
+.auth-form small{color:#666d77;line-height:1.5}
+.strength-track{height:2px;background:#25282d;margin-top:-7px}.check-row{margin-top:2px}.check-row input{accent-color:#fff}
+.primary-button,.secondary-button,.danger-button{border-radius:999px}
+.auth-form>.primary-button{min-height:54px;margin-top:6px;border:0;background:#f7f7f8;color:#090a0b;box-shadow:0 12px 34px rgba(255,255,255,.07);transition:transform .18s ease,background .18s ease}
+.auth-form>.primary-button:hover{transform:translateY(-1px);background:#fff}
+.auth-form>.text-button{text-align:left;width:max-content;color:#858c96}
+
+/* ---------- SIGNED-IN ACCOUNT ---------- */
+.dashboard{width:min(100%,980px);margin:0 auto;min-height:760px}
 .profile-header{padding:18px 0 24px;margin-bottom:12px;border-bottom:1px solid var(--line)}
 .profile-avatar{width:82px;height:82px;border-radius:22px;font-size:27px}
 .profile-heading h1{font-size:36px}
@@ -22,37 +59,29 @@
 .account-tabs button{min-width:0;padding:12px 14px;border-radius:12px;font-size:13px}
 .dashboard-grid{display:grid;grid-template-columns:minmax(0,1fr) 245px;gap:18px;align-items:start}
 .account-panel{min-height:410px;padding:28px;animation:accountEnter .22s ease both}
-.panel-head{margin-bottom:24px}
-.panel-head h2{font-size:34px}
-.account-side{top:164px}
+.panel-head{margin-bottom:24px}.panel-head h2{font-size:34px}.account-side{top:164px}
+.settings-section,.settings-form,.privacy-action,.danger-zone{max-width:680px}.account-panel hr{margin:26px 0}.side-card{border-radius:18px}
 
-/* Make hierarchy obvious. */
-.settings-section,.settings-form,.privacy-action,.danger-zone{max-width:680px}
-.account-panel hr{margin:26px 0}
-.side-card{border-radius:18px}
-
-@media(max-width:900px){
-  .account-shell{padding-top:28px}
-  .dashboard{width:100%}
-  .account-tabs{top:76px}
-  .dashboard-grid{grid-template-columns:1fr}
-  .account-side{position:static;grid-template-columns:1fr 1fr}
+@media(max-width:980px){
+  .account-shell{width:min(100% - 28px,900px);padding-top:24px}
+  #authView.auth-layout{grid-template-columns:1fr minmax(350px,.78fr)}
+  .auth-intro{padding:48px 42px 45px;min-height:660px}
+  .auth-intro:before{right:-170px;top:-110px;opacity:.72}
+  .feature-stack{grid-template-columns:1fr}.feature-stack>div{display:none}.feature-stack>div:first-child{display:block;border-right:0;padding-left:0}
+  .auth-card{padding:52px 38px 46px}
+  .dashboard{width:100%}.account-tabs{top:76px}.dashboard-grid{grid-template-columns:1fr}.account-side{position:static;grid-template-columns:1fr 1fr}
 }
 
-@media(max-width:640px){
-  .account-shell{padding-top:18px}
-  .auth-layout{min-height:auto}
-  .auth-card{margin-top:8px;padding:8px 18px 22px;border-radius:20px}
-  .auth-card:before{margin:16px 0 18px}
-  .form-head h2{font-size:28px}
-  .profile-header{grid-template-columns:68px minmax(0,1fr);gap:13px;padding:8px 0 18px}
-  .profile-avatar{width:68px;height:68px;border-radius:18px;font-size:22px}
-  .profile-heading h1{font-size:26px}
-  .profile-heading p{margin-top:6px}
-  .profile-header>.secondary-button{margin-top:0}
-  .account-tabs{top:68px;grid-template-columns:1fr 1fr;gap:4px;padding:5px;border-radius:16px;overflow:visible}
-  .account-tabs button{font-size:12px;padding:11px 8px}
-  .account-panel{padding:20px;min-height:0;border-radius:18px}
-  .panel-head h2{font-size:29px}
-  .account-side{grid-template-columns:1fr}
+@media(max-width:720px){
+  .account-topbar{height:64px;padding:0 16px}.account-brand span{display:none}.top-actions .ghost-link:first-child{display:none}
+  .account-shell{width:100%;padding:0 0 92px}
+  #authView.auth-layout{display:block;border-top:0;border-bottom:0;min-height:auto}
+  .auth-intro{min-height:285px;padding:38px 22px 28px;justify-content:flex-end;border-bottom:1px solid rgba(255,255,255,.08)}
+  .auth-intro:before{width:330px;right:-84px;top:-92px;opacity:.72}.auth-intro:after{font-size:92px;left:16px;top:24px}
+  .auth-intro>.kicker{margin-bottom:11px}.auth-intro h1{font-size:46px;max-width:430px;margin-bottom:12px}.auth-intro>p{font-size:13px;max-width:380px}.feature-stack{display:none}
+  .auth-card{padding:30px 22px 42px;border-left:0;background:#101114;backdrop-filter:none;-webkit-backdrop-filter:none}
+  .auth-card:before{margin-bottom:28px}.auth-tabs{margin-bottom:32px}.form-head h2{font-size:35px}
+  .profile-header{display:grid;grid-template-columns:68px minmax(0,1fr);gap:13px;padding:18px 14px}.profile-avatar{width:68px;height:68px;border-radius:18px;font-size:22px}.profile-heading h1{font-size:26px}.profile-heading p{margin-top:6px}.profile-header>.secondary-button{grid-column:1/-1;margin-top:0;width:100%}
+  .account-tabs{top:64px;grid-template-columns:1fr 1fr;gap:4px;padding:5px;margin-inline:12px;width:calc(100% - 24px);border-radius:16px;overflow:visible}.account-tabs button{font-size:12px;padding:11px 8px}
+  .dashboard-grid{padding:0 12px}.account-panel{padding:20px;min-height:0;border-radius:18px}.panel-head h2{font-size:29px}.account-side{grid-template-columns:1fr}.fit{width:100%}
 }
