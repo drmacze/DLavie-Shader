@@ -1,0 +1,208 @@
+<!doctype html>
+<html lang="id">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <meta name="theme-color" content="#111214">
+  <meta name="description" content="DLavie Community — realtime global chat, project discussion, feedback, voting, and community tools.">
+  <title>Community — DLavie</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="community.css">
+</head>
+<body>
+  <div class="community-app">
+    <header class="community-topbar">
+      <a class="community-brand" href="./#home" aria-label="Kembali ke DLavie">
+        <img src="assets/dlavie-mark.svg" alt="">
+        <strong>dlavie</strong>
+        <span>community</span>
+      </a>
+      <label class="community-search" aria-label="Cari pesan">
+        <svg viewBox="0 0 24 24"><path d="m21 21-4.3-4.3m2.3-5.2a7.5 7.5 0 1 1-15 0 7.5 7.5 0 0 1 15 0Z"/></svg>
+        <input id="messageSearch" type="search" placeholder="Search messages" autocomplete="off">
+      </label>
+      <div class="community-top-actions">
+        <div class="online-pill"><span class="online-dot"></span><strong id="onlineCount">0</strong><span>online</span></div>
+        <button id="mobileInfoButton" class="top-icon mobile-only" type="button" aria-label="Community info"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 11v6M12 7.5v.01"/></svg></button>
+        <button id="profileButton" class="profile-button" type="button"><span class="mini-avatar" id="topAvatar">?</span><span id="topProfileName">Join</span></button>
+      </div>
+    </header>
+
+    <div class="community-layout">
+      <aside class="community-sidebar" id="communitySidebar">
+        <div class="sidebar-block sidebar-intro">
+          <span class="sidebar-kicker">DLAVIE COMMUNITY</span>
+          <h1>Community</h1>
+          <p>Discuss projects, help each other, and shape what DLavie builds next.</p>
+        </div>
+
+        <div class="sidebar-block">
+          <div class="sidebar-heading"><span>Channels</span><span class="tiny-badge">1</span></div>
+          <button class="channel-item active" type="button">
+            <span class="channel-hash">#</span>
+            <span><strong>global</strong><small>General DLavie chat</small></span>
+            <span class="channel-live">LIVE</span>
+          </button>
+          <button class="channel-item future" type="button" disabled>
+            <span class="channel-hash">#</span>
+            <span><strong>shader</strong><small>Coming with project channels</small></span>
+            <span class="tiny-badge">SOON</span>
+          </button>
+        </div>
+
+        <div class="sidebar-block">
+          <div class="sidebar-heading"><span>Community</span></div>
+          <a class="side-nav-item" href="./#feedback"><svg viewBox="0 0 24 24"><path d="M4 5h16v11H8l-4 4V5Z"/></svg><span>Feedback</span></a>
+          <a class="side-nav-item" href="./#vote"><svg viewBox="0 0 24 24"><path d="m5 12 4 4L19 6"/></svg><span>Roadmap vote</span></a>
+          <a class="side-nav-item" href="https://github.com/drmacze/DLavie-Shader/issues" target="_blank" rel="noreferrer"><img src="https://cdn.simpleicons.org/github/FFFFFF" alt=""><span>GitHub issues</span><b>↗</b></a>
+        </div>
+
+        <div class="sidebar-block rules-mini">
+          <div class="sidebar-heading"><span>Quick rules</span></div>
+          <p>Be useful, stay respectful, no spam, no impersonation, and keep personal information private.</p>
+          <button id="openRules" class="text-button" type="button">Read community rules →</button>
+        </div>
+
+        <div class="sidebar-footer">
+          <a href="./#home">← DLavie home</a>
+          <span>Community beta</span>
+        </div>
+      </aside>
+
+      <main class="chat-panel">
+        <header class="chat-header">
+          <div>
+            <div class="chat-title-row"><span class="channel-title-hash">#</span><h2>global</h2><span class="live-badge">LIVE</span></div>
+            <p>Global chat for everyone following DLavie.</p>
+          </div>
+          <div class="chat-header-actions">
+            <button id="pinnedToggle" class="chat-icon" type="button" aria-label="Pinned messages"><svg viewBox="0 0 24 24"><path d="m9 4 6 6m-4-8 6 6-3 3 3 5-1 1-5-3-5 5-1-1 5-5-3-3 2-2Z"/></svg><span id="pinCountBadge">0</span></button>
+            <button id="refreshChat" class="chat-icon" type="button" aria-label="Refresh chat"><svg viewBox="0 0 24 24"><path d="M20 7v5h-5M4 17v-5h5M6.2 8.2A7 7 0 0 1 18.7 7M17.8 15.8A7 7 0 0 1 5.3 17"/></svg></button>
+          </div>
+        </header>
+
+        <div class="pinned-banner" id="pinnedBanner" hidden>
+          <div><svg viewBox="0 0 24 24"><path d="m9 4 6 6m-4-8 6 6-3 3 3 5-1 1-5-3-5 5-1-1 5-5-3-3 2-2Z"/></svg><span><strong>Pinned</strong><small id="pinnedBannerText">No pinned messages.</small></span></div>
+          <button id="closePinnedBanner" type="button">×</button>
+        </div>
+
+        <section class="message-scroller" id="messageScroller" aria-label="Global community messages">
+          <div class="message-history-top"><span>DLAVIE GLOBAL CHAT</span><h3>Welcome to #global</h3><p>This is the beginning of the DLavie community timeline.</p></div>
+          <div class="chat-loading" id="chatLoading"><span class="spinner"></span><p>Connecting to community…</p></div>
+          <div class="message-list" id="messageList"></div>
+          <div class="typing-line" id="typingLine" aria-live="polite"></div>
+        </section>
+
+        <section class="composer-shell">
+          <div class="reply-preview" id="replyPreview" hidden><div><span>Replying to <strong id="replyName"></strong></span><p id="replyText"></p></div><button id="cancelReply" type="button" aria-label="Cancel reply">×</button></div>
+          <div class="edit-preview" id="editPreview" hidden><div><span>Editing message</span><p>Save changes from the composer.</p></div><button id="cancelEdit" type="button" aria-label="Cancel edit">×</button></div>
+          <div class="composer-join" id="composerJoin">
+            <div><strong>Join the conversation</strong><span>Choose a community name to send messages and reactions.</span></div>
+            <button id="joinFromComposer" class="white-button" type="button">Join chat</button>
+          </div>
+          <form class="composer" id="messageForm" hidden>
+            <button class="composer-tool" id="emojiButton" type="button" aria-label="Emoji reactions">☺</button>
+            <textarea id="messageInput" rows="1" maxlength="1200" placeholder="Message #global" aria-label="Message global chat"></textarea>
+            <span class="composer-count" id="composerCount">0/1200</span>
+            <button class="send-button" id="sendButton" type="submit" aria-label="Send message"><svg viewBox="0 0 24 24"><path d="m3 11 17-8-8 17-2-7-7-2Z"/><path d="m10 13 10-10"/></svg></button>
+          </form>
+          <div class="emoji-picker" id="emojiPicker" hidden><button type="button">👍</button><button type="button">❤️</button><button type="button">😂</button><button type="button">🔥</button><button type="button">🎉</button><button type="button">👀</button></div>
+          <div class="composer-meta"><span>Keep discussion constructive.</span><span id="connectionState"><i></i> Connecting…</span></div>
+        </section>
+      </main>
+
+      <aside class="community-info" id="communityInfo">
+        <section class="info-card">
+          <div class="info-card-head"><h3>Online now</h3><span id="onlineSideCount">0</span></div>
+          <div id="onlineMembers" class="online-members"><p class="muted-small">No active members yet.</p></div>
+        </section>
+        <section class="info-card">
+          <div class="info-card-head"><h3>Pinned</h3><button class="text-button" id="viewAllPins" type="button">View</button></div>
+          <div id="pinnedList" class="pinned-list"><p class="muted-small">Nothing pinned yet.</p></div>
+        </section>
+        <section class="info-card project-card-mini">
+          <span class="sidebar-kicker">CURRENT PROJECT</span>
+          <a href="./#project/dlavie-shader"><img src="assets/dlavie-shader.svg" alt=""><div><strong>DLavie Shader</strong><span>v0.1.2 · Bedrock</span></div><b>→</b></a>
+        </section>
+        <section class="info-card" id="staffCard" hidden>
+          <span class="sidebar-kicker">STAFF</span>
+          <h3>Moderation</h3>
+          <p class="muted-small">Review reports and manage disruptive members.</p>
+          <button id="openModeration" class="dark-button full" type="button">Open moderation queue</button>
+        </section>
+      </aside>
+    </div>
+  </div>
+
+  <div class="modal-backdrop" id="joinModal" hidden>
+    <section class="community-modal join-modal" role="dialog" aria-modal="true" aria-labelledby="joinTitle">
+      <img src="assets/dlavie-mark.svg" alt="" class="join-mark">
+      <span class="sidebar-kicker">DLAVIE COMMUNITY</span>
+      <h2 id="joinTitle">Join the conversation.</h2>
+      <p>Create a lightweight community identity. No password is required for this beta; your secure session stays on this device.</p>
+      <form id="joinForm">
+        <label><span>Community name</span><input id="joinName" maxlength="24" minlength="3" required placeholder="Your name" autocomplete="nickname"></label>
+        <small>3–24 characters. You can change it later.</small>
+        <button class="white-button full" type="submit">Join global chat</button>
+      </form>
+      <button class="modal-close" id="closeJoin" type="button">Not now</button>
+    </section>
+  </div>
+
+  <div class="modal-backdrop" id="profileModal" hidden>
+    <section class="community-modal profile-modal" role="dialog" aria-modal="true" aria-labelledby="profileTitle">
+      <button class="x-close" id="closeProfile" type="button" aria-label="Close">×</button>
+      <div class="profile-hero"><span class="profile-avatar" id="profileAvatar">?</span><div><span class="role-label" id="profileRole">MEMBER</span><h2 id="profileTitle">Community profile</h2><p id="profileSince"></p></div></div>
+      <form id="profileForm" hidden>
+        <label><span>Display name</span><input id="profileName" maxlength="24" minlength="3" required></label>
+        <label><span>Bio</span><textarea id="profileBio" maxlength="160" rows="3" placeholder="A short community bio"></textarea></label>
+        <button class="white-button full" type="submit">Save profile</button>
+      </form>
+      <div id="otherProfileActions" hidden>
+        <p id="otherProfileBio" class="profile-bio"></p>
+        <button id="blockProfile" class="dark-button full" type="button">Block member</button>
+      </div>
+      <button id="logoutButton" class="danger-text" type="button" hidden>Log out on this device</button>
+    </section>
+  </div>
+
+  <div class="modal-backdrop" id="reportModal" hidden>
+    <section class="community-modal" role="dialog" aria-modal="true" aria-labelledby="reportTitle">
+      <button class="x-close" id="closeReport" type="button" aria-label="Close">×</button>
+      <span class="sidebar-kicker">COMMUNITY SAFETY</span>
+      <h2 id="reportTitle">Report message</h2>
+      <form id="reportForm">
+        <label><span>Reason</span><select id="reportReason"><option value="spam">Spam</option><option value="harassment">Harassment</option><option value="hate">Hate</option><option value="sexual">Sexual content</option><option value="violence">Violence</option><option value="privacy">Privacy / personal data</option><option value="other">Other</option></select></label>
+        <label><span>Details (optional)</span><textarea id="reportDetails" maxlength="500" rows="4" placeholder="What should moderators know?"></textarea></label>
+        <button class="white-button full" type="submit">Submit report</button>
+      </form>
+    </section>
+  </div>
+
+  <div class="modal-backdrop" id="rulesModal" hidden>
+    <section class="community-modal rules-modal" role="dialog" aria-modal="true" aria-labelledby="rulesTitle">
+      <button class="x-close" id="closeRules" type="button" aria-label="Close">×</button>
+      <span class="sidebar-kicker">DLAVIE COMMUNITY</span>
+      <h2 id="rulesTitle">Community rules</h2>
+      <ol><li><strong>Be constructive.</strong><span>Critique ideas and projects without attacking people.</span></li><li><strong>No spam.</strong><span>No flooding, repetitive promotion, scams, or malicious links.</span></li><li><strong>Respect privacy.</strong><span>Do not share someone else's personal information.</span></li><li><strong>No hate or harassment.</strong><span>Threats, slurs, targeted harassment, and discriminatory abuse are not allowed.</span></li><li><strong>Keep it relevant.</strong><span>Use global for DLavie/community discussion; project channels will arrive later.</span></li></ol>
+    </section>
+  </div>
+
+  <div class="modal-backdrop" id="moderationModal" hidden>
+    <section class="community-modal moderation-modal" role="dialog" aria-modal="true" aria-labelledby="moderationTitle">
+      <button class="x-close" id="closeModeration" type="button" aria-label="Close">×</button>
+      <span class="sidebar-kicker">STAFF TOOLS</span>
+      <h2 id="moderationTitle">Moderation queue</h2>
+      <div id="moderationQueue" class="moderation-queue"><p class="muted-small">Loading reports…</p></div>
+    </section>
+  </div>
+
+  <div class="mobile-info-backdrop" id="mobileInfoBackdrop" hidden></div>
+  <div class="toast" id="communityToast" role="status" aria-live="polite"></div>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="community.js"></script>
+</body>
+</html>
