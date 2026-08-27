@@ -60,19 +60,36 @@ jobs:
           path = pathlib.Path(sys.argv[1])
           text = path.read_text()
 
-          css = '<link rel="stylesheet" href="home-polish.css" data-dlavie-home-polish="true">'
-          if css not in text:
+          css = '<link rel="stylesheet" href="home-polish.css?v=46" data-dlavie-home-polish="true">'
+          if 'data-dlavie-home-polish="true"' not in text:
               text = text.replace(
                   '<link rel="stylesheet" href="modrinth.css">',
-                  '<link rel="stylesheet" href="modrinth.css">\n  ' + css,
+                  '<link rel="stylesheet" href="modrinth.css?v=46">\n  ' + css,
                   1,
               )
+          else:
+              text = text.replace('href="modrinth.css"', 'href="modrinth.css?v=46"')
+              text = text.replace('href="home-polish.css"', 'href="home-polish.css?v=46"')
 
-          js = '<script src="home-polish.js" data-dlavie-home-polish="true"></script>'
-          if js not in text:
+          home_js = '<script src="home-polish.js?v=46" data-dlavie-home-polish="true"></script>'
+          if 'src="home-polish.js" data-dlavie-home-polish="true"' not in text and 'src="home-polish.js?v=46"' not in text:
               text = text.replace(
                   '<script src="modrinth.js"></script>',
-                  js + '\n  <script src="modrinth.js"></script>',
+                  home_js + '\n  <script src="modrinth.js"></script>',
+                  1,
+              )
+          else:
+              text = text.replace('src="home-polish.js"', 'src="home-polish.js?v=46"')
+
+          # Force iOS/Safari to fetch the new account-state logic instead of using a
+          # cached modrinth.js that still labels every user as signed out.
+          text = text.replace('src="modrinth.js"', 'src="modrinth.js?v=46"')
+
+          auth_bridge = '<script src="auth-status-fix.js?v=46"></script>'
+          if auth_bridge not in text:
+              text = text.replace(
+                  '<script src="modrinth.js?v=46"></script>',
+                  '<script src="modrinth.js?v=46"></script>\n  ' + auth_bridge,
                   1,
               )
 
@@ -82,7 +99,7 @@ jobs:
 
           # Do not load Supabase just to decide whether Home should say Account or
           # Sign in. Auth is resolved only when the user performs a gated action or
-          # explicitly opens Account/Community.
+          # explicitly opens Account/Community. Cache-bust the core app too.
           for js in _site/modrinth.js _site/site/modrinth.js; do
             python3 - "$js" <<'PY'
           import pathlib, sys
@@ -92,6 +109,7 @@ jobs:
           new = "    // No automatic Supabase request on Home. Auth resolves on demand."
           if old in text:
               text = text.replace(old, new, 1)
+          text = text.replace("core.src='modrinth-core.js';", "core.src='modrinth-core.js?v=46';")
           path.write_text(text)
           PY
           done
