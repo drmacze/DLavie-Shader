@@ -31,12 +31,15 @@ jobs:
         run: |
           rm -rf _site
           mkdir -p _site/site _site/brand
+
+          # Canonical deployment at the repository Pages root.
+          cp -R site/. _site/
+
+          # Keep old /site/... URLs working for backwards compatibility.
           cp -R site/. _site/site/
+
           cp brand/dlavie-logo.svg _site/brand/dlavie-logo.svg
           touch _site/.nojekyll
-          cat > _site/index.html <<'EOF'
-          <!doctype html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta http-equiv="refresh" content="0; url=./site/#home"><title>DLavie Hub</title></head><body style="background:#090a0c;color:#fff;font-family:system-ui;padding:40px">Opening <a style="color:#d7b36f" href="./site/#home">DLavie Hub</a>…</body></html>
-          EOF
       - uses: actions/upload-pages-artifact@v3
         with:
           path: _site
