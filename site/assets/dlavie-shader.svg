@@ -1,0 +1,24 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024" role="img" aria-labelledby="title desc">
+  <title id="title">DLavie Shader</title>
+  <desc id="desc">Dark stone D emblem surrounding a warm sun with foliage and metallic DLAVIE wordmark.</desc>
+  <defs>
+    <radialGradient id="bg" cx="50%" cy="38%" r="72%"><stop offset="0" stop-color="#242323"/><stop offset="0.58" stop-color="#121214"/><stop offset="1" stop-color="#09090b"/></radialGradient>
+    <radialGradient id="sun" cx="50%" cy="50%" r="50%"><stop offset="0" stop-color="#fffef4"/><stop offset="0.42" stop-color="#fff1b5"/><stop offset="0.72" stop-color="#ffc96a"/><stop offset="1" stop-color="#f19a34" stop-opacity="0"/></radialGradient>
+    <linearGradient id="stone" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#b8babd"/><stop offset="0.22" stop-color="#85888e"/><stop offset="0.55" stop-color="#4a4d52"/><stop offset="1" stop-color="#1d2024"/></linearGradient>
+    <linearGradient id="stoneHi" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#d0d1d3"/><stop offset="1" stop-color="#62666d"/></linearGradient>
+    <linearGradient id="metal" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffffff"/><stop offset="0.22" stop-color="#d9d9d9"/><stop offset="0.55" stop-color="#fafafa"/><stop offset="0.78" stop-color="#b7b7b7"/><stop offset="1" stop-color="#eeeeee"/></linearGradient>
+    <filter id="glow" x="-80%" y="-80%" width="260%" height="260%"><feGaussianBlur stdDeviation="30"/></filter>
+    <filter id="shadow" x="-40%" y="-40%" width="180%" height="180%"><feDropShadow dx="0" dy="22" stdDeviation="18" flood-color="#000" flood-opacity="0.72"/></filter>
+  </defs>
+  <rect width="1024" height="1024" fill="url(#bg)"/>
+  <circle cx="512" cy="430" r="255" fill="#ffb34d" opacity="0.16" filter="url(#glow)"/>
+  <g opacity="0.16" stroke="#ffc763" stroke-width="12" stroke-linecap="round"><path d="M512 115V230"/><path d="M512 620V710"/><path d="M198 430H318"/><path d="M706 430H825"/><path d="M285 204L369 290"/><path d="M655 571L742 658"/><path d="M741 203L657 289"/><path d="M369 571L282 659"/></g>
+  <g fill="#31451f" opacity="0.95"><circle cx="276" cy="518" r="48"/><circle cx="246" cy="552" r="36"/><circle cx="315" cy="553" r="42"/><circle cx="748" cy="520" r="49"/><circle cx="789" cy="552" r="34"/><circle cx="708" cy="557" r="43"/></g>
+  <g fill="#63783a" opacity="0.85"><circle cx="262" cy="511" r="17"/><circle cx="302" cy="534" r="15"/><circle cx="759" cy="510" r="16"/><circle cx="724" cy="542" r="15"/></g>
+  <g filter="url(#shadow)"><path d="M246 196H504c164 0 282 96 282 238S668 673 504 673H246V196zm132 117v243h117c94 0 158-43 158-122S589 313 495 313H378z" fill="url(#stone)"/><path d="M246 196h126v48h54v45H378v40h-55v57h-77V196z" fill="url(#stoneHi)" opacity="0.9"/><path d="M321 561h69v-52h56v-51h55v-49h56v-49h58v196h-80v52h-78v52H321z" fill="#17191c" opacity="0.82"/><path d="M502 313h80v42h62v43h56v42h47v-77c-24-32-56-50-95-50H502z" fill="#9ea1a6" opacity="0.66"/></g>
+  <circle cx="514" cy="444" r="156" fill="url(#sun)" filter="url(#glow)" opacity="0.82"/><circle cx="514" cy="444" r="105" fill="#fff9da"/><circle cx="514" cy="444" r="90" fill="#fffbe9"/>
+  <path d="M347 439l56 56 48-48 62 62 62-62 49 48 57-56v72l-106 106-62-61-61 61-105-106z" fill="#25282c" opacity="0.94"/>
+  <path d="M349 420l53 53 49-49 62 62 62-62 49 49 53-53" fill="none" stroke="#d4d4d1" stroke-width="18" stroke-linejoin="bevel" opacity="0.9"/>
+  <text x="512" y="842" text-anchor="middle" fill="url(#metal)" stroke="#7f7f7f" stroke-width="1.5" font-family="Georgia, 'Times New Roman', serif" font-size="138" font-weight="700" letter-spacing="2">DLAVIE</text>
+  <text x="512" y="904" text-anchor="middle" fill="#d4b77c" opacity="0.9" font-family="Arial, Helvetica, sans-serif" font-size="31" font-weight="700" letter-spacing="13">SHADER</text>
+</svg>
