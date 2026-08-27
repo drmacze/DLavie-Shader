@@ -20,6 +20,7 @@
   let uiScheduled = false;
 
   const loginUrl = (mode = 'login') => `account.html?mode=${encodeURIComponent(mode)}&next=community`;
+  const setText = (el, value) => { if (el && el.textContent !== value) el.textContent = value; };
 
   function syncLegacySentinel(session) {
     currentSession = session || null;
@@ -84,27 +85,20 @@
 
   function decorateLoggedOutUI() {
     if (currentSession) return;
-    const topName = document.querySelector('#topProfileName');
-    if (topName) topName.textContent = 'Sign in';
+    setText(document.querySelector('#topProfileName'), 'Sign in');
 
     const join = document.querySelector('#composerJoin');
     if (join) {
-      const strong = join.querySelector('strong');
-      const span = join.querySelector('span');
-      const button = join.querySelector('#joinFromComposer');
-      if (strong) strong.textContent = 'Sign in to join';
-      if (span) span.textContent = 'Use your DLavie Account to send messages, replies, and reactions.';
-      if (button) button.textContent = 'Sign in';
+      setText(join.querySelector('strong'), 'Sign in to join');
+      setText(join.querySelector('span'), 'Use your DLavie Account to send messages, replies, and reactions.');
+      setText(join.querySelector('#joinFromComposer'), 'Sign in');
     }
 
-    const joinTitle = document.querySelector('#joinTitle');
+    setText(document.querySelector('#joinTitle'), 'Use a DLavie Account.');
     const joinModal = document.querySelector('#joinModal');
-    if (joinTitle) joinTitle.textContent = 'Use a DLavie Account.';
     if (joinModal) {
-      const copy = joinModal.querySelector('.join-modal > p');
-      const submit = joinModal.querySelector('#joinForm button[type="submit"]');
-      if (copy) copy.textContent = 'Community posting now requires a verified DLavie account session. Sign in or register to continue.';
-      if (submit) submit.textContent = 'Continue to account';
+      setText(joinModal.querySelector('.join-modal > p'), 'Community posting now requires a verified DLavie account session. Sign in or register to continue.');
+      setText(joinModal.querySelector('#joinForm button[type="submit"]'), 'Continue to account');
     }
   }
 
