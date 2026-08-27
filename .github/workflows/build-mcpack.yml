@@ -18,11 +18,13 @@ jobs:
         run: python scripts/validate_pack.py
       - name: Generate preserved biome bindings
         run: python scripts/sync_vanilla_biomes.py --out biomes
+      - name: Generate volumetric fog and light shafts
+        run: python scripts/sync_vanilla_fogs.py --root .
       - name: Build mcpack
-        run: python scripts/build_mcpack.py --skip-biome-sync --output dist/DLavie-Shader-v0.1.0.mcpack
+        run: python scripts/build_mcpack.py --skip-biome-sync --skip-fog-sync --output dist/DLavie-Shader-v0.1.2.mcpack
       - name: Upload mcpack artifact
         uses: actions/upload-artifact@v4
         with:
-          name: DLavie-Shader-v0.1.0
-          path: dist/DLavie-Shader-v0.1.0.mcpack
+          name: DLavie-Shader-v0.1.2
+          path: dist/DLavie-Shader-v0.1.2.mcpack
           if-no-files-found: error
