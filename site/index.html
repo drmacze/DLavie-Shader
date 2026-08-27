@@ -3,268 +3,125 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-  <meta name="theme-color" content="#151217">
-  <meta name="description" content="DLavie Hub — source, download, berita, komunitas, feedback, dan voting untuk seluruh ekosistem DLavie.">
-  <title>DLavie — Hub</title>
+  <meta name="theme-color" content="#111214">
+  <meta name="description" content="DLavie — home for projects created and developed with DLavie. Downloads, changelog, versions, community, feedback, and voting.">
+  <title>DLavie</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@600;700&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://unpkg.com/lenis@1.3.26/dist/lenis.css">
-  <link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href="modrinth.css">
 </head>
 <body>
-  <header class="site-header" id="siteHeader">
-    <div class="header-inner">
+  <header class="desktop-header">
+    <div class="header-shell">
       <a class="brand" href="#home" aria-label="DLavie home">
-        <span class="brand-mark"><img src="../brand/dlavie-logo.svg" alt=""></span>
-        <span class="brand-copy"><strong>DLavie</strong><small>Creative Lab</small></span>
+        <img src="assets/dlavie-mark.svg" alt="" class="brand-logo">
+        <strong>dlavie</strong>
       </a>
-
-      <nav class="desktop-nav" aria-label="Navigasi utama">
+      <nav class="desktop-links" aria-label="Navigasi utama">
         <a href="#home" data-route-link="home">Home</a>
-        <a href="#projects" data-route-link="projects">Projects</a>
-        <a href="#downloads" data-route-link="downloads">Downloads</a>
+        <a href="#downloads" data-route-link="downloads">Projects</a>
         <a href="#news" data-route-link="news">News</a>
         <a href="#community" data-route-link="community">Community</a>
       </nav>
-
       <div class="header-actions">
-        <button class="round-button" id="searchToggle" type="button" aria-label="Cari">
-          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m21 21-4.35-4.35m2.35-5.65a8 8 0 1 1-16 0 8 8 0 0 1 16 0Z"/></svg>
-        </button>
-        <a class="header-cta" href="#feedback">Feedback</a>
-        <button class="menu-button" id="menuToggle" type="button" aria-label="Buka menu" aria-expanded="false">
-          <span></span><span></span>
-        </button>
+        <button class="icon-button" id="searchOpen" aria-label="Search" type="button"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m21 21-4.3-4.3m2.3-5.2a7.5 7.5 0 1 1-15 0 7.5 7.5 0 0 1 15 0Z"/></svg></button>
+        <a class="quiet-button" href="#feedback">Feedback</a>
       </div>
     </div>
-    <nav class="mobile-menu" id="mobileMenu" aria-label="Navigasi mobile">
-      <a href="#home" data-route-link="home">Home</a>
-      <a href="#projects" data-route-link="projects">Projects</a>
-      <a href="#downloads" data-route-link="downloads">Downloads</a>
-      <a href="#news" data-route-link="news">News</a>
-      <a href="#community" data-route-link="community">Community</a>
-      <a href="#vote">Vote</a>
-      <a href="#feedback">Feedback</a>
-    </nav>
   </header>
 
-  <main id="app" tabindex="-1">
+  <main id="app">
     <section class="page active" data-route="home">
-      <section class="hero shell">
-        <p class="overline hero-overline">THE DLAVIE CREATIVE ECOSYSTEM</p>
-        <h1 class="hero-title">One home for<br><span>everything DLavie.</span></h1>
-        <p class="hero-description">Source resmi, shader, texture, tools, berita pengembangan, komunitas, feedback, dan keputusan roadmap—semuanya dibuat jelas dalam satu tempat.</p>
+      <section class="home-hero shell reveal-group">
+        <img src="assets/dlavie-mark.svg" class="hero-brand" alt="DLavie">
+        <p class="eyebrow">PROJECTS BUILT HERE</p>
+        <h1>A clean home for<br><span>DLavie projects.</span></h1>
+        <p class="hero-lede">Download releases, read changelogs, browse versions, follow development, send feedback, and shape what gets built next.</p>
         <div class="hero-actions">
-          <a class="button button-primary" href="#downloads">
-            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v12m0 0 5-5m-5 5-5-5M5 21h14"/></svg>
-            Browse downloads
-          </a>
-          <a class="button button-secondary" href="#projects">Explore projects</a>
+          <a class="primary-button" href="#downloads"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v12m0 0 5-5m-5 5-5-5M5 20h14"/></svg>Explore projects</a>
+          <a class="secondary-button" href="#community">Community</a>
         </div>
       </section>
 
-      <section class="shell stats-wrap" data-reveal>
-        <div class="stats-card surface-card">
-          <div class="stat"><strong id="repoCount">6</strong><span>ACTIVE PROJECTS</span></div>
-          <div class="stat"><strong id="releaseCount">1</strong><span>OFFICIAL RELEASES</span></div>
-          <div class="stat"><strong>100%</strong><span>OPEN SOURCE FIRST</span></div>
-        </div>
+      <section class="shell stat-strip reveal"><div><strong>1</strong><span>Published project</span></div><div><strong>3</strong><span>Tracked versions</span></div><div><strong>MIT</strong><span>Source license</span></div></section>
+
+      <section class="shell section-space reveal">
+        <div class="section-heading"><div><span class="section-kicker">FEATURED</span><h2>Available now</h2></div><a href="#downloads">View projects →</a></div>
+        <a class="featured-project" href="#project/dlavie-shader">
+          <img src="../pack_icon.png" alt="DLavie Shader" class="project-icon large">
+          <div class="featured-copy"><div class="project-title-row"><h3>DLavie Shader</h3><span class="status-chip">v0.1.2</span></div><p>Vibrant Visuals + PBR Enhanced shader for Minecraft Bedrock, tuned around vanilla-faithful materials, volumetric godrays, and mobile-first quality presets.</p><div class="chip-row"><span>Shader</span><span>Bedrock</span><span>Mobile first</span><span>PBR</span></div></div>
+          <span class="arrow">→</span>
+        </a>
       </section>
 
-      <section class="shell content-section" data-reveal>
-        <div class="section-heading">
-          <div>
-            <p class="overline">FEATURED RELEASE</p>
-            <h2>Start with DLavie Shader.</h2>
-          </div>
-          <a class="text-link" href="#downloads">All downloads <span>↗</span></a>
+      <section class="shell section-space reveal">
+        <div class="section-heading"><div><span class="section-kicker">WHY DLAVIE</span><h2>Simple by design.</h2></div></div>
+        <div class="principle-grid">
+          <article class="surface-card"><span class="card-number">01</span><h3>Project first</h3><p>Only products actually built as DLavie projects appear here. Repository lists are not treated as products.</p></article>
+          <article class="surface-card"><span class="card-number">02</span><h3>Clear releases</h3><p>Every project gets a description, changelog, version history, compatibility, license, and download surface.</p></article>
+          <article class="surface-card"><span class="card-number">03</span><h3>Community visible</h3><p>Feedback and voting remain easy to find instead of being buried behind a decorative landing page.</p></article>
         </div>
-
-        <article class="featured-card surface-card">
-          <div class="featured-icon shader-icon" aria-hidden="true">
-            <span class="shader-sun"></span>
-            <span class="shader-block block-a"></span>
-            <span class="shader-block block-b"></span>
-            <span class="shader-block block-c"></span>
-          </div>
-          <div class="featured-copy">
-            <div class="pill-row"><span class="pill">MINECRAFT BEDROCK</span><span class="pill accent-pill">VIBRANT VISUALS</span></div>
-            <h3>DLavie Shader</h3>
-            <p>Vanilla-first shader dengan PBR enhanced, volumetric godrays, natural color grading, serta preset Low, Medium, High, dan Ultra untuk mobile.</p>
-            <div class="platform-row"><span>Bedrock</span><span>iOS</span><span>Android</span><span>Windows</span></div>
-            <div class="featured-actions">
-              <a class="button button-primary wide-on-mobile" href="#downloads">Download DLavie Shader
-                <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v12m0 0 5-5m-5 5-5-5M5 21h14"/></svg>
-              </a>
-              <a class="button button-secondary wide-on-mobile" href="https://github.com/drmacze/DLavie-Shader" target="_blank" rel="noreferrer">View source ↗</a>
-            </div>
-          </div>
-        </article>
-      </section>
-
-      <section class="shell content-section" data-reveal>
-        <div class="section-heading">
-          <div>
-            <p class="overline">EXPLORE</p>
-            <h2>Everything has a place.</h2>
-          </div>
-        </div>
-        <div class="simple-grid">
-          <a class="simple-card surface-card" href="#downloads" data-filter-jump="shader"><span class="simple-index">01</span><h3>Shaders</h3><p>Lighting, atmosphere, water, color grading, dan PBR.</p><span class="arrow">↗</span></a>
-          <a class="simple-card surface-card" href="#downloads" data-filter-jump="texture"><span class="simple-index">02</span><h3>Textures</h3><p>Vanilla-faithful material packs dan visual resources.</p><span class="arrow">↗</span></a>
-          <a class="simple-card surface-card" href="#projects"><span class="simple-index">03</span><h3>Tools</h3><p>Utilities, patches, launcher data, dan project developer.</p><span class="arrow">↗</span></a>
-          <a class="simple-card surface-card" href="#community"><span class="simple-index">04</span><h3>Community</h3><p>Feedback, roadmap, votes, issues, dan kontribusi.</p><span class="arrow">↗</span></a>
-        </div>
-      </section>
-
-      <section class="shell content-section faq-section" data-reveal>
-        <div class="center-heading">
-          <p class="overline">QUICK GUIDE</p>
-          <h2>DLavie FAQ</h2>
-        </div>
-        <div class="faq-list">
-          <article class="faq-item surface-card">
-            <button type="button" aria-expanded="false"><span>What is DLavie?</span><span class="faq-plus">+</span></button>
-            <div class="faq-answer"><div><p>DLavie adalah ekosistem project independen yang mencakup Minecraft visual packs, tools, platform, eksperimen AI, dan project open-source lain yang terus dikembangkan.</p></div></div>
-          </article>
-          <article class="faq-item surface-card">
-            <button type="button" aria-expanded="false"><span>Where should I download official files?</span><span class="faq-plus">+</span></button>
-            <div class="faq-answer"><div><p>Gunakan halaman Downloads di DLavie Hub. Jika sebuah project memiliki GitHub Release, tombol download akan mengarah langsung ke asset release resmi.</p></div></div>
-          </article>
-          <article class="faq-item surface-card">
-            <button type="button" aria-expanded="false"><span>How can I give feedback or vote?</span><span class="faq-plus">+</span></button>
-            <div class="faq-answer"><div><p>Gunakan halaman Feedback dan Vote. Untuk sekarang keduanya terhubung ke GitHub Issues agar diskusi dan prioritas tetap transparan.</p></div></div>
-          </article>
-        </div>
-      </section>
-    </section>
-
-    <section class="page" data-route="projects">
-      <section class="page-hero shell">
-        <p class="overline">SOURCE INDEX</p>
-        <h1>DLavie Projects</h1>
-        <p>Semua project resmi dalam satu index. Repository metadata disinkronkan dari GitHub saat halaman dibuka.</p>
-      </section>
-      <section class="shell content-section compact-top">
-        <div class="toolbar">
-          <label class="search-field"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m21 21-4.35-4.35m2.35-5.65a8 8 0 1 1-16 0 8 8 0 0 1 16 0Z"/></svg><input id="projectSearch" type="search" placeholder="Search projects"></label>
-          <div class="filter-row" id="projectFilters">
-            <button class="active" data-project-filter="all">All</button>
-            <button data-project-filter="minecraft">Minecraft</button>
-            <button data-project-filter="tools">Tools</button>
-            <button data-project-filter="platform">Platform</button>
-          </div>
-        </div>
-        <div id="projectGrid" class="catalog-grid"></div>
       </section>
     </section>
 
     <section class="page" data-route="downloads">
-      <section class="page-hero shell">
-        <p class="overline">OFFICIAL RELEASES</p>
-        <h1>Downloads</h1>
-        <p>Shader, texture, tools, dan source package resmi. Tidak ada mirror pihak ketiga atau tombol download palsu.</p>
-      </section>
-      <section class="shell content-section compact-top">
-        <div class="toolbar">
-          <label class="search-field"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m21 21-4.35-4.35m2.35-5.65a8 8 0 1 1-16 0 8 8 0 0 1 16 0Z"/></svg><input id="downloadSearch" type="search" placeholder="Search downloads"></label>
-          <div class="filter-row" id="downloadFilters">
-            <button class="active" data-download-filter="all">All</button>
-            <button data-download-filter="shader">Shader</button>
-            <button data-download-filter="texture">Texture</button>
-            <button data-download-filter="tool">Tools</button>
-          </div>
-        </div>
-        <div id="downloadGrid" class="catalog-grid"></div>
+      <section class="page-head shell reveal-group"><p class="eyebrow">DLAVIE PROJECTS</p><h1>Discover</h1><p>Project yang dibuat dan dikembangkan sebagai bagian dari DLavie. Untuk sekarang, katalog hanya berisi DLavie Shader.</p></section>
+      <section class="shell discover-tools reveal"><label class="search-field"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m21 21-4.3-4.3m2.3-5.2a7.5 7.5 0 1 1-15 0 7.5 7.5 0 0 1 15 0Z"/></svg><input id="projectSearch" type="search" placeholder="Search projects"></label></section>
+      <section class="shell project-list reveal" id="projectList">
+        <a class="project-row" href="#project/dlavie-shader" data-project-name="dlavie shader minecraft bedrock pbr vibrant visuals"><img src="../pack_icon.png" alt="" class="project-icon"><div class="project-row-copy"><h2>DLavie Shader</h2><p>Vanilla-faithful Vibrant Visuals + PBR shader for Minecraft Bedrock.</p><div class="chip-row"><span>Shader</span><span>Minecraft Bedrock</span><span>iOS / Android</span></div></div><div class="project-row-meta"><strong>v0.1.2</strong><span>Latest</span></div></a>
       </section>
     </section>
 
-    <section class="page" data-route="news">
-      <section class="page-hero shell">
-        <p class="overline">DEVELOPMENT NOTES</p>
-        <h1>DLavie News</h1>
-        <p>Release notes, eksperimen, roadmap, dan perkembangan penting dari seluruh ekosistem.</p>
-      </section>
-      <section class="shell content-section compact-top"><div id="newsGrid" class="news-list"></div></section>
-    </section>
-
-    <section class="page" data-route="community">
-      <section class="page-hero shell">
-        <p class="overline">COMMUNITY</p>
-        <h1>Build it together.</h1>
-        <p>Diskusi, issues, feedback, votes, dan kontribusi publik tanpa membuat alurnya membingungkan.</p>
-      </section>
-      <section class="shell content-section compact-top">
-        <div class="community-grid">
-          <article class="community-card surface-card">
-            <p class="overline">GITHUB</p><h2>Open discussions & issues.</h2><p>Bug report, ide, source code, dan diskusi teknis berada di GitHub supaya semuanya mudah dilacak.</p>
-            <a class="button button-primary" href="https://github.com/drmacze/DLavie-Shader/issues" target="_blank" rel="noreferrer">Open GitHub Issues ↗</a>
-          </article>
-          <article class="community-card surface-card">
-            <p class="overline">ROADMAP</p><h2>Choose what matters next.</h2><p>Vote prioritas pengembangan berikutnya dan jelaskan kenapa fitur itu penting untuk kamu.</p>
-            <a class="button button-secondary" href="#vote">Go to voting</a>
-          </article>
+    <section class="page project-page" data-route="project">
+      <section class="project-shell shell">
+        <div class="project-summary reveal-group"><img src="../pack_icon.png" alt="DLavie Shader" class="project-icon hero-project-icon"><div class="project-identity"><p class="eyebrow">DLAVIE / MINECRAFT BEDROCK</p><h1>DLavie Shader</h1><p>Mobile-first Vibrant Visuals shader with vanilla-faithful PBR, volumetric godrays, and scalable Low / Medium / High / Ultra presets.</p></div></div>
+        <div class="project-action-row reveal">
+          <button class="round-action primary" id="downloadLatest" type="button" aria-label="Download latest version"><svg viewBox="0 0 24 24"><path d="M12 3v12m0 0 5-5m-5 5-5-5M5 20h14"/></svg></button>
+          <button class="round-action" id="copyProjectLink" type="button" aria-label="Copy project link"><svg viewBox="0 0 24 24"><path d="M10 13a5 5 0 0 0 7.1.1l2-2a5 5 0 0 0-7.1-7.1l-1.1 1.1M14 11a5 5 0 0 0-7.1-.1l-2 2A5 5 0 0 0 12 20l1.1-1.1"/></svg></button>
+          <a class="round-action" href="https://github.com/drmacze/DLavie-Shader" target="_blank" rel="noreferrer" aria-label="GitHub source"><img src="https://cdn.simpleicons.org/github/FFFFFF" alt=""></a>
+          <div class="more-wrap"><button class="round-action" id="projectMore" type="button" aria-expanded="false" aria-label="More"><svg viewBox="0 0 24 24"><path d="M12 5.5v.01M12 12v.01M12 18.5v.01"/></svg></button><div class="context-menu" id="projectMenu" hidden><a href="https://github.com/drmacze/DLavie-Shader" target="_blank" rel="noreferrer"><span>⌘</span>View source</a><a href="https://github.com/drmacze/DLavie-Shader/issues/new" target="_blank" rel="noreferrer"><span>⚑</span>Report issue</a><button type="button" id="copyPermanent"><span>⧉</span>Copy permanent link</button></div></div>
         </div>
-        <div class="activity-card surface-card">
-          <div class="activity-title"><h3>Recent community activity</h3><span class="status-dot"></span></div>
-          <div id="activityList" class="activity-list"><div class="skeleton"></div><div class="skeleton"></div><div class="skeleton"></div></div>
+        <div class="project-stats reveal"><span><svg viewBox="0 0 24 24"><path d="M12 3v12m0 0 5-5m-5 5-5-5M5 20h14"/></svg><b id="downloadStat">—</b> downloads</span><i></i><span><svg viewBox="0 0 24 24"><path d="M12 20.5S4 16 4 9.8A4.3 4.3 0 0 1 12 7a4.3 4.3 0 0 1 8 2.8c0 6.2-8 10.7-8 10.7Z"/></svg><b id="starStat">—</b> stars</span><i></i><span>Updated <b id="updatedStat">—</b></span></div>
+        <div class="tabbar reveal" id="projectTabs" role="tablist" aria-label="Project sections"><button class="active" data-project-tab="description" type="button">Description</button><button data-project-tab="changelog" type="button">Changelog</button><button data-project-tab="versions" type="button">Versions</button><button data-project-tab="license" type="button">License</button></div>
+        <div class="project-content-layout reveal">
+          <section class="project-content">
+            <article class="tab-panel active" data-tab-panel="description"><div class="content-card prose"><h2>DLavie Shader</h2><p class="lead">A long-term Minecraft Bedrock shader/resource-pack project built around the official Vibrant Visuals and PBR pipeline.</p><p>The visual direction targets cinematic clarity, expressive skies, soft lighting, terrain-aware volumetric light shafts, and a vanilla-faithful PBR material feel while remaining designed for Bedrock mobile.</p><hr><h3>What makes it different</h3><ul><li><strong>Vanilla-faithful materials.</strong> PBR enriches the original texture identity instead of replacing it.</li><li><strong>Terrain-aware godrays.</strong> Sun shafts can form through leaves, windows, roofs, cave openings, and narrow terrain gaps.</li><li><strong>Four real quality presets.</strong> Low, Medium, High, and Ultra use actual resource overrides rather than fake toggles.</li><li><strong>Mobile first.</strong> Visual features are designed with sensible performance tiers and thermal limits in mind.</li></ul><h3>Install</h3><ol><li>Download a trusted <code>.mcpack</code> build.</li><li>Open it with Minecraft Bedrock.</li><li>Activate DLavie Shader in Global Resources or the world resource packs.</li><li>Enable Vibrant Visuals in Video settings.</li><li>Choose Low, Medium, High, or Ultra from Pack Settings.</li></ol></div></article>
+            <article class="tab-panel" data-tab-panel="changelog"><div class="content-card changelog-block"><span class="version-label current">CURRENT</span><h2>0.1.2 — Godrays Pass</h2><ul><li>Added vanilla-preserving volumetric fog generation and terrain-aware light shafts.</li><li>Added Low / Medium / High / Ultra volumetric profiles.</li><li>Reworked Mie scattering and glare into time-of-day keyframes.</li><li>Added Henyey-Greenstein forward scattering for sharper sunlight shafts.</li><li>Kept Nether and End behavior dimension-correct.</li></ul></div><div class="content-card changelog-block"><span class="version-label">0.1.1</span><h2>Import Fix</h2><ul><li>Fixed .mcpack import structure and root-manifest verification.</li><li>Kept stable manifest v2 subpack configuration.</li></ul></div><div class="content-card changelog-block"><span class="version-label">0.1.0</span><h2>Foundation</h2><ul><li>Initial Vibrant Visuals + PBR architecture.</li><li>Four quality presets, water, caustics, shadows, local lighting, and biome preservation.</li><li>Added validation, build tooling, architecture docs, and roadmap.</li></ul></div></article>
+            <article class="tab-panel" data-tab-panel="versions"><div class="versions-toolbar"><div><h2>Versions</h2><p>Build history tracked for DLavie Shader.</p></div><button class="secondary-button compact" id="refreshRelease" type="button">Refresh release data</button></div><div id="versionList" class="version-list"></div></article>
+            <article class="tab-panel" data-tab-panel="license"><div class="content-card prose"><div class="license-head"><div><span class="version-label">SOURCE</span><h2>MIT License</h2></div><a href="https://github.com/drmacze/DLavie-Shader/blob/main/LICENSE" target="_blank" rel="noreferrer">View original ↗</a></div><p>DLavie Shader's original source and configuration files are licensed under the MIT License.</p><p>The license does <strong>not</strong> grant rights to third-party Minecraft assets, Mojang/Microsoft content, or third-party shader assets that are not included in the repository.</p><pre>Copyright (c) 2026 DLavie Shader contributors
+
+Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated original configuration files, to deal in the Software without restriction, subject to the conditions in the LICENSE file.</pre></div></article>
+          </section>
+          <aside class="project-sidebar">
+            <div class="side-card"><h3>Compatibility</h3><p>Minecraft: Bedrock Edition</p><div class="chip-row"><span>1.21.120+</span><span>Vibrant Visuals</span></div><h4>Target devices</h4><div class="official-links inline"><span><img src="https://cdn.simpleicons.org/apple/FFFFFF" alt="">iOS</span><span><img src="https://cdn.simpleicons.org/android/3DDC84" alt="">Android</span></div></div>
+            <div class="side-card"><h3>Links</h3><div class="side-links"><a href="https://github.com/drmacze/DLavie-Shader/issues" target="_blank" rel="noreferrer"><img src="https://cdn.simpleicons.org/github/FFFFFF" alt="">Report issues <b>↗</b></a><a href="https://github.com/drmacze/DLavie-Shader" target="_blank" rel="noreferrer"><img src="https://cdn.simpleicons.org/github/FFFFFF" alt="">View source <b>↗</b></a><a href="#feedback"><span class="ui-link-icon">✎</span>Send feedback <b>→</b></a></div></div>
+            <div class="side-card"><h3>Tags</h3><div class="chip-row"><span>Shader</span><span>PBR</span><span>Visuals</span><span>Mobile</span></div></div>
+            <div class="side-card"><h3>Details</h3><dl class="details-list"><div><dt>License</dt><dd>MIT</dd></div><div><dt>Published</dt><dd>2026</dd></div><div><dt>Latest</dt><dd>0.1.2</dd></div></dl></div>
+          </aside>
         </div>
       </section>
     </section>
 
-    <section class="page" data-route="feedback">
-      <section class="page-hero shell centered-page-hero">
-        <p class="overline">FEEDBACK</p>
-        <h1>Tell us what to improve.</h1>
-        <p>Isi dengan jelas. DLavie Hub akan menyiapkan GitHub Issue supaya feedback kamu bisa dilacak secara terbuka.</p>
-      </section>
-      <section class="shell content-section compact-top form-shell">
-        <form id="feedbackForm" class="form-card surface-card">
-          <div class="field-grid">
-            <label><span>Type</span><select id="feedbackType" required><option value="Bug">Bug</option><option value="Feature">Feature request</option><option value="Visual">Visual / UI</option><option value="Performance">Performance</option><option value="Other">Other</option></select></label>
-            <label><span>Project</span><select id="feedbackProject"><option>DLavie Shader</option><option>DLavie Hub</option><option>DLavie Patches</option><option>DLavie Meta</option><option>Other</option></select></label>
-          </div>
-          <label><span>Title</span><input id="feedbackTitle" maxlength="120" required placeholder="Ringkas masalah atau ide kamu"></label>
-          <label><span>Details</span><textarea id="feedbackDetails" rows="7" maxlength="4000" required placeholder="Jelaskan apa yang terjadi, apa yang kamu harapkan, device/version bila relevan..."></textarea></label>
-          <div class="form-footer"><p>Tidak ada data yang dikirim diam-diam. Tombol ini membuka GitHub dengan issue yang sudah terisi.</p><button class="button button-primary" type="submit">Prepare feedback ↗</button></div>
-        </form>
-      </section>
-    </section>
-
-    <section class="page" data-route="vote">
-      <section class="page-hero shell centered-page-hero">
-        <p class="overline">COMMUNITY VOTE</p>
-        <h1>What should we build next?</h1>
-        <p>Pilih prioritas yang paling kamu inginkan. Vote disiapkan melalui GitHub agar transparan dan bisa dibahas.</p>
-      </section>
-      <section class="shell content-section compact-top"><div id="voteGrid" class="vote-grid"></div></section>
-    </section>
+    <section class="page" data-route="news"><section class="page-head shell reveal-group"><p class="eyebrow">DEVELOPMENT</p><h1>News</h1><p>Release notes and development direction for projects currently published under DLavie.</p></section><section class="shell news-stack reveal"><article class="news-item"><time>27 AUG 2026</time><span class="status-chip">SHADER</span><h2>Godrays Pass reaches v0.1.2</h2><p>Terrain-aware light shafts, time-of-day scattering, and performance-tiered volumetric profiles are now part of DLavie Shader.</p><a href="#project/dlavie-shader?tab=changelog">Read changelog →</a></article><article class="news-item"><time>27 AUG 2026</time><span class="status-chip">WEB</span><h2>DLavie becomes project-first</h2><p>The website now lists only products deliberately created as DLavie projects, starting with DLavie Shader.</p></article></section></section>
+    <section class="page" data-route="community"><section class="page-head shell reveal-group"><p class="eyebrow">COMMUNITY</p><h1>Build with us.</h1><p>Keep discussion useful: report issues, suggest improvements, and vote on the roadmap for active DLavie projects.</p></section><section class="shell community-grid reveal"><a class="surface-card action-card" href="https://github.com/drmacze/DLavie-Shader/issues" target="_blank" rel="noreferrer"><img src="https://cdn.simpleicons.org/github/FFFFFF" alt=""><h2>GitHub issues</h2><p>Bug reports, technical discussion, and tracked feedback.</p><span>Open issues ↗</span></a><a class="surface-card action-card" href="#feedback"><span class="big-ui-icon">✎</span><h2>Feedback</h2><p>Prepare a structured issue for visual, performance, bug, or feature feedback.</p><span>Send feedback →</span></a><a class="surface-card action-card" href="#vote"><span class="big-ui-icon">✓</span><h2>Vote</h2><p>Choose which DLavie Shader improvements should be prioritized next.</p><span>Open roadmap vote →</span></a></section></section>
+    <section class="page" data-route="feedback"><section class="page-head shell reveal-group"><p class="eyebrow">FEEDBACK</p><h1>Tell us what needs work.</h1><p>Your message is prepared as a GitHub issue so it stays visible and trackable.</p></section><section class="shell form-shell reveal"><form id="feedbackForm" class="form-card"><div class="form-grid"><label><span>Type</span><select id="feedbackType"><option>Bug</option><option>Feature</option><option>Visual</option><option>Performance</option><option>Other</option></select></label><label><span>Project</span><select id="feedbackProject"><option>DLavie Shader</option><option>DLavie Website</option></select></label></div><label><span>Title</span><input id="feedbackTitle" required maxlength="120" placeholder="Short summary"></label><label><span>Details</span><textarea id="feedbackDetails" rows="8" required maxlength="4000" placeholder="What happened, what you expected, device/version, or your idea..."></textarea></label><div class="form-end"><p>No hidden submission. This opens GitHub with a pre-filled issue.</p><button class="primary-button" type="submit">Prepare feedback ↗</button></div></form></section></section>
+    <section class="page" data-route="vote"><section class="page-head shell reveal-group"><p class="eyebrow">DLAVIE SHADER ROADMAP</p><h1>What next?</h1><p>Current vote options are scoped only to DLavie Shader.</p></section><section class="shell vote-grid reveal" id="voteGrid"></section></section>
   </main>
 
-  <section class="search-overlay" id="searchOverlay" aria-hidden="true">
-    <div class="search-panel surface-card">
-      <div class="search-panel-head">
-        <label class="search-field global-search"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m21 21-4.35-4.35m2.35-5.65a8 8 0 1 1-16 0 8 8 0 0 1 16 0Z"/></svg><input id="globalSearch" type="search" placeholder="Search DLavie" autocomplete="off"></label>
-        <button id="searchClose" class="round-button" type="button" aria-label="Tutup">×</button>
-      </div>
-      <div id="globalResults" class="global-results"><p class="empty-state">Search projects, downloads, news, or community pages.</p></div>
-    </div>
-  </section>
+  <footer class="site-footer"><div class="shell footer-inner"><a class="footer-brand" href="#home"><img src="assets/dlavie-mark.svg" alt=""><strong>dlavie</strong></a><div class="footer-links"><a href="#downloads">Projects</a><a href="#community">Community</a><a href="#feedback">Feedback</a><a href="#vote">Vote</a></div><p>© 2026 DLavie. Independent project.</p></div></footer>
 
-  <footer class="site-footer shell">
-    <nav class="footer-nav" aria-label="Footer">
-      <a href="#home">Home</a><a href="#projects">Projects</a><a href="#downloads">Downloads</a><a href="#news">News</a><a href="#community">Community</a><a href="#feedback">Support</a>
-    </nav>
-    <div class="footer-line"></div>
-    <div class="footer-bottom"><span>© 2026 DLavie — built to keep evolving.</span><a href="https://github.com/drmacze" target="_blank" rel="noreferrer">GitHub ↗</a></div>
-  </footer>
+  <nav class="mobile-nav" aria-label="Mobile navigation"><a href="#home" data-route-link="home"><svg viewBox="0 0 24 24"><path d="m3 11 9-8 9 8v9H6v-9m4 9v-6h4v6"/></svg><span>Home</span></a><button id="mobileSearch" type="button"><svg viewBox="0 0 24 24"><path d="m21 21-4.3-4.3m2.3-5.2a7.5 7.5 0 1 1-15 0 7.5 7.5 0 0 1 15 0Z"/></svg><span>Search</span></button><button id="mobileMenuOpen" type="button"><svg viewBox="0 0 24 24"><path d="M4 6h16M4 12h16M4 18h16"/></svg><span>Menu</span></button></nav>
 
+  <div class="sheet-backdrop" id="sheetBackdrop" hidden></div>
+  <aside class="mobile-sheet" id="mobileSheet" aria-hidden="true"><div class="sheet-handle"></div><a class="sheet-action primary" href="#downloads"><svg viewBox="0 0 24 24"><path d="M12 3v12m0 0 5-5m-5 5-5-5M5 20h14"/></svg>Projects</a><a class="sheet-action" href="#news">News</a><a class="sheet-action" href="#community">Community</a><a class="sheet-action" href="#feedback">Feedback</a><a class="sheet-action" href="#vote">Vote</a><a class="sheet-action" href="https://github.com/drmacze/DLavie-Shader" target="_blank" rel="noreferrer"><img src="https://cdn.simpleicons.org/github/FFFFFF" alt="">GitHub</a></aside>
+
+  <div class="search-overlay" id="searchOverlay" hidden><div class="search-dialog"><div class="search-dialog-head"><label class="search-field large"><svg viewBox="0 0 24 24"><path d="m21 21-4.3-4.3m2.3-5.2a7.5 7.5 0 1 1-15 0 7.5 7.5 0 0 1 15 0Z"/></svg><input id="globalSearch" type="search" placeholder="Search DLavie" autocomplete="off"></label><button class="icon-button" id="searchClose" type="button" aria-label="Close">×</button></div><div id="searchResults" class="search-results"><p>Try “shader”, “changelog”, “versions”, or “feedback”.</p></div></div></div>
   <div class="toast" id="toast" role="status" aria-live="polite"></div>
-
-  <script src="https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/gsap.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/ScrollTrigger.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.13.0/gsap.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.13.0/ScrollTrigger.min.js"></script>
   <script src="https://unpkg.com/lenis@1.3.26/dist/lenis.min.js"></script>
-  <script src="app.js"></script>
+  <script src="modrinth.js"></script>
 </body>
 </html>
