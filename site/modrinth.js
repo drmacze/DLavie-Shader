@@ -3,8 +3,23 @@
 
   const SUPABASE_URL = 'https://ydaeukhqwishlrjyfktk.supabase.co';
   const SUPABASE_KEY = 'sb_publishable_XNXU6SVeM-D477Ymy1ORsw_4hCHOll9';
-  const authState = { checked:false, session:null, client:null, promise:null };
+  const AUTH_STORAGE_KEY = 'sb-ydaeukhqwishlrjyfktk-auth-token';
+
+  function hasPersistedSession(){
+    try{
+      const raw=localStorage.getItem(AUTH_STORAGE_KEY);
+      if(!raw) return false;
+      const parsed=JSON.parse(raw);
+      const session=parsed?.currentSession || parsed?.session || parsed;
+      return !!(session?.access_token || session?.refresh_token);
+    }catch{
+      return false;
+    }
+  }
+
+  const authState = { checked:false, session:null, client:null, promise:null, hint:hasPersistedSession() };
   const IS_TOUCH = matchMedia('(pointer: coarse)').matches || navigator.maxTouchPoints > 0;
+  const isSignedInUI = () => !!authState.session || authState.hint;
 
   const scheduleIdle = (fn, timeout=1600) => {
     if('requestIdleCallback' in window){
@@ -65,14 +80,17 @@
         authState.client=lib.createClient(SUPABASE_URL,SUPABASE_KEY,{auth:{persistSession:true,autoRefreshToken:true,detectSessionInUrl:false}});
         const {data}=await authState.client.auth.getSession();
         authState.session=data.session||null;
+        authState.hint=!!authState.session;
         authState.checked=true;
         authState.client.auth.onAuthStateChange((_event,session)=>{
           authState.session=session||null;
+          authState.hint=!!session;
           authState.checked=true;
           updateAccountUI();
         });
       }catch{
         authState.session=null;
+        authState.hint=hasPersistedSession();
         authState.checked=true;
       }
       updateAccountUI();
@@ -117,7 +135,7 @@
 
   function updateAccountUI(){
     injectGateStyles();
-    const loggedIn=!!authState.session;
+    const loggedIn=isSignedInUI();
     document.documentElement.dataset.auth=loggedIn?'member':'guest';
 
     document.querySelectorAll('[data-dlavie-account-link]').forEach(link=>{
@@ -156,7 +174,7 @@
       link.className='quiet-button';
       link.href='account.html';
       link.dataset.dlavieAccountLink='true';
-      link.textContent=authState.session?'Account':'Sign in';
+      link.textContent=isSignedInUI()?'Account':'Sign in';
       actions.appendChild(link);
     }
 
@@ -166,8 +184,8 @@
       link.className='sheet-action';
       link.href='account.html';
       link.dataset.dlavieAccountLink='true';
-      link.dataset.authLabel=authState.session?'Account':'Sign in';
-      link.innerHTML='<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/></svg>'+(authState.session?'Account':'Sign in');
+      link.dataset.authLabel=isSignedInUI()?'Account':'Sign in';
+      link.innerHTML='<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/></svg>'+(isSignedInUI()?'Account':'Sign in');
       sheet.insertBefore(link,sheet.firstElementChild?.nextElementSibling||null);
     }
     updateAccountUI();
@@ -216,6 +234,22 @@
     else requestAnimationFrame(updateAccountUI);
   },{passive:true});
 
+  window.addEventListener('storage',event=>{
+    if(event.key!==AUTH_STORAGE_KEY) return;
+    authState.hint=hasPersistedSession();
+    if(!authState.hint){
+      authState.session=null;
+      authState.checked=false;
+      authState.promise=null;
+    }
+    updateAccountUI();
+  });
+
+  window.addEventListener('pageshow',()=>{
+    authState.hint=hasPersistedSession();
+    updateAccountUI();
+  },{passive:true});
+
   // On iPhone/touch devices, native scrolling and instant route swaps are much
   // faster than rebuilding GSAP/ScrollTrigger state on every tab change.
   if(IS_TOUCH){
@@ -229,10 +263,6 @@
   core.src='modrinth-core.js';
   core.defer=true;
   core.onload=()=>{
-    // The navigation DOM is already present because this loader runs at the end
-    // of <body>. Inject once. Observing the entire body here caused a feedback
-    // loop: updateAccountUI() rewrote link contents, which retriggered the
-    // MutationObserver indefinitely on iOS/WebKit.
     injectAccountLinks();
     // No automatic Supabase request on Home. Auth resolves on demand.
   };
