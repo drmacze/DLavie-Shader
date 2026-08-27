@@ -46,7 +46,7 @@
         <div class="home-visual-card">
           <div class="home-visual-top"><span class="home-live-label">CURRENT BUILD</span><span class="home-version-pill">v0.1.2</span></div>
           <div class="home-visual-project">
-            <img src="../pack_icon.png" alt="DLavie Shader">
+            <img src="assets/dlavie-shader.svg" alt="DLavie Shader">
             <div><span class="home-visual-kicker">MINECRAFT BEDROCK</span><h2>DLavie Shader</h2><p>Vibrant Visuals + PBR Enhanced with mobile-first quality presets.</p></div>
           </div>
           <div class="home-visual-stats">
