@@ -10,18 +10,13 @@ DLavie Shader is a long-term Minecraft Bedrock shader/resource-pack project buil
 
 > **Important:** DLavie Shader is an original Bedrock implementation. Its visual target is inspired in part by high-end Java shader packs such as **Photon by SixthSurge**, but it does not redistribute Photon source code or copyrighted shader assets.
 
-## v0.1.0 — Foundation
+## v0.1.1 — Import fix
 
-- Dynamic sun / moon / ambient light over the full day-night cycle
-- Warm sunrise and sunset, cool moonlight, cleaner night separation
-- Custom Overworld, Nether and End atmosphere identities
-- Vibrant-but-controlled color grading and generic tone mapping
-- PBR-enhanced fallback material response via `pbr/global.json` (normal/MERS material library is the next authored stage)
-- Custom local-light colors for torches, lanterns, glowstone, froglights, etc.
-- Tunable water simulation and caustics
-- Four real quality subpacks: **Low, Medium, High, Ultra**
-- Reproducible biome-binding generator that preserves vanilla biome data
-- GitHub Actions validation + reproducible `.mcpack` build workflow
+- Stable manifest v2 + Vibrant Visuals `pbr` capability
+- Low / Medium / High / Ultra remain real subpack presets
+- Removed custom manifest-v3 `settings` from the stable mobile build
+- Clean-pack build allowlist: only Minecraft resource-pack files enter the `.mcpack`
+- Build script now verifies that `manifest.json` is at archive root and parseable before completing
 
 ## Quality presets
 
@@ -32,22 +27,19 @@ DLavie Shader is a long-term Minecraft Bedrock shader/resource-pack project buil
 | High | Strong phones/tablets | 16-octave waves | On | Soft | Point-light enhanced |
 | Ultra | Screenshots / headroom | 28-octave waves | On, strongest | Soft | Point-light enhanced |
 
-**Recommended first choice on iPhone:** Medium. Use Low if the device gets hot or frame pacing becomes unstable; High/Ultra are intentionally more demanding.
+**Recommended first choice on iPhone:** Medium.
 
 ## Install / use
 
-1. For immediate testing, download `test-builds/DLavie-Shader-v0.1.0-mobile-test.mcpack`. For a full biome-bound build, run the build workflow manually or use the developer commands below.
-2. Open it with Minecraft.
+1. Build or obtain `DLavie-Shader-v0.1.1.mcpack` from an authenticated/trusted file source.
+2. Open the `.mcpack` with Minecraft.
 3. Activate **DLavie Shader** in Global Resources or the world resource packs.
 4. Enable **Vibrant Visuals** in Minecraft's Video settings.
-5. Open the pack's **gear / Pack Settings** and choose Low, Medium, High, or Ultra.
-6. Restart/reload the world after changing a subpack if Minecraft does not refresh it immediately.
+5. Open the pack's gear / Pack Settings and choose Low, Medium, High, or Ultra.
 
-## Immediate mobile smoke-test build
+### Important for private GitHub repositories
 
-A directly downloadable compatibility build is tracked at `test-builds/DLavie-Shader-v0.1.0-mobile-test.mcpack`. It contains the complete DLavie base renderer and all Low/Medium/High/Ultra subpacks, but intentionally omits the generated vanilla-biome binding layer. Use it to confirm import, Vibrant Visuals activation, Pack Settings and device performance.
-
-The full reproducible build adds preserved current vanilla biome bindings through `scripts/sync_vanilla_biomes.py`.
+Do not rely on an unauthenticated `github.com/.../raw/...mcpack` link from iOS. If the repository is private, GitHub can return an HTML/login response while the saved filename still ends in `.mcpack`. Minecraft then reports **"cannot find manifest in pack"** because the downloaded file is not the actual ZIP resource pack.
 
 ## Developer build
 
@@ -56,7 +48,7 @@ python3 scripts/sync_vanilla_biomes.py --out biomes
 python3 scripts/build_mcpack.py --skip-biome-sync
 ```
 
-The biome generator downloads Mojang's current Bedrock sample client-biome JSONs, preserves all vanilla components, and changes only the Vibrant Visuals identifier components. This is deliberate: newer Bedrock versions use per-biome visual identifiers that can take precedence over pack-wide defaults.
+The builder performs an import-structure self-check before completing.
 
 ## Project principles
 
@@ -71,4 +63,4 @@ See [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) and [docs/ROADMAP.md](docs/ROAD
 
 ## Visual reference & attribution
 
-Photon by SixthSurge is used as a **visual reference only** for goals such as sky depth, readable lighting, water response, soft shadows and cinematic color separation. DLavie Shader v0.1.0 contains original Bedrock JSON/configuration and branding; it does not include Photon GLSL or Photon texture assets.
+Photon by SixthSurge is used as a **visual reference only** for goals such as sky depth, readable lighting, water response, soft shadows and cinematic color separation. DLavie Shader contains original Bedrock JSON/configuration and branding; it does not include Photon GLSL or Photon texture assets.
