@@ -10,6 +10,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="account.css">
+  <link rel="stylesheet" href="account-flow.css">
 </head>
 <body>
   <header class="account-topbar">
@@ -76,7 +77,7 @@
         <button class="secondary-button" id="signOutButton" type="button">Sign out</button>
       </header>
 
-      <nav class="account-tabs"><button type="button" data-panel="profile" class="active">Profile</button><button type="button" data-panel="security">Security</button><button type="button" data-panel="preferences">Preferences</button><button type="button" data-panel="data">Data & privacy</button></nav>
+      <nav class="account-tabs" aria-label="Account settings"><button type="button" data-panel="profile" class="active">Profile</button><button type="button" data-panel="security">Security</button><button type="button" data-panel="preferences">Preferences</button><button type="button" data-panel="data">Data & privacy</button></nav>
 
       <div class="dashboard-grid">
         <section class="panel-stack">
@@ -96,7 +97,7 @@
             </form>
           </article>
 
-          <article class="account-panel" data-account-panel="security">
+          <article class="account-panel" data-account-panel="security" hidden>
             <div class="panel-head"><div><span class="kicker">ACCOUNT SECURITY</span><h2>Security</h2></div></div>
             <div class="settings-section">
               <div class="setting-copy"><h3>Email address</h3><p>Changing email may require confirmation on the new address.</p></div>
@@ -115,7 +116,7 @@
             <div class="settings-section row-setting"><div class="setting-copy"><h3>All sessions</h3><p>Sign out this account everywhere, including other browsers and devices.</p></div><button class="secondary-button" id="signOutAll" type="button">Sign out everywhere</button></div>
           </article>
 
-          <article class="account-panel" data-account-panel="preferences">
+          <article class="account-panel" data-account-panel="preferences" hidden>
             <div class="panel-head"><div><span class="kicker">EXPERIENCE</span><h2>Preferences</h2></div></div>
             <form id="preferencesForm" class="preference-list">
               <label class="toggle-setting"><div><strong>Community notifications</strong><span>Allow DLavie to surface community activity in future notification features.</span></div><input id="prefCommunity" type="checkbox"><i></i></label>
@@ -125,7 +126,7 @@
             </form>
           </article>
 
-          <article class="account-panel" data-account-panel="data">
+          <article class="account-panel" data-account-panel="data" hidden>
             <div class="panel-head"><div><span class="kicker">PRIVACY</span><h2>Your data</h2></div></div>
             <div class="privacy-action"><div><h3>Export account data</h3><p>Download a JSON archive containing your DLavie profile and community activity.</p></div><button class="secondary-button" id="exportData" type="button">Export JSON</button></div>
             <hr>
@@ -144,5 +145,6 @@
   <div class="toast" id="accountToast" role="status" aria-live="polite"></div>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="account.js"></script>
+  <script src="account-flow.js"></script>
 </body>
 </html>
