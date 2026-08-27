@@ -3,6 +3,15 @@
   const valid = new Set(['profile','security','preferences','data']);
   const $all = (s,r=document) => [...r.querySelectorAll(s)];
 
+  function loadEasyUsername(){
+    if(document.querySelector('script[data-dlavie-easy-username]')) return;
+    const script=document.createElement('script');
+    script.src='username-easy.js';
+    script.dataset.dlavieEasyUsername='true';
+    script.defer=true;
+    document.head.appendChild(script);
+  }
+
   function activeSectionFromHash(){
     const raw = location.hash.replace(/^#/, '').toLowerCase();
     return valid.has(raw) ? raw : 'profile';
@@ -41,6 +50,7 @@
   }
 
   function bind(){
+    loadEasyUsername();
     document.addEventListener('click', event => {
       const button = event.target.closest('[data-panel]');
       if(!button) return;
