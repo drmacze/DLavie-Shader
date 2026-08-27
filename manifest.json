@@ -2,9 +2,9 @@
   "format_version": 2,
   "header": {
     "name": "DLavie Shader",
-    "description": "Vibrant Visuals + PBR Enhanced | Mobile-first cinematic shader | v0.1.1 import fix",
+    "description": "Vibrant Visuals + PBR Enhanced | Mobile-first cinematic shader | v0.1.2",
     "uuid": "d1a3e7b6-2f63-4d65-9c8b-6a4d3c9e7f11",
-    "version": [0, 1, 1],
+    "version": [0, 1, 2],
     "min_engine_version": [1, 21, 120]
   },
   "modules": [
@@ -12,7 +12,7 @@
       "description": "DLavie Shader resources",
       "type": "resources",
       "uuid": "0b92a7cf-37d2-47a8-b622-eefb071532ad",
-      "version": [0, 1, 1]
+      "version": [0, 1, 2]
     }
   ],
   "capabilities": ["pbr"],
