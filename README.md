@@ -6,32 +6,34 @@
 
 <p align="center"><strong>Vibrant Visuals · PBR Enhanced · Mobile First</strong></p>
 
-DLavie Shader is a long-term Minecraft Bedrock shader/resource-pack project built around the official **Vibrant Visuals** and **PBR** pipeline. Its art direction targets the cinematic clarity, expressive skies, soft light and reflective material feel associated with high-end Java shaders, while remaining designed for Bedrock mobile.
+DLavie Shader is a long-term Minecraft Bedrock shader/resource-pack project built around the official **Vibrant Visuals** and **PBR** pipeline. Its art direction targets cinematic clarity, expressive skies, soft lighting, terrain-aware volumetric light shafts and a vanilla-faithful PBR material feel while remaining designed for Bedrock mobile.
 
-> **Important:** DLavie Shader is an original Bedrock implementation. Its visual target is inspired in part by high-end Java shader packs such as **Photon by SixthSurge**, but it does not redistribute Photon source code or copyrighted shader assets.
+> **Important:** DLavie Shader is an original Bedrock implementation. Other shader/resource packs are visual references only; DLavie does not redistribute their source code or copyrighted assets.
 
-## v0.1.1 — Import fix
+## v0.1.2 — Godrays Pass
 
-- Stable manifest v2 + Vibrant Visuals `pbr` capability
-- Low / Medium / High / Ultra remain real subpack presets
-- Removed custom manifest-v3 `settings` from the stable mobile build
-- Clean-pack build allowlist: only Minecraft resource-pack files enter the `.mcpack`
-- Build script now verifies that `manifest.json` is at archive root and parseable before completing
+- Added true Vibrant Visuals **volumetric fog + terrain-aware light shafts** instead of relying only on sky glare.
+- Sunlight can form visible shafts through leaves, windows, cave openings, roofs and narrow terrain gaps.
+- Added Henyey-Greenstein forward scattering to make the shafts directional rather than turning the whole scene into white fog.
+- Preserves vanilla fog identifiers, fog distance, underwater colors and authored biome-specific properties.
+- Nether and End keep dimension-correct fog; Overworld sunlight shafts are not injected into those dimensions.
+- Rebuilt sun Mie and glare values as time-of-day keyframes: readable at noon, strongest around sunrise/sunset, almost absent at midnight.
+- Low / Medium / High / Ultra now include different volumetric intensity profiles.
 
 ## Quality presets
 
-| Preset | Target | Water | Caustics | Shadows | Light style |
+| Preset | Target | Godrays | Water | Caustics | Shadows |
 |---|---|---|---|---|---|
-| Low | FPS / thermals | Flat | Off | Blocky | Static-biased |
-| Medium | Mobile balanced | 8-octave waves | Off | Soft | Static-biased |
-| High | Strong phones/tablets | 16-octave waves | On | Soft | Point-light enhanced |
-| Ultra | Screenshots / headroom | 28-octave waves | On, strongest | Soft | Point-light enhanced |
+| Low | FPS / thermals | Light | Flat | Off | Blocky |
+| Medium | Mobile balanced | Natural | 8-octave waves | Off | Soft |
+| High | Strong phones/tablets | Strong | 16-octave waves | On | Soft |
+| Ultra | Screenshots / headroom | Cinematic | 28-octave waves | Strong | Soft |
 
-**Recommended first choice on iPhone:** Medium.
+**Recommended first choice on iPhone:** Medium. High is the preferred preset for judging the new godrays; Ultra intentionally pushes the light shafts harder.
 
 ## Install / use
 
-1. Build or obtain `DLavie-Shader-v0.1.1.mcpack` from an authenticated/trusted file source.
+1. Build or obtain `DLavie-Shader-v0.1.2.mcpack` from an authenticated/trusted file source.
 2. Open the `.mcpack` with Minecraft.
 3. Activate **DLavie Shader** in Global Resources or the world resource packs.
 4. Enable **Vibrant Visuals** in Minecraft's Video settings.
@@ -44,23 +46,32 @@ Do not rely on an unauthenticated `github.com/.../raw/...mcpack` link from iOS. 
 ## Developer build
 
 ```bash
-python3 scripts/sync_vanilla_biomes.py --out biomes
-python3 scripts/build_mcpack.py --skip-biome-sync
+python3 scripts/validate_pack.py
+python3 scripts/build_mcpack.py
 ```
 
-The builder performs an import-structure self-check before completing.
+The build automatically:
+
+1. preserves and binds the current vanilla client-biome definitions;
+2. downloads current vanilla fog definitions and adds DLavie's tiered volumetric-lighting layer;
+3. packages only valid resource-pack content; and
+4. verifies the manifest plus generated fog overrides before completing.
+
+For debugging the generators independently:
+
+```bash
+python3 scripts/sync_vanilla_biomes.py --out biomes
+python3 scripts/sync_vanilla_fogs.py --root .
+```
 
 ## Project principles
 
 1. **Mobile first, not mobile only.** Every visual feature must have a sensible performance tier.
-2. **Original implementation.** Learn from the visual goals of excellent Java shaders; do not clone their code.
-3. **Reproducible builds.** A release should be buildable from the repository.
-4. **No fake toggles.** A quality option must correspond to a real resource override.
-5. **PBR grows incrementally.** The fallback material model ships first; authored per-block normal/MERS assets are added in reviewed sets.
-6. **Visual consistency.** Overworld, Nether and End each receive an intentional palette rather than accidental defaults.
+2. **Vanilla-faithful materials.** PBR should enrich vanilla textures instead of replacing Minecraft's visual identity.
+3. **Original implementation.** Learn from excellent shaders and PBR packs; do not clone their code or assets.
+4. **Reproducible builds.** A release should be buildable from the repository.
+5. **No fake toggles.** A quality option must correspond to a real resource override.
+6. **PBR grows incrementally.** Authored per-block normal/MERS assets are added in reviewed sets.
+7. **Visual consistency.** Overworld, Nether and End each receive an intentional palette rather than accidental defaults.
 
 See [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) and [docs/ROADMAP.md](docs/ROADMAP.md).
-
-## Visual reference & attribution
-
-Photon by SixthSurge is used as a **visual reference only** for goals such as sky depth, readable lighting, water response, soft shadows and cinematic color separation. DLavie Shader contains original Bedrock JSON/configuration and branding; it does not include Photon GLSL or Photon texture assets.
