@@ -1,0 +1,130 @@
+<!doctype html>
+<html lang="id">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <meta name="theme-color" content="#0a0b0d">
+  <meta name="description" content="DLavie Hub — source, download, berita, komunitas, feedback, dan vote dari ekosistem DLavie.">
+  <title>DLavie Hub</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="ambient" aria-hidden="true"><span class="orb orb-a"></span><span class="orb orb-b"></span><span class="grid"></span></div>
+
+  <header class="topbar">
+    <a class="brand" href="#home" aria-label="DLavie Hub home">
+      <img src="../brand/dlavie-logo.svg" alt="" class="brand-mark">
+      <span><strong>DLavie</strong><small>HUB</small></span>
+    </a>
+    <nav class="desktop-nav" aria-label="Navigasi utama">
+      <a href="#home" data-route-link="home">Home</a>
+      <a href="#projects" data-route-link="projects">Projects</a>
+      <a href="#downloads" data-route-link="downloads">Download</a>
+      <a href="#news" data-route-link="news">News</a>
+      <a href="#community" data-route-link="community">Community</a>
+    </nav>
+    <div class="top-actions">
+      <button class="icon-btn" id="searchToggle" type="button" aria-label="Cari di DLavie Hub">⌕</button>
+      <a class="glass-btn compact" href="#feedback">Feedback</a>
+    </div>
+  </header>
+
+  <main id="app" tabindex="-1">
+    <section class="page active" data-route="home">
+      <div class="hero shell">
+        <div class="hero-copy">
+          <div class="eyebrow"><span class="live-dot"></span> DLAVIE ECOSYSTEM</div>
+          <h1>Everything DLavie,<br><span>in one place.</span></h1>
+          <p>Satu portal untuk source resmi DLavie, release terbaru, komunitas, berita pengembangan, feedback, dan keputusan yang bisa kamu vote.</p>
+          <div class="hero-actions">
+            <a class="primary-btn" href="#downloads">Explore downloads <span>↗</span></a>
+            <a class="glass-btn" href="#projects">View all projects</a>
+          </div>
+          <div class="hero-meta">
+            <div><b id="repoCount">6</b><span>Active projects</span></div>
+            <div><b>Open</b><span>Community driven</span></div>
+            <div><b>Mobile</b><span>First experience</span></div>
+          </div>
+        </div>
+        <div class="hero-visual" aria-label="DLavie brand artwork">
+          <div class="sun-ring"></div>
+          <div class="brand-card glass-panel">
+            <img src="../brand/dlavie-logo.svg" alt="DLavie" class="hero-logo">
+            <div class="brand-card-footer"><span>DLAVIE / 2026</span><span class="status-pill">BUILDING</span></div>
+          </div>
+        </div>
+      </div>
+
+      <section class="shell section-block">
+        <div class="section-head"><div><span class="kicker">FEATURED</span><h2>Latest from DLavie</h2></div><a href="#news">See all news →</a></div>
+        <div class="feature-grid">
+          <article class="feature-card feature-large glass-panel">
+            <div class="feature-art shader-art"><span class="beam b1"></span><span class="beam b2"></span><span class="beam b3"></span><div class="cube"></div></div>
+            <div class="feature-body"><div class="tag-row"><span class="tag">SHADER</span><span class="tag warm">NEW</span></div><h3>DLavie Shader v0.1.2</h3><p>Vibrant Visuals, PBR enhanced, volumetric light shafts dan preset mobile Low sampai Ultra.</p><a href="#downloads">Open release <span>↗</span></a></div>
+          </article>
+          <div class="feature-stack">
+            <article class="mini-card glass-panel"><span class="mini-icon">◈</span><div><small>PLATFORM</small><h3>DLavie Hub begins</h3><p>Portal pusat untuk seluruh ekosistem DLavie.</p></div><a href="#projects">→</a></article>
+            <article class="mini-card glass-panel"><span class="mini-icon">◎</span><div><small>COMMUNITY</small><h3>Your feedback matters</h3><p>Laporkan bug, ide fitur, atau saran visual.</p></div><a href="#feedback">→</a></article>
+          </div>
+        </div>
+      </section>
+
+      <section class="shell section-block">
+        <div class="section-head"><div><span class="kicker">DISCOVER</span><h2>Explore the ecosystem</h2></div></div>
+        <div class="category-grid">
+          <a class="category-card glass-panel" href="#downloads" data-filter-jump="shader"><span class="category-icon">◐</span><div><h3>Shaders</h3><p>Lighting, atmosphere & PBR.</p></div><span>01</span></a>
+          <a class="category-card glass-panel" href="#downloads" data-filter-jump="texture"><span class="category-icon">▦</span><div><h3>Textures</h3><p>Vanilla-first visual packs.</p></div><span>02</span></a>
+          <a class="category-card glass-panel" href="#projects"><span class="category-icon">⌘</span><div><h3>Tools</h3><p>Utilities & developer projects.</p></div><span>03</span></a>
+          <a class="category-card glass-panel" href="#community"><span class="category-icon">◇</span><div><h3>Community</h3><p>Ideas, feedback & votes.</p></div><span>04</span></a>
+        </div>
+      </section>
+    </section>
+
+    <section class="page" data-route="projects">
+      <div class="page-hero shell"><span class="kicker">SOURCE INDEX</span><h1>DLavie Projects</h1><p>Semua project resmi dalam satu index. Status repository diperbarui langsung dari GitHub saat halaman dibuka.</p></div>
+      <section class="shell section-block"><div class="toolbar"><label class="search-box"><span>⌕</span><input id="projectSearch" type="search" placeholder="Cari project..."></label><div class="segmented" id="projectFilters"><button class="active" data-project-filter="all">All</button><button data-project-filter="minecraft">Minecraft</button><button data-project-filter="tools">Tools</button><button data-project-filter="platform">Platform</button></div></div><div id="projectGrid" class="project-grid"></div></section>
+    </section>
+
+    <section class="page" data-route="downloads">
+      <div class="page-hero shell"><span class="kicker">OFFICIAL RELEASES</span><h1>Downloads</h1><p>Shader, texture, tools, dan source package resmi dari DLavie. Tidak ada mirror pihak ketiga.</p></div>
+      <section class="shell section-block"><div class="toolbar"><label class="search-box"><span>⌕</span><input id="downloadSearch" type="search" placeholder="Cari download..."></label><div class="segmented" id="downloadFilters"><button class="active" data-download-filter="all">All</button><button data-download-filter="shader">Shader</button><button data-download-filter="texture">Texture</button><button data-download-filter="tool">Tools</button></div></div><div id="downloadGrid" class="download-grid"></div></section>
+    </section>
+
+    <section class="page" data-route="news">
+      <div class="page-hero shell"><span class="kicker">CHANGELOG & STORIES</span><h1>DLavie Newsroom</h1><p>Catatan pengembangan, release notes, eksperimen, dan hal yang sedang dibangun.</p></div>
+      <section class="shell section-block"><div id="newsGrid" class="news-grid"></div></section>
+    </section>
+
+    <section class="page" data-route="community">
+      <div class="page-hero shell"><span class="kicker">COMMUNITY</span><h1>Build it together.</h1><p>Tempat untuk menemukan diskusi, berkontribusi, mengikuti keputusan, dan melihat apa yang sedang dibicarakan.</p></div>
+      <section class="shell section-block community-layout"><div class="community-main"><div class="community-card glass-panel"><span class="community-symbol">⌁</span><h2>GitHub Community</h2><p>Diskusi teknis, bug report, source code, dan kontribusi terbuka berada di GitHub DLavie.</p><a class="primary-btn" href="https://github.com/drmacze/DLavie-Shader/issues" target="_blank" rel="noreferrer">Open community issues ↗</a></div><div class="community-card glass-panel"><span class="community-symbol">◎</span><h2>Shape the roadmap</h2><p>Vote fitur yang harus diprioritaskan dan bantu menentukan arah pengembangan berikutnya.</p><a class="glass-btn" href="#vote">Go to voting</a></div></div><aside class="activity-panel glass-panel"><div class="panel-title"><span>Live activity</span><span class="live-dot"></span></div><div id="activityList" class="activity-list"><div class="skeleton-line"></div><div class="skeleton-line"></div><div class="skeleton-line"></div></div></aside></section>
+    </section>
+
+    <section class="page" data-route="feedback">
+      <div class="page-hero shell"><span class="kicker">FEEDBACK</span><h1>Tell us what to improve.</h1><p>Feedback kamu akan disiapkan sebagai GitHub Issue agar dapat dilacak secara terbuka.</p></div>
+      <section class="shell section-block narrow"><form id="feedbackForm" class="form-card glass-panel"><div class="field-row"><label><span>Type</span><select id="feedbackType" required><option value="Bug">Bug</option><option value="Feature">Feature request</option><option value="Visual">Visual / UI</option><option value="Performance">Performance</option><option value="Other">Other</option></select></label><label><span>Project</span><select id="feedbackProject"><option>DLavie Shader</option><option>DLavie Hub</option><option>DLavie Patches</option><option>DLavie Meta</option><option>Other</option></select></label></div><label><span>Title</span><input id="feedbackTitle" maxlength="120" required placeholder="Ringkas masalah atau ide kamu"></label><label><span>Details</span><textarea id="feedbackDetails" rows="7" maxlength="4000" required placeholder="Jelaskan apa yang terjadi, yang kamu harapkan, device/version bila relevan..."></textarea></label><div class="form-footer"><p>Tidak ada data yang dikirim diam-diam. Tombol ini membuka GitHub dengan issue yang sudah terisi.</p><button class="primary-btn" type="submit">Prepare feedback ↗</button></div></form></section>
+    </section>
+
+    <section class="page" data-route="vote">
+      <div class="page-hero shell"><span class="kicker">COMMUNITY VOTE</span><h1>What should we build next?</h1><p>Pilih prioritas yang paling kamu inginkan. Vote dikirim melalui GitHub agar transparan dan dapat ditindaklanjuti.</p></div>
+      <section class="shell section-block"><div id="voteGrid" class="vote-grid"></div></section>
+    </section>
+
+    <section class="search-overlay" id="searchOverlay" aria-hidden="true">
+      <div class="search-modal glass-panel"><div class="search-modal-head"><label class="search-box global"><span>⌕</span><input id="globalSearch" type="search" placeholder="Search DLavie..." autocomplete="off"></label><button id="searchClose" class="icon-btn" type="button" aria-label="Tutup pencarian">×</button></div><div id="globalResults" class="global-results"><p class="empty-state">Cari project, download, atau berita.</p></div></div>
+    </section>
+  </main>
+
+  <nav class="mobile-nav" aria-label="Navigasi mobile">
+    <a href="#home" data-route-link="home"><span>⌂</span><small>Home</small></a>
+    <a href="#projects" data-route-link="projects"><span>◈</span><small>Projects</small></a>
+    <a href="#downloads" data-route-link="downloads"><span>↓</span><small>Download</small></a>
+    <a href="#community" data-route-link="community"><span>◇</span><small>Community</small></a>
+  </nav>
+
+  <footer class="footer shell"><div class="footer-brand"><img src="../brand/dlavie-logo.svg" alt=""><div><b>DLavie</b><span>Made to keep evolving.</span></div></div><div class="footer-links"><a href="#feedback">Feedback</a><a href="#vote">Vote</a><a href="https://github.com/drmacze" target="_blank" rel="noreferrer">GitHub ↗</a></div><p>© 2026 DLavie. Independent community project.</p></footer>
+
+  <div id="toast" class="toast" role="status" aria-live="polite"></div>
+  <script src="app.js"></script>
+</body>
+</html>

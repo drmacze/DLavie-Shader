@@ -1,0 +1,45 @@
+name: Deploy DLavie Hub
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'site/**'
+      - 'brand/dlavie-logo.svg'
+      - '.github/workflows/pages.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
+jobs:
+  deploy:
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/configure-pages@v5
+      - name: Prepare static site
+        run: |
+          rm -rf _site
+          mkdir -p _site/site _site/brand
+          cp -R site/. _site/site/
+          cp brand/dlavie-logo.svg _site/brand/dlavie-logo.svg
+          touch _site/.nojekyll
+          cat > _site/index.html <<'EOF'
+          <!doctype html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta http-equiv="refresh" content="0; url=./site/#home"><title>DLavie Hub</title></head><body style="background:#090a0c;color:#fff;font-family:system-ui;padding:40px">Opening <a style="color:#d7b36f" href="./site/#home">DLavie Hub</a>…</body></html>
+          EOF
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: _site
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
