@@ -1,0 +1,148 @@
+<!doctype html>
+<html lang="id">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <meta name="theme-color" content="#111214">
+  <meta name="description" content="DLavie Account — sign in, register, profile, security, preferences, and account data.">
+  <title>Account — DLavie</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="account.css">
+</head>
+<body>
+  <header class="account-topbar">
+    <a class="account-brand" href="./#home"><img src="assets/dlavie-mark.svg" alt=""><strong>dlavie</strong><span>account</span></a>
+    <div class="top-actions"><a class="ghost-link" href="community.html">Community</a><a class="ghost-link" href="./#home">Home</a></div>
+  </header>
+
+  <main class="account-shell">
+    <section class="auth-layout" id="authView">
+      <div class="auth-intro">
+        <span class="kicker">DLAVIE ACCOUNT</span>
+        <h1>One account.<br>Everything DLavie.</h1>
+        <p>Use one identity for community chat, votes, feedback, future project downloads, and your DLavie profile.</p>
+        <div class="feature-stack">
+          <div><span>01</span><strong>Persistent identity</strong><p>Your profile and community history follow your account.</p></div>
+          <div><span>02</span><strong>Secure sessions</strong><p>Supabase Auth handles password hashing, refresh tokens, and session expiry.</p></div>
+          <div><span>03</span><strong>Privacy controls</strong><p>Export your data or permanently delete your account at any time.</p></div>
+        </div>
+      </div>
+
+      <section class="auth-card" aria-live="polite">
+        <div class="auth-tabs" id="authTabs"><button type="button" data-auth-tab="login" class="active">Sign in</button><button type="button" data-auth-tab="register">Register</button></div>
+        <div class="auth-message" id="authMessage" hidden></div>
+
+        <form id="loginForm" class="auth-form">
+          <div class="form-head"><h2>Welcome back.</h2><p>Sign in to your DLavie account.</p></div>
+          <label><span>Email</span><input id="loginEmail" type="email" autocomplete="email" required placeholder="you@example.com"></label>
+          <label><span>Password</span><div class="password-field"><input id="loginPassword" type="password" autocomplete="current-password" required minlength="8" placeholder="Your password"><button type="button" data-toggle-password="loginPassword">Show</button></div></label>
+          <button class="primary-button" type="submit">Sign in</button>
+          <button class="text-button" id="forgotPassword" type="button">Forgot password?</button>
+        </form>
+
+        <form id="registerForm" class="auth-form" hidden>
+          <div class="form-head"><h2>Create your account.</h2><p>Choose a public username and secure password.</p></div>
+          <label><span>Username</span><div class="username-field"><span>@</span><input id="registerUsername" autocomplete="username" required minlength="3" maxlength="24" pattern="[a-z0-9_]+" placeholder="yourname"></div><small id="usernameStatus">3–24 lowercase letters, numbers, or underscore.</small></label>
+          <label><span>Display name</span><input id="registerDisplayName" autocomplete="name" required minlength="3" maxlength="32" placeholder="Your public name"></label>
+          <label><span>Email</span><input id="registerEmail" type="email" autocomplete="email" required placeholder="you@example.com"></label>
+          <label><span>Password</span><div class="password-field"><input id="registerPassword" type="password" autocomplete="new-password" required minlength="10" placeholder="At least 10 characters"><button type="button" data-toggle-password="registerPassword">Show</button></div><div class="strength-track"><i id="passwordStrength"></i></div><small id="passwordHint">Use 10+ characters with a mix of letters, numbers, and symbols.</small></label>
+          <label><span>Confirm password</span><input id="registerConfirm" type="password" autocomplete="new-password" required minlength="10"></label>
+          <label class="check-row"><input id="termsAccept" type="checkbox" required><span>I agree to the DLavie community rules and account terms.</span></label>
+          <button class="primary-button" type="submit">Create account</button>
+        </form>
+
+        <form id="resetRequestForm" class="auth-form" hidden>
+          <div class="form-head"><h2>Reset password.</h2><p>We'll send a recovery link to your email.</p></div>
+          <label><span>Email</span><input id="resetEmail" type="email" autocomplete="email" required></label>
+          <button class="primary-button" type="submit">Send recovery email</button>
+          <button class="text-button" type="button" data-back-login>Back to sign in</button>
+        </form>
+
+        <form id="resetPasswordForm" class="auth-form" hidden>
+          <div class="form-head"><h2>Choose a new password.</h2><p>This will replace your current password.</p></div>
+          <label><span>New password</span><input id="recoveryPassword" type="password" autocomplete="new-password" minlength="10" required></label>
+          <label><span>Confirm new password</span><input id="recoveryConfirm" type="password" autocomplete="new-password" minlength="10" required></label>
+          <button class="primary-button" type="submit">Update password</button>
+        </form>
+      </section>
+    </section>
+
+    <section class="dashboard" id="accountView" hidden>
+      <header class="profile-header">
+        <div class="profile-avatar" id="accountAvatar">D</div>
+        <div class="profile-heading"><div class="identity-line"><h1 id="accountDisplay">DLavie member</h1><span class="verified-badge" id="verifiedBadge" hidden>VERIFIED EMAIL</span><span class="role-badge" id="roleBadge">MEMBER</span></div><p><span id="accountUsername">@member</span><i>•</i><span id="accountEmail">email</span></p></div>
+        <button class="secondary-button" id="signOutButton" type="button">Sign out</button>
+      </header>
+
+      <nav class="account-tabs"><button type="button" data-panel="profile" class="active">Profile</button><button type="button" data-panel="security">Security</button><button type="button" data-panel="preferences">Preferences</button><button type="button" data-panel="data">Data & privacy</button></nav>
+
+      <div class="dashboard-grid">
+        <section class="panel-stack">
+          <article class="account-panel active" data-account-panel="profile">
+            <div class="panel-head"><div><span class="kicker">PUBLIC PROFILE</span><h2>Profile</h2></div><span class="save-state" id="profileSaveState"></span></div>
+            <form id="profileForm" class="settings-form">
+              <label><span>Display name</span><input id="profileDisplayName" minlength="3" maxlength="32" required></label>
+              <label><span>Bio</span><textarea id="profileBio" maxlength="200" rows="4" placeholder="Tell the community a little about yourself."></textarea><small><span id="bioCount">0</span>/200</small></label>
+              <label><span>Avatar URL (optional)</span><input id="profileAvatarUrl" type="url" placeholder="https://..."><small>HTTPS only. Leave empty to use your generated DLavie avatar.</small></label>
+              <button class="primary-button fit" type="submit">Save profile</button>
+            </form>
+            <hr>
+            <form id="usernameForm" class="settings-form compact-form">
+              <div class="setting-copy"><h3>Username</h3><p>Your unique DLavie handle. It can only be changed once every 30 days.</p></div>
+              <label><span>New username</span><div class="username-field"><span>@</span><input id="newUsername" minlength="3" maxlength="24" pattern="[a-z0-9_]+"></div><small id="newUsernameStatus"></small></label>
+              <button class="secondary-button fit" type="submit">Change username</button>
+            </form>
+          </article>
+
+          <article class="account-panel" data-account-panel="security">
+            <div class="panel-head"><div><span class="kicker">ACCOUNT SECURITY</span><h2>Security</h2></div></div>
+            <div class="settings-section">
+              <div class="setting-copy"><h3>Email address</h3><p>Changing email may require confirmation on the new address.</p></div>
+              <form id="emailForm" class="inline-form"><input id="newEmail" type="email" placeholder="new@example.com"><button class="secondary-button" type="submit">Change email</button></form>
+              <button class="text-button left" id="resendVerification" type="button">Resend verification email</button>
+            </div>
+            <hr>
+            <form id="passwordForm" class="settings-section settings-form compact-form">
+              <div class="setting-copy"><h3>Change password</h3><p>We re-authenticate with your current password before changing it.</p></div>
+              <label><span>Current password</span><input id="currentPassword" type="password" autocomplete="current-password" required></label>
+              <label><span>New password</span><input id="newPassword" type="password" autocomplete="new-password" minlength="10" required></label>
+              <label><span>Confirm new password</span><input id="newPasswordConfirm" type="password" autocomplete="new-password" minlength="10" required></label>
+              <button class="primary-button fit" type="submit">Update password</button>
+            </form>
+            <hr>
+            <div class="settings-section row-setting"><div class="setting-copy"><h3>All sessions</h3><p>Sign out this account everywhere, including other browsers and devices.</p></div><button class="secondary-button" id="signOutAll" type="button">Sign out everywhere</button></div>
+          </article>
+
+          <article class="account-panel" data-account-panel="preferences">
+            <div class="panel-head"><div><span class="kicker">EXPERIENCE</span><h2>Preferences</h2></div></div>
+            <form id="preferencesForm" class="preference-list">
+              <label class="toggle-setting"><div><strong>Community notifications</strong><span>Allow DLavie to surface community activity in future notification features.</span></div><input id="prefCommunity" type="checkbox"><i></i></label>
+              <label class="toggle-setting"><div><strong>Email notifications</strong><span>Allow non-security project and community emails.</span></div><input id="prefEmail" type="checkbox"><i></i></label>
+              <label class="select-setting"><div><strong>Theme</strong><span>DLavie currently prioritizes dark mode.</span></div><select id="prefTheme"><option value="dark">Dark</option><option value="system">System</option></select></label>
+              <button class="primary-button fit" type="submit">Save preferences</button>
+            </form>
+          </article>
+
+          <article class="account-panel" data-account-panel="data">
+            <div class="panel-head"><div><span class="kicker">PRIVACY</span><h2>Your data</h2></div></div>
+            <div class="privacy-action"><div><h3>Export account data</h3><p>Download a JSON archive containing your DLavie profile and community activity.</p></div><button class="secondary-button" id="exportData" type="button">Export JSON</button></div>
+            <hr>
+            <div class="danger-zone"><span class="kicker">DANGER ZONE</span><h3>Delete DLavie account</h3><p>Your authentication account and private profile will be deleted. Existing community messages are retained only as anonymized history.</p><label><span>Type <b id="deleteUsernameHint">your username</b> to confirm</span><input id="deleteConfirmation"></label><button class="danger-button" id="deleteAccount" type="button">Permanently delete account</button></div>
+          </article>
+        </section>
+
+        <aside class="account-side">
+          <article class="side-card"><span class="kicker">ACCOUNT</span><dl><div><dt>Created</dt><dd id="createdDate">—</dd></div><div><dt>Email</dt><dd id="emailState">—</dd></div><div><dt>Community role</dt><dd id="communityRole">MEMBER</dd></div></dl></article>
+          <article class="side-card"><span class="kicker">QUICK LINKS</span><a href="community.html">Open community <b>→</b></a><a href="./#project/dlavie-shader">DLavie Shader <b>→</b></a><a href="./#feedback">Send feedback <b>→</b></a></article>
+        </aside>
+      </div>
+    </section>
+  </main>
+
+  <div class="toast" id="accountToast" role="status" aria-live="polite"></div>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="account.js"></script>
+</body>
+</html>
