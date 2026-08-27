@@ -122,10 +122,16 @@
 
     document.querySelectorAll('[data-dlavie-account-link]').forEach(link=>{
       link.href='account.html';
+      const label=loggedIn?'Account':'Sign in';
       if(link.classList.contains('sheet-action')){
-        const svg=link.querySelector('svg')?.outerHTML || '';
-        link.innerHTML=`${svg}${loggedIn?'Account':'Sign in'}`;
-      }else link.textContent=loggedIn?'Account':'Sign in';
+        if(link.dataset.authLabel!==label){
+          const svg=link.querySelector('svg')?.outerHTML || '';
+          link.innerHTML=`${svg}${label}`;
+          link.dataset.authLabel=label;
+        }
+      }else if(link.textContent!==label){
+        link.textContent=label;
+      }
     });
 
     const download=document.querySelector('#downloadLatest');
@@ -160,6 +166,7 @@
       link.className='sheet-action';
       link.href='account.html';
       link.dataset.dlavieAccountLink='true';
+      link.dataset.authLabel=authState.session?'Account':'Sign in';
       link.innerHTML='<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/></svg>'+(authState.session?'Account':'Sign in');
       sheet.insertBefore(link,sheet.firstElementChild?.nextElementSibling||null);
     }
@@ -222,11 +229,12 @@
   core.src='modrinth-core.js';
   core.defer=true;
   core.onload=()=>{
+    // The navigation DOM is already present because this loader runs at the end
+    // of <body>. Inject once. Observing the entire body here caused a feedback
+    // loop: updateAccountUI() rewrote link contents, which retriggered the
+    // MutationObserver indefinitely on iOS/WebKit.
     injectAccountLinks();
-    const observer=new MutationObserver(injectAccountLinks);
-    observer.observe(document.body,{childList:true,subtree:true});
-    // Auth is background state, not a render dependency. Let Home paint first.
-    scheduleIdle(()=>ensureSession(), IS_TOUCH ? 2200 : 1200);
+    // No automatic Supabase request on Home. Auth resolves on demand.
   };
   document.head.appendChild(core);
 })();
