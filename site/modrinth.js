@@ -15,6 +15,22 @@
     location.replace(target.href);
   };
 
+  function loadHomePolish(){
+    if(!document.querySelector('link[data-dlavie-home-polish]')){
+      const link=document.createElement('link');
+      link.rel='stylesheet';
+      link.href='home-polish.css';
+      link.dataset.dlavieHomePolish='true';
+      document.head.appendChild(link);
+    }
+    if(!document.querySelector('script[data-dlavie-home-polish]')){
+      const script=document.createElement('script');
+      script.src='home-polish.js';
+      script.dataset.dlavieHomePolish='true';
+      document.head.appendChild(script);
+    }
+  }
+
   function loadSupabase(){
     if(window.supabase) return Promise.resolve(window.supabase);
     return new Promise((resolve,reject) => {
@@ -175,6 +191,8 @@
     openCommunity();
     return;
   }
+
+  loadHomePolish();
 
   window.addEventListener('hashchange',()=>{
     if(isCommunityRoute()) openCommunity();
