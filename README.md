@@ -21,7 +21,7 @@ DLavie Shader is a long-term Minecraft Bedrock shader/resource-pack project buil
 - Tunable water simulation and caustics
 - Four real quality subpacks: **Low, Medium, High, Ultra**
 - Reproducible biome-binding generator that preserves vanilla biome data
-- GitHub Actions validation + `.mcpack` build artifact
+- GitHub Actions validation + reproducible `.mcpack` build workflow
 
 ## Quality presets
 
@@ -36,7 +36,7 @@ DLavie Shader is a long-term Minecraft Bedrock shader/resource-pack project buil
 
 ## Install / use
 
-1. Download the latest `.mcpack` from the repository's **Actions** artifact.
+1. For immediate testing, download `test-builds/DLavie-Shader-v0.1.0-mobile-test.mcpack`. For a full biome-bound build, run the build workflow manually or use the developer commands below.
 2. Open it with Minecraft.
 3. Activate **DLavie Shader** in Global Resources or the world resource packs.
 4. Enable **Vibrant Visuals** in Minecraft's Video settings.
