@@ -21,8 +21,15 @@
   function message(text,type=''){ const el=$('#authMessage'); if(!el)return; el.hidden=!text; el.textContent=text||''; el.className=`auth-message${type?' '+type:''}`; }
   function setBusy(form,busy){ const b=form?.querySelector('button[type="submit"]'); if(b){b.disabled=busy; b.dataset.oldText ||= b.textContent; b.textContent=busy?'Please wait…':b.dataset.oldText;} }
 
+  async function currentSession(){
+    if(state.session) return state.session;
+    const {data:{session}}=await sb.auth.getSession();
+    state.session=session||null;
+    return state.session;
+  }
+
   async function accountApi(action,payload={}){
-    const {data:{session}} = await sb.auth.getSession();
+    const session=await currentSession();
     if(!session) throw new Error('Please sign in first.');
     const res = await fetch(ACCOUNT_API,{method:'POST',headers:{'Content-Type':'application/json','apikey':SUPABASE_KEY,'Authorization':`Bearer ${session.access_token}`},body:JSON.stringify({action,...payload})});
     const json = await res.json().catch(()=>({}));
@@ -77,7 +84,7 @@
   }
 
   async function applySession(session){
-    state.session=session;
+    state.session=session||null;
     if(!session){ $('#accountView').hidden=true; $('#authView').hidden=false; return; }
     try{ await loadAccount(); const next=nextTarget(); if(next && new URLSearchParams(location.search).get('complete')==='1') location.replace(next); }
     catch(e){ message(e.message,'error'); $('#accountView').hidden=true; $('#authView').hidden=false; }
@@ -99,14 +106,14 @@
     $('#registerUsername')?.addEventListener('input',()=>{clearTimeout(state.usernameTimer);state.usernameTimer=setTimeout(()=>checkUsername($('#registerUsername'),$('#usernameStatus')),350)});
     $('#newUsername')?.addEventListener('input',()=>{clearTimeout(state.usernameTimer);state.usernameTimer=setTimeout(()=>checkUsername($('#newUsername'),$('#newUsernameStatus')),350)});
 
-    $('#loginForm')?.addEventListener('submit',async e=>{e.preventDefault();const f=e.currentTarget;setBusy(f,true);message('');try{const {data,error}=await sb.auth.signInWithPassword({email:$('#loginEmail').value.trim(),password:$('#loginPassword').value});if(error)throw error;await applySession(data.session);const next=nextTarget();if(next)location.replace(next);}catch(err){message(err.message||'Sign in failed.','error')}finally{setBusy(f,false)}});
+    $('#loginForm')?.addEventListener('submit',async e=>{e.preventDefault();const f=e.currentTarget;setBusy(f,true);message('');try{const {data,error}=await sb.auth.signInWithPassword({email:$('#loginEmail').value.trim(),password:$('#loginPassword').value});if(error)throw error;state.session=data.session||null;await applySession(data.session);const next=nextTarget();if(next)location.replace(next);}catch(err){message(err.message||'Sign in failed.','error')}finally{setBusy(f,false)}});
 
     $('#registerForm')?.addEventListener('submit',async e=>{e.preventDefault();const f=e.currentTarget;setBusy(f,true);message('');try{
       const username=cleanUsername($('#registerUsername').value),display=$('#registerDisplayName').value.trim(),email=$('#registerEmail').value.trim(),password=$('#registerPassword').value,confirm=$('#registerConfirm').value;
       if(password!==confirm)throw new Error('Password confirmation does not match.'); if(passwordScore(password)<2)throw new Error('Use a stronger password.'); if(!$('#termsAccept').checked)throw new Error('You must accept the terms.');
       const available=await checkUsername($('#registerUsername'),$('#usernameStatus')); if(!available)throw new Error('Choose an available username.');
       const {data,error}=await signUpWithRedirect({email,password,options:{data:{dlavie_signup:'true',username,display_name:display,terms_version:'v1'}}}); if(error)throw error;
-      if(data.session){ await applySession(data.session); const next=nextTarget(); if(next)location.replace(next); }
+      if(data.session){ state.session=data.session; await applySession(data.session); const next=nextTarget(); if(next)location.replace(next); }
       else{ message('Account created. Check your email to verify the address, then sign in.','success'); setAuthMode('login'); $('#loginEmail').value=email; }
     }catch(err){message(err.message||'Registration failed.','error')}finally{setBusy(f,false)}});
 
@@ -125,18 +132,46 @@
     $('#resendVerification')?.addEventListener('click',async()=>{try{const email=state.data?.user?.email;if(!email)throw new Error('Email unavailable.');let {error}=await sb.auth.resend({type:'signup',email,options:{emailRedirectTo:accountUrl('?verified=1')}});if(error&&/redirect|not allowed|url/i.test(error.message||''))({error}=await sb.auth.resend({type:'signup',email}));if(error)throw error;toast('Verification email sent.');}catch(err){toast(err.message)}});
     $('#passwordForm')?.addEventListener('submit',async e=>{e.preventDefault();const f=e.currentTarget;setBusy(f,true);try{const oldp=$('#currentPassword').value,newp=$('#newPassword').value,c=$('#newPasswordConfirm').value;if(newp!==c)throw new Error('Password confirmation does not match.');if(passwordScore(newp)<2)throw new Error('Use a stronger new password.');const email=state.data?.user?.email;const {error:reauth}=await sb.auth.signInWithPassword({email,password:oldp});if(reauth)throw new Error('Current password is incorrect.');const {error}=await sb.auth.updateUser({password:newp});if(error)throw error;f.reset();toast('Password updated.');}catch(err){toast(err.message)}finally{setBusy(f,false)}});
     $('#preferencesForm')?.addEventListener('submit',async e=>{e.preventDefault();const f=e.currentTarget;setBusy(f,true);try{await accountApi('update_profile',{preferences:{community_notifications:$('#prefCommunity').checked,email_notifications:$('#prefEmail').checked,theme:$('#prefTheme').value}});await loadAccount();toast('Preferences saved.')}catch(err){toast(err.message)}finally{setBusy(f,false)}});
-    $('#signOutButton')?.addEventListener('click',async()=>{await sb.auth.signOut({scope:'local'});location.replace('account.html')});
-    $('#signOutAll')?.addEventListener('click',async()=>{try{const {error}=await sb.auth.signOut({scope:'global'});if(error)throw error;location.replace('account.html');}catch(err){toast(err.message)}});
+    $('#signOutButton')?.addEventListener('click',async()=>{await sb.auth.signOut({scope:'local'});state.session=null;location.replace('account.html')});
+    $('#signOutAll')?.addEventListener('click',async()=>{try{const {error}=await sb.auth.signOut({scope:'global'});if(error)throw error;state.session=null;location.replace('account.html');}catch(err){toast(err.message)}});
     $('#exportData')?.addEventListener('click',async()=>{try{const data=await accountApi('export_account');const blob=new Blob([JSON.stringify(data,null,2)],{type:'application/json'});const url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download=`dlavie-account-${state.data.account.username}.json`;a.click();setTimeout(()=>URL.revokeObjectURL(url),1000);toast('Export created.')}catch(err){toast(err.message)}});
-    $('#deleteAccount')?.addEventListener('click',async()=>{const confirm=$('#deleteConfirmation').value.trim();if(confirm.toLowerCase()!==String(state.data?.account?.username||'').toLowerCase()){toast('Type your exact username to confirm.');return;}if(!window.confirm('Permanently delete this DLavie account? This cannot be undone.'))return;try{await accountApi('delete_account',{confirm});await sb.auth.signOut({scope:'local'}).catch(()=>{});localStorage.removeItem('dlavie.community.session.v1');location.replace('./#home');}catch(err){toast(err.message)}});
+    $('#deleteAccount')?.addEventListener('click',async()=>{const confirm=$('#deleteConfirmation').value.trim();if(confirm.toLowerCase()!==String(state.data?.account?.username||'').toLowerCase()){toast('Type your exact username to confirm.');return;}if(!window.confirm('Permanently delete this DLavie account? This cannot be undone.'))return;try{await accountApi('delete_account',{confirm});await sb.auth.signOut({scope:'local'}).catch(()=>{});state.session=null;localStorage.removeItem('dlavie.community.session.v1');location.replace('./#home');}catch(err){toast(err.message)}});
+  }
+
+  function handleAuthEvent(event,session){
+    state.session=session||null;
+    setTimeout(async()=>{
+      if(event==='PASSWORD_RECOVERY'){
+        state.recovery=true;
+        setAuthMode('reset-password');
+        $('#authView').hidden=false;
+        $('#accountView').hidden=true;
+        return;
+      }
+      if(event==='SIGNED_OUT'){
+        state.data=null;
+        $('#accountView').hidden=true;
+        $('#authView').hidden=false;
+        if(!state.recovery)setAuthMode('login');
+        return;
+      }
+      if(session&&!state.recovery) await applySession(session);
+    },0);
   }
 
   async function init(){
     bindAuth();bindDashboard();
-    const params=new URLSearchParams(location.search); if(params.get('mode')==='register')setAuthMode('register'); if(params.get('mode')==='reset'){state.recovery=true;setAuthMode('reset-password')}
-    sb.auth.onAuthStateChange(async(event,session)=>{state.session=session;if(event==='PASSWORD_RECOVERY'){state.recovery=true;setAuthMode('reset-password');$('#authView').hidden=false;$('#accountView').hidden=true;return;}if(event==='SIGNED_OUT'){state.data=null;$('#accountView').hidden=true;$('#authView').hidden=false;setAuthMode('login');return;}if(session&&!state.recovery)await applySession(session);});
-    const {data:{session}}=await sb.auth.getSession(); if(session&&!state.recovery)await applySession(session); else if(!state.recovery){$('#authView').hidden=false;$('#accountView').hidden=true;}
-    if(params.get('verified')==='1')message('Email confirmation received. You can sign in now.','success');
+    const params=new URLSearchParams(location.search);
+    if(params.get('mode')==='register')setAuthMode('register');
+    if(params.get('mode')==='reset'){state.recovery=true;setAuthMode('reset-password')}
+
+    const {data:{session}}=await sb.auth.getSession();
+    state.session=session||null;
+    if(session&&!state.recovery)await applySession(session);
+    else if(!state.recovery){$('#authView').hidden=false;$('#accountView').hidden=true;}
+
+    sb.auth.onAuthStateChange(handleAuthEvent);
+    if(params.get('verified')==='1'&&!session)message('Email confirmation received. You can sign in now.','success');
   }
   if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',init,{once:true});else init();
 })();
