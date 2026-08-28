@@ -36,9 +36,8 @@ jobs:
           cp brand/dlavie-logo.svg _site/brand/dlavie-logo.svg
           touch _site/.nojekyll
 
-          # Home: keep the polished visual design while preserving the fast v42
-          # behavior (no animation/font CDN, no Supabase background check, and no
-          # GitHub metadata request until the project page is actually opened).
+          # Home keeps the polished design, but no render-blocking third-party
+          # animation/font libraries and no background Supabase/GitHub API work.
           for html in _site/index.html _site/site/index.html; do
             sed -i '/fonts.googleapis.com/d' "$html"
             sed -i '/fonts.gstatic.com/d' "$html"
@@ -53,29 +52,19 @@ jobs:
           import pathlib, sys, re
           path = pathlib.Path(sys.argv[1])
           text = path.read_text()
-
-          # Normalize previous cache-busters then inject v47 assets once.
-          text = re.sub(r'href="modrinth\.css(?:\?v=\d+)?"', 'href="modrinth.css?v=47"', text)
-          text = re.sub(r'href="home-polish\.css(?:\?v=\d+)?"', 'href="home-polish.css?v=47"', text)
-          if 'data-dlavie-home-polish="true"' not in text:
-              text = text.replace(
-                  '<link rel="stylesheet" href="modrinth.css?v=47">',
-                  '<link rel="stylesheet" href="modrinth.css?v=47">\n  <link rel="stylesheet" href="home-polish.css?v=47" data-dlavie-home-polish="true">',
-                  1,
-              )
-
-          # Remove any prior dynamic/static polish script duplicates, then insert one.
-          text = re.sub(r'\s*<script src="home-polish\.js(?:\?v=\d+)?" data-dlavie-home-polish="true"></script>', '', text)
-          text = re.sub(r'src="modrinth\.js(?:\?v=\d+)?"', 'src="modrinth.js?v=47"', text)
+          text = re.sub(r'href="modrinth\.css(?:\?v=\d+)?"', 'href="modrinth.css?v=48"', text)
+          text = re.sub(r'\s*<link rel="stylesheet" href="home-polish\.css(?:\?v=\d+)?"[^>]*>', '', text)
           text = text.replace(
-              '<script src="modrinth.js?v=47"></script>',
-              '<script src="home-polish.js?v=47" data-dlavie-home-polish="true"></script>\n  <script src="modrinth.js?v=47"></script>',
+              '<link rel="stylesheet" href="modrinth.css?v=48">',
+              '<link rel="stylesheet" href="modrinth.css?v=48">\n  <link rel="stylesheet" href="home-polish.css?v=48" data-dlavie-home-polish="true">',
               1,
           )
+          text = re.sub(r'\s*<script src="home-polish\.js(?:\?v=\d+)?"[^>]*></script>', '', text)
           text = re.sub(r'\s*<script src="auth-status-fix\.js(?:\?v=\d+)?"></script>', '', text)
+          text = re.sub(r'src="modrinth\.js(?:\?v=\d+)?"', 'src="modrinth.js?v=48"', text)
           text = text.replace(
-              '<script src="modrinth.js?v=47"></script>',
-              '<script src="modrinth.js?v=47"></script>\n  <script src="auth-status-fix.js?v=47"></script>',
+              '<script src="modrinth.js?v=48"></script>',
+              '<script src="home-polish.js?v=48" data-dlavie-home-polish="true"></script>\n  <script src="modrinth.js?v=48"></script>\n  <script src="auth-status-fix.js?v=48"></script>',
               1,
           )
           path.write_text(text)
@@ -88,7 +77,7 @@ jobs:
           path = pathlib.Path(sys.argv[1])
           text = path.read_text()
           text = text.replace("    scheduleIdle(()=>ensureSession(), IS_TOUCH ? 2200 : 1200);", "    // No automatic Supabase request on Home. Auth resolves on demand.")
-          text = re.sub(r"core\.src='modrinth-core\.js(?:\?v=\d+)?';", "core.src='modrinth-core.js?v=47';", text)
+          text = re.sub(r"core\.src='modrinth-core\.js(?:\?v=\d+)?';", "core.src='modrinth-core.js?v=48';", text)
           path.write_text(text)
           PY
           done
@@ -98,18 +87,22 @@ jobs:
           import pathlib, sys
           path = pathlib.Path(sys.argv[1])
           text = path.read_text()
-          old_init = "bindTabs();bindProjectActions();bindProjectSearch();bindFeedback();bindSearch();bindMobileSheet();renderVotes();renderVersions();loadProjectMeta();"
-          new_init = "bindTabs();bindProjectActions();bindProjectSearch();bindFeedback();bindSearch();bindMobileSheet();renderVotes();renderVersions();if(parseHash().route==='project')loadProjectMeta();"
-          text = text.replace(old_init, new_init, 1)
-          old_hash = "window.addEventListener('hashchange',route);route();"
-          new_hash = "window.addEventListener('hashchange',()=>{route();if(parseHash().route==='project'&&!state.repo)loadProjectMeta();});route();"
-          text = text.replace(old_hash, new_hash, 1)
+          text = text.replace(
+              "bindTabs();bindProjectActions();bindProjectSearch();bindFeedback();bindSearch();bindMobileSheet();renderVotes();renderVersions();loadProjectMeta();",
+              "bindTabs();bindProjectActions();bindProjectSearch();bindFeedback();bindSearch();bindMobileSheet();renderVotes();renderVersions();if(parseHash().route==='project')loadProjectMeta();",
+              1,
+          )
+          text = text.replace(
+              "window.addEventListener('hashchange',route);route();",
+              "window.addEventListener('hashchange',()=>{route();if(parseHash().route==='project'&&!state.repo)loadProjectMeta();});route();",
+              1,
+          )
           path.write_text(text)
           PY
           done
 
-          # Account: professional compact visual layer + built-in DLavie avatar picker.
-          # The old free-form avatar URL is replaced at runtime by seven bundled SVGs.
+          # Account uses its source controller directly. Add only the compact visual
+          # layer and built-in avatar picker, then cache-bust all account assets.
           for html in _site/account.html _site/site/account.html; do
             sed -i '/fonts.googleapis.com/d' "$html"
             sed -i '/fonts.gstatic.com/d' "$html"
@@ -118,108 +111,25 @@ jobs:
           path = pathlib.Path(sys.argv[1])
           text = path.read_text()
           text = re.sub(r'\s*<link rel="stylesheet" href="account-clean\.css(?:\?v=\d+)?">', '', text)
+          text = re.sub(r'href="account-flow\.css(?:\?v=\d+)?"', 'href="account-flow.css?v=48"', text)
           text = text.replace(
-              '<link rel="stylesheet" href="account-flow.css">',
-              '<link rel="stylesheet" href="account-flow.css?v=47">\n  <link rel="stylesheet" href="account-clean.css?v=47">',
+              '<link rel="stylesheet" href="account-flow.css?v=48">',
+              '<link rel="stylesheet" href="account-flow.css?v=48">\n  <link rel="stylesheet" href="account-clean.css?v=48">',
               1,
           )
           text = re.sub(r'\s*<script src="account-clean\.js(?:\?v=\d+)?"></script>', '', text)
-          text = re.sub(r'<script src="account\.js(?:\?v=\d+)?"></script>', '<script src="account.js?v=47"></script>', text)
-          text = re.sub(r'<script src="account-flow\.js(?:\?v=\d+)?"></script>', '<script src="account-flow.js?v=47"></script>', text)
+          text = re.sub(r'<script src="account\.js(?:\?v=\d+)?"></script>', '<script src="account.js?v=48"></script>', text)
+          text = re.sub(r'<script src="account-flow\.js(?:\?v=\d+)?"></script>', '<script src="account-flow.js?v=48"></script>', text)
           text = text.replace(
-              '<script src="account.js?v=47"></script>',
-              '<script src="account-clean.js?v=47"></script>\n  <script src="account.js?v=47"></script>',
+              '<script src="account.js?v=48"></script>',
+              '<script src="account-clean.js?v=48"></script>\n  <script src="account.js?v=48"></script>',
               1,
           )
           path.write_text(text)
           PY
           done
 
-          # Patch the deployed Account controller so existing accounts use built-in
-          # avatars and Safari/iOS gets a robust persisted-session restore path.
-          for js in _site/account.js _site/site/account.js; do
-            python3 - "$js" <<'PY'
-          import pathlib, sys
-          path = pathlib.Path(sys.argv[1])
-          text = path.read_text()
-
-          old_current = """  async function currentSession(){
-            if(state.session) return state.session;
-            const {data:{session}}=await sb.auth.getSession();
-            state.session=session||null;
-            return state.session;
-          }"""
-          new_current = """  async function currentSession(){
-            if(state.session) return state.session;
-            let {data:{session}}=await sb.auth.getSession();
-            if(!session){
-              try{ const refreshed=await sb.auth.refreshSession(); session=refreshed.data?.session||null; }catch{}
-            }
-            state.session=session||null;
-            return state.session;
-          }"""
-          if old_current not in text: raise SystemExit('account.js currentSession patch target not found')
-          text = text.replace(old_current, new_current, 1)
-
-          old_profile_values = "$('#profileDisplayName').value=a.display_name||''; $('#profileBio').value=a.bio||''; $('#profileAvatarUrl').value=a.avatar_url||''; $('#bioCount').textContent=String((a.bio||'').length);"
-          new_profile_values = "$('#profileDisplayName').value=a.display_name||''; $('#profileBio').value=a.bio||''; $('#bioCount').textContent=String((a.bio||'').length); window.DLavieAccountUI?.setAvatar?.(a.avatar_seed);"
-          if old_profile_values not in text: raise SystemExit('account.js profile values patch target not found')
-          text = text.replace(old_profile_values, new_profile_values, 1)
-
-          old_avatar = "const av=$('#accountAvatar'); av.textContent=initials(a.display_name); if(a.avatar_url){av.style.backgroundImage=`url(${JSON.stringify(a.avatar_url).slice(1,-1)})`;}else{const p=avatarStyle(a.avatar_seed);av.style.backgroundImage='none';av.style.background=`linear-gradient(145deg,${p[0]},${p[1]})`; }"
-          if old_avatar not in text:
-              old_avatar = "const av=$('#accountAvatar'); av.textContent=initials(a.display_name); if(a.avatar_url){av.style.backgroundImage=`url(${JSON.stringify(a.avatar_url).slice(1,-1)})`;}else{const p=avatarStyle(a.avatar_seed);av.style.backgroundImage='none';av.style.background=`linear-gradient(145deg,${p[0]},${p[1]})`; }".replace("; }", ";}")
-          if old_avatar not in text: raise SystemExit('account.js avatar render patch target not found')
-          text = text.replace(old_avatar, "window.DLavieAccountUI?.setAvatar?.(a.avatar_seed);", 1)
-
-          old_payload = "avatar_url:$('#profileAvatarUrl').value.trim()"
-          new_payload = "avatar_id:window.DLavieAccountUI?.selectedAvatar?.()||state.data?.account?.avatar_seed"
-          if old_payload not in text: raise SystemExit('account.js avatar save patch target not found')
-          text = text.replace(old_payload, new_payload, 1)
-
-          # Cache a non-sensitive signed-in/profile hint for the Home UI without making
-          # Home load Supabase. The real account still always depends on the Auth JWT.
-          marker = "const a=data.account,m=data.member,u=data.user;"
-          hint = """const a=data.account,m=data.member,u=data.user;
-            try{
-              localStorage.setItem('dlavie.auth.state.v1',JSON.stringify({signedIn:true,userId:u.id}));
-              localStorage.setItem('dlavie.profile.cache.v1',JSON.stringify({username:a.username,display_name:a.display_name,avatar:a.avatar_seed}));
-            }catch{}"""
-          if marker not in text: raise SystemExit('account.js render hint patch target not found')
-          text = text.replace(marker, hint, 1)
-
-          old_init = """    const {data:{session}}=await sb.auth.getSession();
-            state.session=session||null;
-            if(session&&!state.recovery)await applySession(session);
-            else if(!state.recovery){$('#authView').hidden=false;$('#accountView').hidden=true;}
-
-            sb.auth.onAuthStateChange(handleAuthEvent);"""
-          new_init = """    let {data:{session}}=await sb.auth.getSession();
-            if(!session){
-              await new Promise(resolve=>setTimeout(resolve,180));
-              ({data:{session}}=await sb.auth.getSession());
-            }
-            if(!session){
-              try{ const refreshed=await sb.auth.refreshSession(); session=refreshed.data?.session||null; }catch{}
-            }
-            state.session=session||null;
-            if(session&&!state.recovery)await applySession(session);
-            else if(!state.recovery){$('#authView').hidden=false;$('#accountView').hidden=true;}
-            document.body.classList.add('account-auth-ready');
-
-            sb.auth.onAuthStateChange(handleAuthEvent);"""
-          if old_init not in text: raise SystemExit('account.js init session patch target not found')
-          text = text.replace(old_init, new_init, 1)
-
-          clear = "try{localStorage.removeItem('dlavie.auth.state.v1');localStorage.removeItem('dlavie.profile.cache.v1');}catch{}"
-          text = text.replace("state.session=null;location.replace('account.html')", "state.session=null;"+clear+";location.replace('account.html')")
-          text = text.replace("state.session=null;localStorage.removeItem('dlavie.community.session.v1');", "state.session=null;"+clear+";localStorage.removeItem('dlavie.community.session.v1');")
-
-          path.write_text(text)
-          PY
-          done
-
-          # Returning Home uses history/BFCache only; no background prefetch network.
+          # Returning Home uses history/BFCache; never warm CDN/network assets.
           for js in _site/account-flow.js _site/site/account-flow.js; do
             python3 - "$js" <<'PY'
           import pathlib, sys
