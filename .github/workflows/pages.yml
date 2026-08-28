@@ -36,8 +36,9 @@ jobs:
           cp brand/dlavie-logo.svg _site/brand/dlavie-logo.svg
           touch _site/.nojekyll
 
-          # Home keeps the polished design, but no render-blocking third-party
-          # animation/font libraries and no background Supabase/GitHub API work.
+          # Restore the original pre-home-polish Modrinth-style Home.
+          # Performance fixes stay: no blocking font/animation CDNs, no background
+          # Supabase request on Home, and GitHub metadata only loads on project pages.
           for html in _site/index.html _site/site/index.html; do
             sed -i '/fonts.googleapis.com/d' "$html"
             sed -i '/fonts.gstatic.com/d' "$html"
@@ -52,19 +53,18 @@ jobs:
           import pathlib, sys, re
           path = pathlib.Path(sys.argv[1])
           text = path.read_text()
-          text = re.sub(r'href="modrinth\.css(?:\?v=\d+)?"', 'href="modrinth.css?v=48"', text)
-          text = re.sub(r'\s*<link rel="stylesheet" href="home-polish\.css(?:\?v=\d+)?"[^>]*>', '', text)
-          text = text.replace(
-              '<link rel="stylesheet" href="modrinth.css?v=48">',
-              '<link rel="stylesheet" href="modrinth.css?v=48">\n  <link rel="stylesheet" href="home-polish.css?v=48" data-dlavie-home-polish="true">',
-              1,
-          )
-          text = re.sub(r'\s*<script src="home-polish\.js(?:\?v=\d+)?"[^>]*></script>', '', text)
+
+          # Explicitly remove every home-polish layer. This restores the exact
+          # visual structure that existed before commit 425ba6b introduced it.
+          text = re.sub(r'\s*<link[^>]+href="home-polish\.css(?:\?v=\d+)?"[^>]*>', '', text)
+          text = re.sub(r'\s*<script[^>]+src="home-polish\.js(?:\?v=\d+)?"[^>]*></script>', '', text)
+
+          text = re.sub(r'href="modrinth\.css(?:\?v=\d+)?"', 'href="modrinth.css?v=49"', text)
           text = re.sub(r'\s*<script src="auth-status-fix\.js(?:\?v=\d+)?"></script>', '', text)
-          text = re.sub(r'src="modrinth\.js(?:\?v=\d+)?"', 'src="modrinth.js?v=48"', text)
+          text = re.sub(r'src="modrinth\.js(?:\?v=\d+)?"', 'src="modrinth.js?v=49"', text)
           text = text.replace(
-              '<script src="modrinth.js?v=48"></script>',
-              '<script src="home-polish.js?v=48" data-dlavie-home-polish="true"></script>\n  <script src="modrinth.js?v=48"></script>\n  <script src="auth-status-fix.js?v=48"></script>',
+              '<script src="modrinth.js?v=49"></script>',
+              '<script src="modrinth.js?v=49"></script>\n  <script src="auth-status-fix.js?v=49"></script>',
               1,
           )
           path.write_text(text)
@@ -76,8 +76,12 @@ jobs:
           import pathlib, sys, re
           path = pathlib.Path(sys.argv[1])
           text = path.read_text()
+
+          # The source loader still knows how to load the later polish layer.
+          # Disable that call in the deployed build so Home stays pre-polish.
+          text = text.replace('  loadHomePolish();', '  // Pre-polish Modrinth Home: intentionally no home-polish layer.', 1)
           text = text.replace("    scheduleIdle(()=>ensureSession(), IS_TOUCH ? 2200 : 1200);", "    // No automatic Supabase request on Home. Auth resolves on demand.")
-          text = re.sub(r"core\.src='modrinth-core\.js(?:\?v=\d+)?';", "core.src='modrinth-core.js?v=48';", text)
+          text = re.sub(r"core\.src='modrinth-core\.js(?:\?v=\d+)?';", "core.src='modrinth-core.js?v=49';", text)
           path.write_text(text)
           PY
           done
@@ -101,8 +105,7 @@ jobs:
           PY
           done
 
-          # Account uses its source controller directly. Add only the compact visual
-          # layer and built-in avatar picker, then cache-bust all account assets.
+          # Keep the current Account visual/features unchanged.
           for html in _site/account.html _site/site/account.html; do
             sed -i '/fonts.googleapis.com/d' "$html"
             sed -i '/fonts.gstatic.com/d' "$html"
@@ -111,25 +114,24 @@ jobs:
           path = pathlib.Path(sys.argv[1])
           text = path.read_text()
           text = re.sub(r'\s*<link rel="stylesheet" href="account-clean\.css(?:\?v=\d+)?">', '', text)
-          text = re.sub(r'href="account-flow\.css(?:\?v=\d+)?"', 'href="account-flow.css?v=48"', text)
+          text = re.sub(r'href="account-flow\.css(?:\?v=\d+)?"', 'href="account-flow.css?v=49"', text)
           text = text.replace(
-              '<link rel="stylesheet" href="account-flow.css?v=48">',
-              '<link rel="stylesheet" href="account-flow.css?v=48">\n  <link rel="stylesheet" href="account-clean.css?v=48">',
+              '<link rel="stylesheet" href="account-flow.css?v=49">',
+              '<link rel="stylesheet" href="account-flow.css?v=49">\n  <link rel="stylesheet" href="account-clean.css?v=49">',
               1,
           )
           text = re.sub(r'\s*<script src="account-clean\.js(?:\?v=\d+)?"></script>', '', text)
-          text = re.sub(r'<script src="account\.js(?:\?v=\d+)?"></script>', '<script src="account.js?v=48"></script>', text)
-          text = re.sub(r'<script src="account-flow\.js(?:\?v=\d+)?"></script>', '<script src="account-flow.js?v=48"></script>', text)
+          text = re.sub(r'<script src="account\.js(?:\?v=\d+)?"></script>', '<script src="account.js?v=49"></script>', text)
+          text = re.sub(r'<script src="account-flow\.js(?:\?v=\d+)?"></script>', '<script src="account-flow.js?v=49"></script>', text)
           text = text.replace(
-              '<script src="account.js?v=48"></script>',
-              '<script src="account-clean.js?v=48"></script>\n  <script src="account.js?v=48"></script>',
+              '<script src="account.js?v=49"></script>',
+              '<script src="account-clean.js?v=49"></script>\n  <script src="account.js?v=49"></script>',
               1,
           )
           path.write_text(text)
           PY
           done
 
-          # Returning Home uses history/BFCache; never warm CDN/network assets.
           for js in _site/account-flow.js _site/site/account-flow.js; do
             python3 - "$js" <<'PY'
           import pathlib, sys
