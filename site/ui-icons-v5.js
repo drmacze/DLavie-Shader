@@ -17,6 +17,7 @@
     theme:'<path d="M20 14.2A8.2 8.2 0 0 1 9.8 3.8 8.5 8.5 0 1 0 20 14.2Z"/>',
     search:'<path d="m20 20-4.2-4.2M18 10.5a7.5 7.5 0 1 1-15 0 7.5 7.5 0 0 1 15 0Z"/>',
     menu:'<path d="M5 7h14M5 12h14M5 17h14"/>',
+    close:'<path d="m6 6 12 12M18 6 6 18"/>',
     bookmark:'<path d="M6.5 4h11v16l-5.5-3.4L6.5 20V4Z"/>',
     shield:'<path d="M12 3 5.5 5.6v5.7c0 4.2 2.4 7.6 6.5 9.7 4.1-2.1 6.5-5.5 6.5-9.7V5.6L12 3ZM9 12l2 2 4-4"/>',
     settings:'<path d="M4 7h10M18 7h2M4 17h2M10 17h10M14 4v6M7 14v6"/>',
@@ -34,10 +35,12 @@
   function icon(name,cls='ui-icon'){
     return `<span class="${cls}" aria-hidden="true"><svg viewBox="0 0 24 24">${paths[name]||paths.chevron}</svg></span>`;
   }
-
-  function cleanText(el){
-    if(!el) return '';
-    return el.textContent.replace(/\s+/g,' ').trim();
+  function cleanText(el){return el?el.textContent.replace(/\s+/g,' ').trim():'';}
+  function updateViewportInset(){
+    const vv=window.visualViewport;
+    let obstruction=0;
+    if(vv) obstruction=Math.max(0,window.innerHeight-vv.height-vv.offsetTop);
+    document.documentElement.style.setProperty('--dlv-bottom-obstruction',`${Math.min(140,Math.round(obstruction))}px`);
   }
 
   function inferMainAction(el){
@@ -61,9 +64,9 @@
     if(!$('.ui-sheet-heading',sheet)){
       const heading=document.createElement('div');
       heading.className='ui-sheet-heading';
-      heading.innerHTML=`<div class="ui-sheet-heading-brand"><img src="assets/dlavie-mark.svg" alt=""><span><b>DLavie</b><small>Navigasi</small></span></div><span class="ui-sheet-hint">Pilih halaman</span>`;
+      heading.innerHTML=`<div class="ui-sheet-heading-brand"><img src="assets/dlavie-mark.svg?v=60" alt=""><span><b>DLavie</b><small>Navigasi</small></span></div><span class="ui-sheet-hint">Pilih halaman</span>`;
       const handle=$('.sheet-handle',sheet);
-      (handle||sheet.firstChild)?.insertAdjacentElement?.('afterend',heading) || sheet.prepend(heading);
+      if(handle) handle.insertAdjacentElement('afterend',heading); else sheet.prepend(heading);
     }
     $$('.sheet-action',sheet).forEach(el=>{
       if(el.dataset.uiV5==='1') return;
@@ -82,7 +85,7 @@
       const open=sheet?.classList.contains('open')||sheet?.getAttribute('aria-hidden')==='false';
       toggle?.setAttribute('aria-expanded',String(!!open));
       toggle?.setAttribute('aria-label',open?'Tutup menu':'Buka menu');
-      if(toggle) toggle.innerHTML=icon(open?'chevron':'menu','ui-site-toggle-icon');
+      if(toggle) toggle.innerHTML=icon(open?'close':'menu','ui-site-toggle-icon');
       toggle?.classList.toggle('is-open',!!open);
     };
     toggle?.addEventListener('click',()=>{
@@ -99,7 +102,6 @@
     $$('.brand strong,.dlv-mobile-brand span,.account-brand strong').forEach(el=>el.textContent='DLavie');
     $$('.brand-logo,.dlv-mobile-brand img,.account-brand img').forEach(img=>img.classList.add('ui-brand-mark-v5'));
   }
-
   function addCaptionIcon(inputSelector,name){
     const input=$(inputSelector); if(!input) return;
     const label=input.closest('label'); const caption=label?.querySelector(':scope > span');
@@ -108,7 +110,6 @@
     const text=cleanText(caption);
     caption.innerHTML=`${icon(name,'ui-caption-icon')}<span>${text}</span>`;
   }
-
   function upgradeAuth(){
     if(!$('#authView')) return;
     document.body.classList.add('ui-account-v5');
@@ -117,38 +118,28 @@
     if(registerTab&&registerTab.dataset.uiV5!=='1'){registerTab.dataset.uiV5='1';registerTab.innerHTML=`${icon('userPlus','ui-tab-icon')}<span>Buat akun</span>`;}
     [['#loginEmail','mail'],['#loginPassword','lock'],['#registerUsername','account'],['#registerDisplayName','account'],['#registerEmail','mail'],['#registerPassword','lock'],['#registerConfirm','lock'],['#resetEmail','mail'],['#recoveryPassword','lock'],['#recoveryConfirm','lock']].forEach(([s,n])=>addCaptionIcon(s,n));
     const forgot=$('#forgotPassword');
-    if(forgot&&forgot.dataset.uiV5!=='1'){
-      forgot.dataset.uiV5='1';forgot.innerHTML=`${icon('key','ui-inline-icon')}<span>Lupa password?</span>`;
-    }
-    const flow=$('#authFlowNote');
-    if(flow) flow.classList.add('ui-flow-note-v5');
+    if(forgot&&forgot.dataset.uiV5!=='1'){forgot.dataset.uiV5='1';forgot.innerHTML=`${icon('key','ui-inline-icon')}<span>Lupa password?</span>`;}
+    $('#authFlowNote')?.classList.add('ui-flow-note-v5');
   }
 
   const accountNavMap={overview:'home',saved:'bookmark',profile:'account',security:'shield',preferences:'settings',data:'file'};
   function upgradeAccountNav(){
     $$('.account-tabs button[data-panel]').forEach(button=>{
-      const key=button.dataset.panel, iconSlot=$('.account-nav-icon',button);
-      if(iconSlot) iconSlot.innerHTML=`<svg viewBox="0 0 24 24">${paths[accountNavMap[key]||'chevron']}</svg>`;
+      const key=button.dataset.panel, slot=$('.account-nav-icon',button);
+      if(slot) slot.innerHTML=`<svg viewBox="0 0 24 24">${paths[accountNavMap[key]||'chevron']}</svg>`;
     });
   }
-
   function upgradeKpis(){
-    const cards=$$('.account-kpi-grid article');
-    const names=['bookmark','message','heart','download'];
-    cards.forEach((card,i)=>{
-      if(card.dataset.uiV5==='1')return;
-      card.dataset.uiV5='1';
-      card.insertAdjacentHTML('afterbegin',icon(names[i]||'check','ui-kpi-icon'));
-    });
+    const cards=$$('.account-kpi-grid article'), names=['bookmark','message','heart','download'];
+    cards.forEach((card,i)=>{if(card.dataset.uiV5==='1')return;card.dataset.uiV5='1';card.insertAdjacentHTML('afterbegin',icon(names[i]||'check','ui-kpi-icon'));});
     const profile=$('.account-health-grid .plus-card:first-child .plus-card-head>div');
     if(profile&&!$('.ui-section-icon',profile))profile.insertAdjacentHTML('afterbegin',icon('account','ui-section-icon'));
     const security=$('.account-health-grid .plus-card:nth-child(2) .plus-card-head>div');
     if(security&&!$('.ui-section-icon',security))security.insertAdjacentHTML('afterbegin',icon('shield','ui-section-icon'));
   }
-
   function inferAccountMenu(el){
     const section=el.dataset.dlvSection;
-    if(section) return [accountNavMap[section]||'chevron', ({overview:'Ringkasan',saved:'Tersimpan',profile:'Profil',security:'Keamanan',preferences:'Preferensi',data:'Data & privasi'})[section]];
+    if(section) return [accountNavMap[section]||'chevron',({overview:'Ringkasan',saved:'Tersimpan',profile:'Profil',security:'Keamanan',preferences:'Preferensi',data:'Data & privasi'})[section]];
     if(el.dataset.dlvAuth==='login') return ['login','Masuk'];
     if(el.dataset.dlvAuth==='register') return ['userPlus','Buat akun'];
     if(el.hasAttribute('data-dlv-signout')) return ['logout','Keluar dari akun'];
@@ -157,7 +148,6 @@
     if(href.includes('community')) return ['community','Komunitas'];
     return ['chevron',cleanText(el)];
   }
-
   function upgradeAccountBottomMenu(){
     const menu=$('#dlvMobileMenu'); if(!menu) return;
     $$('a,button',menu).forEach(el=>{
@@ -167,23 +157,15 @@
       el.innerHTML=`<span class="ui-account-menu-leading">${icon(name,'ui-menu-icon')}<span>${label}</span></span>${icon('chevron','ui-menu-trailing')}`;
     });
   }
-
   function observeDynamicMenus(){
-    const sheet=$('#mobileSheet');
-    if(sheet)new MutationObserver(upgradeMainSheet).observe(sheet,{childList:true,subtree:true});
-    const menu=$('#dlvMobileMenu');
-    if(menu)new MutationObserver(upgradeAccountBottomMenu).observe(menu,{childList:true,subtree:false});
+    const sheet=$('#mobileSheet'); if(sheet)new MutationObserver(upgradeMainSheet).observe(sheet,{childList:true,subtree:true});
+    const menu=$('#dlvMobileMenu'); if(menu)new MutationObserver(upgradeAccountBottomMenu).observe(menu,{childList:true,subtree:false});
   }
-
   function init(){
-    upgradeBrand();
-    upgradeMainSheet();
-    createSiteFloatingMenu();
-    upgradeAuth();
-    upgradeAccountNav();
-    upgradeKpis();
-    upgradeAccountBottomMenu();
-    observeDynamicMenus();
+    updateViewportInset();upgradeBrand();upgradeMainSheet();createSiteFloatingMenu();upgradeAuth();upgradeAccountNav();upgradeKpis();upgradeAccountBottomMenu();observeDynamicMenus();
+    window.addEventListener('resize',updateViewportInset,{passive:true});
+    window.visualViewport?.addEventListener('resize',updateViewportInset,{passive:true});
+    window.visualViewport?.addEventListener('scroll',updateViewportInset,{passive:true});
   }
   if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',init,{once:true}); else init();
 })();
