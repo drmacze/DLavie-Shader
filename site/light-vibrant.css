@@ -1,0 +1,211 @@
+/* DLavie light-first visual polish.
+   Loaded last so the default light theme feels vivid, layered, and readable. */
+
+html[data-theme="light"]{
+  color-scheme:light;
+  --mr-bg:#f5f7f4;
+  --mr-bg-raised:#ffffff;
+  --mr-card:#ffffff;
+  --mr-card-hover:#fbfdfb;
+  --mr-input:#ffffff;
+  --mr-border:#d6ddd7;
+  --mr-border-soft:#e6ebe7;
+  --mr-text:#171a18;
+  --mr-muted:#636b65;
+  --mr-dim:#858d87;
+  --mr-green:#16d96a;
+  --mr-green-hover:#0fc75f;
+  --mr-green-soft:rgba(22,217,106,.12);
+}
+
+html[data-theme="light"] body{
+  background:
+    radial-gradient(circle at 88% 8%,rgba(22,217,106,.10),transparent 26rem),
+    radial-gradient(circle at 8% 38%,rgba(79,155,255,.055),transparent 24rem),
+    var(--mr-bg)!important;
+  color:var(--mr-text)!important;
+}
+
+html[data-theme="light"] .desktop-header,
+html[data-theme="light"] .dlv-mobile-topbar{
+  background:rgba(255,255,255,.94)!important;
+  border-bottom-color:#dfe5e0!important;
+}
+
+html[data-theme="light"] .dlv-category-nav{
+  background:rgba(250,252,250,.96)!important;
+  border-bottom-color:#dfe5e0!important;
+  box-shadow:0 1px 0 rgba(21,27,23,.025)!important;
+}
+html[data-theme="light"] .dlv-category-nav a{color:#666d68!important}
+html[data-theme="light"] .dlv-category-nav a:hover{background:#eef4ef!important;color:#1a1f1b!important}
+html[data-theme="light"] .dlv-category-nav a.active{
+  background:#dff9e9!important;
+  color:#0db85a!important;
+  box-shadow:inset 0 0 0 1px rgba(13,184,90,.10)!important;
+}
+
+html[data-theme="light"] .dlv-mobile-icon,
+html[data-theme="light"] .icon-button,
+html[data-theme="light"] .quiet-button{
+  background:#fff!important;
+  color:#222724!important;
+  border-color:#d5dcd6!important;
+}
+html[data-theme="light"] .dlv-mobile-icon:hover,
+html[data-theme="light"] .icon-button:hover,
+html[data-theme="light"] .quiet-button:hover{background:#f1f6f2!important}
+
+html[data-theme="light"] body.modrinth-home-v4{
+  --home-green:#16d96a;
+  --home-green-2:#0fc75f;
+  --home-surface:#ffffff;
+  --home-surface-2:#fbfdfb;
+  --home-border:#d5ddd6;
+  --home-muted:#646c66;
+  --home-text:#171a18;
+}
+
+html[data-theme="light"] body.modrinth-home-v4 .home-hero:before{
+  background:radial-gradient(circle,rgba(22,217,106,.18),rgba(62,207,136,.07) 40%,transparent 70%)!important;
+  opacity:1!important;
+}
+
+html[data-theme="light"] body.modrinth-home-v4 .home-hero{
+  background:
+    radial-gradient(circle at 84% 22%,rgba(25,220,110,.085),transparent 22rem),
+    radial-gradient(circle at 12% 78%,rgba(76,156,255,.04),transparent 18rem)!important;
+}
+
+html[data-theme="light"] body.modrinth-home-v4 .home-hero .eyebrow,
+html[data-theme="light"] body.modrinth-home-v4 .section-kicker,
+html[data-theme="light"] body.modrinth-home-v4 .mr-word{color:#11c760!important}
+
+html[data-theme="light"] body.modrinth-home-v4 .hero-lede{color:#616963!important}
+
+/* Strong CTA contrast in light mode. */
+html[data-theme="light"] body.modrinth-home-v4 .hero-actions .primary-button,
+html[data-theme="light"] .primary-button{
+  background:linear-gradient(180deg,#1ce276,#13d267)!important;
+  color:#062713!important;
+  border-color:#11ca61!important;
+  box-shadow:0 7px 18px rgba(19,210,103,.18)!important;
+}
+html[data-theme="light"] body.modrinth-home-v4 .hero-actions .primary-button:hover,
+html[data-theme="light"] .primary-button:hover{
+  background:linear-gradient(180deg,#22e77c,#10c65f)!important;
+  box-shadow:0 9px 22px rgba(19,210,103,.24)!important;
+}
+html[data-theme="light"] body.modrinth-home-v4 .hero-actions .secondary-button,
+html[data-theme="light"] .secondary-button{
+  background:#23272b!important;
+  color:#f7faf8!important;
+  border-color:#23272b!important;
+  box-shadow:0 6px 16px rgba(25,30,27,.12)!important;
+}
+html[data-theme="light"] body.modrinth-home-v4 .hero-actions .secondary-button:hover,
+html[data-theme="light"] .secondary-button:hover{background:#151918!important;color:#fff!important}
+
+/* Showcase: more color separation without becoming noisy. */
+html[data-theme="light"] .mr-float-card{
+  color:#171a18!important;
+  border-color:#cfd8d1!important;
+  box-shadow:0 22px 55px rgba(40,58,46,.12)!important;
+}
+html[data-theme="light"] .mr-float-card.main{
+  background:linear-gradient(145deg,#ffffff 18%,#f1fff7 100%)!important;
+  border-color:#c7e8d2!important;
+}
+html[data-theme="light"] .mr-float-card.release{
+  background:linear-gradient(145deg,#ffffff,#eafbf1)!important;
+  border-color:#bfe6cc!important;
+}
+html[data-theme="light"] .mr-float-card.feature{
+  background:linear-gradient(145deg,#ffffff,#eef5ff)!important;
+  border-color:#cbdcf7!important;
+}
+html[data-theme="light"] .mr-float-card small{color:#747c76!important}
+html[data-theme="light"] .mr-float-card em{color:#0db85a!important}
+html[data-theme="light"] .mr-showcase-orb{background:rgba(22,217,106,.16)!important}
+
+html[data-theme="light"] .mr-mini-tags span,
+html[data-theme="light"] .chip-row span,
+html[data-theme="light"] .status-chip,
+html[data-theme="light"] .version-label{
+  background:#f0f4f1!important;
+  border-color:#d5ddd7!important;
+  color:#505852!important;
+}
+html[data-theme="light"] .mr-mini-tags span:nth-child(1),
+html[data-theme="light"] .chip-row span:nth-child(1){background:#e3f9eb!important;border-color:#bee8cd!important;color:#0f9f50!important}
+html[data-theme="light"] .mr-mini-tags span:nth-child(2),
+html[data-theme="light"] .chip-row span:nth-child(2){background:#eaf3ff!important;border-color:#c9dcfa!important;color:#326da8!important}
+html[data-theme="light"] .mr-mini-tags span:nth-child(3),
+html[data-theme="light"] .chip-row span:nth-child(3){background:#f1edff!important;border-color:#dad0fb!important;color:#6d55b5!important}
+
+html[data-theme="light"] .mr-discovery-search,
+html[data-theme="light"] .mr-discovery-sort,
+html[data-theme="light"] .search-field{
+  background:#fff!important;
+  color:#606862!important;
+  border-color:#d5ddd6!important;
+  box-shadow:0 2px 8px rgba(31,45,35,.035)!important;
+}
+html[data-theme="light"] .mr-discovery-search:hover,
+html[data-theme="light"] .mr-discovery-sort:hover{background:#f8fbf9!important;border-color:#bfcac1!important}
+
+html[data-theme="light"] .featured-project,
+html[data-theme="light"] .project-row,
+html[data-theme="light"] .content-card,
+html[data-theme="light"] .side-card,
+html[data-theme="light"] .version-card,
+html[data-theme="light"] .news-item,
+html[data-theme="light"] .form-card{
+  background:#fff!important;
+  border-color:#d6ddd7!important;
+  box-shadow:0 7px 24px rgba(29,45,33,.055)!important;
+}
+html[data-theme="light"] .featured-project:hover,
+html[data-theme="light"] .project-row:hover,
+html[data-theme="light"] .version-card:hover{
+  background:#fbfefc!important;
+  border-color:#bcd4c3!important;
+  box-shadow:0 10px 28px rgba(29,45,33,.075)!important;
+}
+
+html[data-theme="light"] .project-title-row h3,
+html[data-theme="light"] .project-row-copy h2,
+html[data-theme="light"] .page-head h1,
+html[data-theme="light"] .project-identity h1,
+html[data-theme="light"] .prose h2,
+html[data-theme="light"] .prose h3{color:#171a18!important}
+
+html[data-theme="light"] .featured-copy p,
+html[data-theme="light"] .project-row-copy p,
+html[data-theme="light"] .prose p,
+html[data-theme="light"] .prose li,
+html[data-theme="light"] .side-card p{color:#626a64!important}
+
+html[data-theme="light"] .tabbar{background:transparent!important;border-bottom-color:#d8dfd9!important}
+html[data-theme="light"] .tabbar button{color:#69706b!important}
+html[data-theme="light"] .tabbar button.active{color:#0db85a!important;border-bottom-color:#12ca61!important}
+
+html[data-theme="light"] .search-dialog,
+html[data-theme="light"] .mobile-sheet{
+  background:#ffffff!important;
+  border-color:#d3dbd5!important;
+  box-shadow:0 24px 65px rgba(25,38,29,.16)!important;
+}
+html[data-theme="light"] .sheet-action{color:#252a26!important}
+html[data-theme="light"] .sheet-action:hover,
+html[data-theme="light"] .sheet-action:active,
+html[data-theme="light"] .sheet-action.primary{background:#edf6f0!important;color:#167b43!important}
+
+@media(max-width:760px){
+  html[data-theme="light"] body.modrinth-home-v4 .home-hero{
+    background:
+      radial-gradient(circle at 88% 8%,rgba(20,217,105,.10),transparent 15rem),
+      linear-gradient(180deg,#f8fbf8 0%,#f5f7f4 100%)!important;
+  }
+  html[data-theme="light"] .mr-float-card.main{box-shadow:0 16px 38px rgba(34,54,40,.13)!important}
+}
