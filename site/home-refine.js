@@ -37,6 +37,12 @@
       button.setAttribute('aria-pressed', String(theme === 'light'));
       const label = button.querySelector('[data-theme-label]');
       if(label) label.textContent = theme === 'dark' ? 'Light theme' : 'Dark theme';
+      const sun = button.querySelector('.theme-icon-sun');
+      const moon = button.querySelector('.theme-icon-moon');
+      if(!button.classList.contains('theme-toggle')){
+        if(sun) sun.style.display = theme === 'light' ? '' : 'none';
+        if(moon) moon.style.display = theme === 'dark' ? '' : 'none';
+      }
     });
   }
 
