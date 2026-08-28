@@ -91,7 +91,7 @@ jobs:
           text = path.read_text()
           for name in ('account-plus','account-plus-fix'):
               text = re.sub(rf'\s*<link[^>]+href="{name}\.css(?:\?v=\d+)?"[^>]*>', '', text)
-          for name in ('account-clean','account-plus'):
+          for name in ('account-clean','account-plus','account-theme-restore'):
               text = re.sub(rf'\s*<script[^>]+src="{name}\.js(?:\?v=\d+)?"[^>]*></script>', '', text)
           text = re.sub(r'\s*<script data-dlavie-account-theme-boot>.*?</script>', '', text, flags=re.S)
 
@@ -99,7 +99,7 @@ jobs:
           text = text.replace('<title>Account — DLavie</title>', '<title>Account — DLavie</title>\n' + theme_boot, 1)
           text = text.replace('</head>', '  <link rel="stylesheet" href="account-plus.css?v=57">\n  <link rel="stylesheet" href="account-plus-fix.css?v=57">\n</head>', 1)
 
-          text = re.sub(r'<script src="account\.js(?:\?v=\d+)?"></script>', '<script src="account-clean.js?v=57"></script>\n  <script src="account-plus.js?v=57"></script>\n  <script src="account.js?v=57"></script>', text, count=1)
+          text = re.sub(r'<script src="account\.js(?:\?v=\d+)?"></script>', '<script src="account-clean.js?v=57"></script>\n  <script src="account-plus.js?v=57"></script>\n  <script src="account-theme-restore.js?v=57"></script>\n  <script src="account.js?v=57"></script>', text, count=1)
           text = re.sub(r'<script src="account-flow\.js(?:\?v=\d+)?"></script>', '<script src="account-flow.js?v=57"></script>', text, count=1)
           path.write_text(text)
           PY
