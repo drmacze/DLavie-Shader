@@ -92,7 +92,7 @@ jobs:
           text = path.read_text()
           for name in ('account-plus','account-plus-fix'):
               text = re.sub(rf'\s*<link[^>]+href="{name}\.css(?:\?v=\d+)?"[^>]*>', '', text)
-          for name in ('account-clean','account-plus','account-theme-restore'):
+          for name in ('account-clean','account-plus','account-theme-restore','account-export-plus'):
               text = re.sub(rf'\s*<script[^>]+src="{name}\.js(?:\?v=\d+)?"[^>]*></script>', '', text)
           text = re.sub(r'\s*<script data-dlavie-account-theme-boot>.*?</script>', '', text, flags=re.S)
 
@@ -100,8 +100,20 @@ jobs:
           text = text.replace('<title>Account — DLavie</title>', '<title>Account — DLavie</title>\n' + theme_boot, 1)
           text = text.replace('</head>', '  <link rel="stylesheet" href="account-plus.css?v=57">\n  <link rel="stylesheet" href="account-plus-fix.css?v=57">\n</head>', 1)
 
-          text = re.sub(r'<script src="account\.js(?:\?v=\d+)?"></script>', '<script src="account-clean.js?v=57"></script>\n  <script src="account-plus.js?v=57"></script>\n  <script src="account-theme-restore.js?v=57"></script>\n  <script src="account.js?v=57"></script>', text, count=1)
+          text = re.sub(r'<script src="account\.js(?:\?v=\d+)?"></script>', '<script src="account-clean.js?v=57"></script>\n  <script src="account-plus.js?v=57"></script>\n  <script src="account-theme-restore.js?v=57"></script>\n  <script src="account-export-plus.js?v=57"></script>\n  <script src="account.js?v=57"></script>', text, count=1)
           text = re.sub(r'<script src="account-flow\.js(?:\?v=\d+)?"></script>', '<script src="account-flow.js?v=57"></script>', text, count=1)
+          path.write_text(text)
+          PY
+          done
+
+          # Strengthen password acceptance from score 2 to score 3 without
+          # changing Supabase Auth/session behavior.
+          for js in _site/account.js _site/site/account.js; do
+            python3 - "$js" <<'PY'
+          import pathlib, re, sys
+          path = pathlib.Path(sys.argv[1])
+          text = path.read_text()
+          text = re.sub(r'passwordScore\(([^)]+)\)<2', r'passwordScore(\1)<3', text)
           path.write_text(text)
           PY
           done
