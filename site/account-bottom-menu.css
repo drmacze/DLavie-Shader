@@ -1,0 +1,91 @@
+/* DLavie Account v4 — centered mobile menu */
+:root{--dlv-bottom-obstruction:0px}
+.dlv-mobile-menu-toggle,.dlv-mobile-menu,.dlv-mobile-menu-backdrop{display:none}
+
+@media (max-width:760px){
+  .top-actions{display:none!important}
+  .account-topbar{height:58px!important;padding-inline:18px!important}
+  .account-brand span{display:none!important}
+  .account-shell{padding-bottom:140px!important}
+
+  /* The bottom menu replaces the long mobile account tab row. */
+  #accountView:not([hidden]) .account-workspace>.account-tabs{display:none!important}
+  #accountView:not([hidden]) .account-workspace{display:block!important}
+  #accountView:not([hidden]) .dashboard-grid{display:block!important}
+
+  .dlv-mobile-menu-toggle{
+    position:fixed;
+    left:50%;
+    bottom:calc(max(18px,env(safe-area-inset-bottom)) + var(--dlv-bottom-obstruction));
+    transform:translateX(-50%);
+    z-index:1602;
+    width:58px;
+    height:48px;
+    display:grid;
+    place-items:center;
+    border:1px solid rgba(255,255,255,.16);
+    border-radius:999px;
+    background:#111214;
+    color:#fff;
+    box-shadow:0 14px 38px rgba(0,0,0,.26),inset 0 1px rgba(255,255,255,.08);
+    -webkit-tap-highlight-color:transparent;
+  }
+  .dlv-mobile-menu-toggle:focus-visible{outline:3px solid color-mix(in srgb,var(--a3-brand) 38%,transparent);outline-offset:3px}
+  .dlv-mobile-menu-toggle span{position:absolute;width:20px;height:2px;border-radius:999px;background:currentColor;transition:transform .22s ease,opacity .18s ease,top .22s ease}
+  .dlv-mobile-menu-toggle span:nth-child(1){top:17px}
+  .dlv-mobile-menu-toggle span:nth-child(2){top:23px}
+  .dlv-mobile-menu-toggle span:nth-child(3){top:29px}
+  .dlv-mobile-menu-toggle[aria-expanded="true"] span:nth-child(1){top:23px;transform:rotate(45deg)}
+  .dlv-mobile-menu-toggle[aria-expanded="true"] span:nth-child(2){opacity:0}
+  .dlv-mobile-menu-toggle[aria-expanded="true"] span:nth-child(3){top:23px;transform:rotate(-45deg)}
+
+  .dlv-mobile-menu-backdrop{
+    position:fixed;inset:0;z-index:1600;display:block;
+    background:rgba(8,10,9,.28);backdrop-filter:blur(2px);-webkit-backdrop-filter:blur(2px);
+    opacity:0;pointer-events:none;transition:opacity .2s ease;
+  }
+  .dlv-mobile-menu-backdrop.is-open{opacity:1;pointer-events:auto}
+
+  .dlv-mobile-menu{
+    position:fixed;
+    left:50%;
+    bottom:calc(max(78px,env(safe-area-inset-bottom) + 74px) + var(--dlv-bottom-obstruction));
+    transform:translate(-50%,12px) scale(.985);
+    z-index:1601;
+    width:min(360px,calc(100vw - 28px));
+    max-height:min(66svh,560px);
+    overflow:auto;
+    overscroll-behavior:contain;
+    display:block;
+    padding:10px;
+    border:1px solid color-mix(in srgb,var(--a3-border-strong) 85%,transparent);
+    border-radius:18px;
+    background:color-mix(in srgb,var(--a3-panel) 96%,transparent);
+    box-shadow:0 26px 70px rgba(0,0,0,.22);
+    backdrop-filter:blur(22px);-webkit-backdrop-filter:blur(22px);
+    opacity:0;visibility:hidden;pointer-events:none;
+    transition:opacity .18s ease,transform .22s ease,visibility .18s ease;
+  }
+  .dlv-mobile-menu.is-open{opacity:1;visibility:visible;pointer-events:auto;transform:translate(-50%,0) scale(1)}
+  .dlv-mobile-menu-head{display:flex;align-items:center;justify-content:space-between;padding:7px 8px 9px}
+  .dlv-mobile-menu-head strong{font-size:12px;color:var(--a3-text)}
+  .dlv-mobile-menu-head span{font-size:9px;color:var(--a3-muted)}
+  .dlv-mobile-menu-group{display:grid;gap:4px;padding:4px 0}
+  .dlv-mobile-menu-group+.dlv-mobile-menu-group{margin-top:6px;padding-top:10px;border-top:1px solid var(--a3-border)}
+  .dlv-mobile-menu-label{padding:4px 8px 5px;color:var(--a3-soft);font-size:8px;font-weight:800;letter-spacing:.12em;text-transform:uppercase}
+  .dlv-mobile-menu a,.dlv-mobile-menu button{
+    width:100%;min-height:44px;display:flex;align-items:center;justify-content:space-between;gap:12px;
+    padding:0 11px;border:0;border-radius:11px;background:transparent;color:var(--a3-text);
+    text-decoration:none;font:700 11px/1 system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;text-align:left;
+  }
+  .dlv-mobile-menu a:hover,.dlv-mobile-menu button:hover,.dlv-mobile-menu a:active,.dlv-mobile-menu button:active{background:var(--a3-panel-soft)}
+  .dlv-mobile-menu button.is-active{background:var(--a3-brand-soft);color:var(--a3-brand-deep)}
+  .dlv-mobile-menu .dlv-menu-arrow{color:var(--a3-soft);font-size:14px;font-weight:500}
+  .dlv-mobile-menu .dlv-menu-danger{color:var(--a3-danger)}
+
+  html[data-theme="dark"] .dlv-mobile-menu-toggle{background:#f3f5f4;color:#111214;border-color:rgba(0,0,0,.16);box-shadow:0 14px 38px rgba(0,0,0,.42)}
+}
+
+@media (prefers-reduced-motion:reduce){
+  .dlv-mobile-menu-toggle span,.dlv-mobile-menu,.dlv-mobile-menu-backdrop{transition:none!important}
+}
