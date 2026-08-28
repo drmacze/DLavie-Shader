@@ -2,7 +2,7 @@
   'use strict';
 
   const setTextPreserveIcon = (el,text) => {
-    if(!el) return;
+    if(!el || el.textContent.trim() === text) return;
     const icon = el.querySelector('svg')?.outerHTML || el.querySelector('img')?.outerHTML || '';
     el.innerHTML = icon + text;
   };
@@ -23,17 +23,18 @@
       results.querySelectorAll('p').forEach(p => {
         const text = p.textContent.trim();
         if(text.startsWith('Try “shader”')) p.textContent = 'Cari shader, versi, changelog, atau feedback.';
-        if(text === 'No results.') p.textContent = 'Tidak ada hasil yang cocok.';
+        else if(text === 'No results.') p.textContent = 'Tidak ada hasil yang cocok.';
       });
       results.querySelectorAll('a span').forEach(span => {
+        const text = span.textContent.trim();
         const map = {
-          'Project':'Project',
           'Development':'Update',
           'Issues & feedback':'Issue & feedback',
           'Send an issue':'Kirim issue',
           'Shader roadmap':'Roadmap shader'
         };
-        if(map[span.textContent.trim()]) span.textContent = map[span.textContent.trim()];
+        const next = map[text];
+        if(next && next !== text) span.textContent = next;
       });
     };
     translate();
@@ -48,13 +49,8 @@
       sheet.querySelectorAll('[data-dlavie-account-link]').forEach(link => {
         const raw = link.textContent.trim().toLowerCase();
         if(raw === 'account') setTextPreserveIcon(link,'Akun');
-        if(raw === 'sign in') setTextPreserveIcon(link,'Masuk');
+        else if(raw === 'sign in') setTextPreserveIcon(link,'Masuk');
       });
-      const themeLabel = sheet.querySelector('[data-theme-label]');
-      if(themeLabel){
-        const light = document.documentElement.dataset.theme !== 'light';
-        themeLabel.textContent = light ? 'Tema terang' : 'Tema gelap';
-      }
     };
 
     translate();
