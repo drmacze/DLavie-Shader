@@ -1,6 +1,6 @@
 (() => {
   'use strict';
-  const valid = new Set(['profile','security','preferences','data']);
+  const valid = new Set(['overview','saved','profile','security','preferences','data']);
   const $all = (s,r=document) => [...r.querySelectorAll(s)];
 
   function loadEasyUsername(){
@@ -25,19 +25,13 @@
       'modrinth.css',
       'modrinth.js',
       'modrinth-core.js',
-      'home-polish.css',
-      'home-polish.js',
+      'modrinth-v2.css',
+      'modrinth-home.css',
+      'light-vibrant.css',
       'assets/dlavie-mark.svg',
       'assets/dlavie-shader.svg'
     ];
-    const remote=[
-      'https://cdnjs.cloudflare.com/ajax/libs/gsap/3.13.0/gsap.min.js',
-      'https://cdnjs.cloudflare.com/ajax/libs/gsap/3.13.0/ScrollTrigger.min.js',
-      'https://unpkg.com/lenis@1.3.26/dist/lenis.min.js',
-      'https://unpkg.com/lenis@1.3.26/dist/lenis.css'
-    ];
     local.forEach(url=>fetch(url,{cache:'force-cache',credentials:'same-origin'}).catch(()=>{}));
-    remote.forEach(url=>fetch(url,{mode:'no-cors',cache:'force-cache'}).catch(()=>{}));
   }
 
   function cameFromMainApp(){
@@ -65,11 +59,11 @@
 
   function activeSectionFromHash(){
     const raw = location.hash.replace(/^#/, '').toLowerCase();
-    return valid.has(raw) ? raw : 'profile';
+    return valid.has(raw) ? raw : 'overview';
   }
 
   function applySection(name, {updateUrl=false} = {}){
-    if(!valid.has(name)) name = 'profile';
+    if(!valid.has(name)) name = 'overview';
     $all('[data-panel]').forEach(button => {
       const active = button.dataset.panel === name;
       button.classList.toggle('active', active);
@@ -135,6 +129,7 @@
     applySection(activeSectionFromHash());
   }
 
+  window.DLavieAccountFlow={applySection,activeSectionFromHash};
   if(document.readyState === 'loading') document.addEventListener('DOMContentLoaded', bind, {once:true});
   else bind();
 })();
