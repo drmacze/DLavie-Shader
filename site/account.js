@@ -15,16 +15,45 @@
   const accountUrl = (params='') => `${location.origin}${location.pathname}${params}`;
   const nextTarget = () => new URLSearchParams(location.search).get('next') === 'community' ? 'community.html' : null;
   const cleanUsername = v => String(v||'').toLowerCase().replace(/[^a-z0-9_]+/g,'').slice(0,24);
-  const initials = name => String(name||'?').trim().split(/\s+/).slice(0,2).map(x=>x[0]||'').join('').toUpperCase() || '?';
 
   function toast(message){ const el=$('#accountToast'); if(!el)return; el.textContent=message; el.classList.add('show'); clearTimeout(toast.t); toast.t=setTimeout(()=>el.classList.remove('show'),2200); }
   function message(text,type=''){ const el=$('#authMessage'); if(!el)return; el.hidden=!text; el.textContent=text||''; el.className=`auth-message${type?' '+type:''}`; }
   function setBusy(form,busy){ const b=form?.querySelector('button[type="submit"]'); if(b){b.disabled=busy; b.dataset.oldText ||= b.textContent; b.textContent=busy?'Please wait…':b.dataset.oldText;} }
+  const wait = ms => new Promise(resolve => setTimeout(resolve,ms));
+
+  function persistHints(data){
+    try{
+      const a=data?.account,u=data?.user;
+      if(!a||!u)return;
+      localStorage.setItem('dlavie.auth.state.v1',JSON.stringify({signedIn:true,userId:u.id}));
+      localStorage.setItem('dlavie.profile.cache.v1',JSON.stringify({username:a.username,display_name:a.display_name,avatar:a.avatar_seed}));
+    }catch{}
+  }
+  function clearHints(){
+    try{
+      localStorage.removeItem('dlavie.auth.state.v1');
+      localStorage.removeItem('dlavie.profile.cache.v1');
+    }catch{}
+  }
+
+  async function restorePersistedSession(){
+    let session=null;
+    try{ session=(await sb.auth.getSession()).data?.session||null; }catch{}
+    if(session)return session;
+
+    // WebKit/BFCache can resume the document before Supabase's persisted storage is
+    // immediately visible. A short second read avoids incorrectly showing login.
+    await wait(180);
+    try{ session=(await sb.auth.getSession()).data?.session||null; }catch{}
+    if(session)return session;
+
+    try{ session=(await sb.auth.refreshSession()).data?.session||null; }catch{}
+    return session;
+  }
 
   async function currentSession(){
     if(state.session) return state.session;
-    const {data:{session}}=await sb.auth.getSession();
-    state.session=session||null;
+    state.session=await restorePersistedSession();
     return state.session;
   }
 
@@ -63,31 +92,38 @@
     statusEl.textContent=data?'Available':'Not available'; statusEl.style.color=data?'#79e6ad':'#ff92a7'; return !!data;
   }
 
-  function avatarStyle(seed='dlavie'){
-    let h=0; for(const c of seed)h=((h<<5)-h+c.charCodeAt(0))|0;
-    const pairs=[['#3ab7f4','#3157d8'],['#ff4f8f','#8e3ce8'],['#f4c94c','#ed7e39'],['#23d778','#168e62'],['#a7b0ff','#5a61d5'],['#ff8b68','#c94d5b']]; return pairs[Math.abs(h)%pairs.length];
-  }
-
   async function loadAccount(){
     const data=await accountApi('me'); state.data=data; renderAccount(data); return data;
   }
   function renderAccount(data){
     const a=data.account,m=data.member,u=data.user;
+    persistHints(data);
     $('#authView').hidden=true; $('#accountView').hidden=false;
     $('#accountDisplay').textContent=a.display_name; $('#accountUsername').textContent='@'+a.username; $('#accountEmail').textContent=u.email||'';
     $('#verifiedBadge').hidden=!u.email_confirmed_at; $('#roleBadge').textContent=(m?.role||'member').toUpperCase(); $('#communityRole').textContent=(m?.role||'member').toUpperCase();
     $('#createdDate').textContent=new Date(a.created_at).toLocaleDateString([], {year:'numeric',month:'short',day:'numeric'}); $('#emailState').textContent=u.email_confirmed_at?'Verified':'Unverified';
-    $('#profileDisplayName').value=a.display_name||''; $('#profileBio').value=a.bio||''; $('#profileAvatarUrl').value=a.avatar_url||''; $('#bioCount').textContent=String((a.bio||'').length);
+    $('#profileDisplayName').value=a.display_name||''; $('#profileBio').value=a.bio||''; $('#bioCount').textContent=String((a.bio||'').length); window.DLavieAccountUI?.setAvatar?.(a.avatar_seed);
     $('#newUsername').value=a.username||''; $('#deleteUsernameHint').textContent=a.username; $('#deleteConfirmation').value='';
     const pref=a.preferences||{}; $('#prefCommunity').checked=pref.community_notifications!==false; $('#prefEmail').checked=pref.email_notifications!==false; $('#prefTheme').value=pref.theme==='system'?'system':'dark';
-    const av=$('#accountAvatar'); av.textContent=initials(a.display_name); if(a.avatar_url){av.style.backgroundImage=`url(${JSON.stringify(a.avatar_url).slice(1,-1)})`;}else{const p=avatarStyle(a.avatar_seed);av.style.backgroundImage='none';av.style.background=`linear-gradient(145deg,${p[0]},${p[1]})`;}
+    window.DLavieAccountUI?.setAvatar?.(a.avatar_seed);
   }
 
   async function applySession(session){
     state.session=session||null;
     if(!session){ $('#accountView').hidden=true; $('#authView').hidden=false; return; }
-    try{ await loadAccount(); const next=nextTarget(); if(next && new URLSearchParams(location.search).get('complete')==='1') location.replace(next); }
-    catch(e){ message(e.message,'error'); $('#accountView').hidden=true; $('#authView').hidden=false; }
+    try{
+      await loadAccount();
+      const next=nextTarget(); if(next && new URLSearchParams(location.search).get('complete')==='1') location.replace(next);
+    }catch(firstError){
+      // Do not interpret a transient profile/backend failure as an Auth logout.
+      await wait(220);
+      try{ await loadAccount(); }
+      catch(error){
+        message(error.message||firstError.message||'Could not load account data.','error');
+        $('#accountView').hidden=true;
+        $('#authView').hidden=false;
+      }
+    }
   }
 
   async function signUpWithRedirect(payload){
@@ -126,16 +162,16 @@
   function bindDashboard(){
     $$('[data-panel]').forEach(b=>b.addEventListener('click',()=>setPanel(b.dataset.panel)));
     $('#profileBio')?.addEventListener('input',()=>$('#bioCount').textContent=String($('#profileBio').value.length));
-    $('#profileForm')?.addEventListener('submit',async e=>{e.preventDefault();const f=e.currentTarget;setBusy(f,true);try{await accountApi('update_profile',{display_name:$('#profileDisplayName').value.trim(),bio:$('#profileBio').value,avatar_url:$('#profileAvatarUrl').value.trim(),preferences:state.data?.account?.preferences||{}});await loadAccount();$('#profileSaveState').textContent='Saved';toast('Profile saved.')}catch(err){toast(err.message)}finally{setBusy(f,false)}});
+    $('#profileForm')?.addEventListener('submit',async e=>{e.preventDefault();const f=e.currentTarget;setBusy(f,true);try{await accountApi('update_profile',{display_name:$('#profileDisplayName').value.trim(),bio:$('#profileBio').value,avatar_id:window.DLavieAccountUI?.selectedAvatar?.()||state.data?.account?.avatar_seed,preferences:state.data?.account?.preferences||{}});await loadAccount();$('#profileSaveState').textContent='Saved';toast('Profile saved.')}catch(err){toast(err.message)}finally{setBusy(f,false)}});
     $('#usernameForm')?.addEventListener('submit',async e=>{e.preventDefault();const f=e.currentTarget;setBusy(f,true);try{const username=cleanUsername($('#newUsername').value);if(username!==state.data.account.username){const available=await checkUsername($('#newUsername'),$('#newUsernameStatus'));if(!available)throw new Error('Username is not available.');}await accountApi('change_username',{username});await loadAccount();toast('Username updated.')}catch(err){toast(err.message)}finally{setBusy(f,false)}});
     $('#emailForm')?.addEventListener('submit',async e=>{e.preventDefault();const f=e.currentTarget;setBusy(f,true);try{const email=$('#newEmail').value.trim();if(!email)throw new Error('Enter a new email address.');const {error}=await sb.auth.updateUser({email});if(error)throw error;toast('Check your email to confirm the change.');}catch(err){toast(err.message)}finally{setBusy(f,false)}});
     $('#resendVerification')?.addEventListener('click',async()=>{try{const email=state.data?.user?.email;if(!email)throw new Error('Email unavailable.');let {error}=await sb.auth.resend({type:'signup',email,options:{emailRedirectTo:accountUrl('?verified=1')}});if(error&&/redirect|not allowed|url/i.test(error.message||''))({error}=await sb.auth.resend({type:'signup',email}));if(error)throw error;toast('Verification email sent.');}catch(err){toast(err.message)}});
     $('#passwordForm')?.addEventListener('submit',async e=>{e.preventDefault();const f=e.currentTarget;setBusy(f,true);try{const oldp=$('#currentPassword').value,newp=$('#newPassword').value,c=$('#newPasswordConfirm').value;if(newp!==c)throw new Error('Password confirmation does not match.');if(passwordScore(newp)<2)throw new Error('Use a stronger new password.');const email=state.data?.user?.email;const {error:reauth}=await sb.auth.signInWithPassword({email,password:oldp});if(reauth)throw new Error('Current password is incorrect.');const {error}=await sb.auth.updateUser({password:newp});if(error)throw error;f.reset();toast('Password updated.');}catch(err){toast(err.message)}finally{setBusy(f,false)}});
     $('#preferencesForm')?.addEventListener('submit',async e=>{e.preventDefault();const f=e.currentTarget;setBusy(f,true);try{await accountApi('update_profile',{preferences:{community_notifications:$('#prefCommunity').checked,email_notifications:$('#prefEmail').checked,theme:$('#prefTheme').value}});await loadAccount();toast('Preferences saved.')}catch(err){toast(err.message)}finally{setBusy(f,false)}});
-    $('#signOutButton')?.addEventListener('click',async()=>{await sb.auth.signOut({scope:'local'});state.session=null;location.replace('account.html')});
-    $('#signOutAll')?.addEventListener('click',async()=>{try{const {error}=await sb.auth.signOut({scope:'global'});if(error)throw error;state.session=null;location.replace('account.html');}catch(err){toast(err.message)}});
+    $('#signOutButton')?.addEventListener('click',async()=>{await sb.auth.signOut({scope:'local'});state.session=null;clearHints();location.replace('account.html')});
+    $('#signOutAll')?.addEventListener('click',async()=>{try{const {error}=await sb.auth.signOut({scope:'global'});if(error)throw error;state.session=null;clearHints();location.replace('account.html');}catch(err){toast(err.message)}});
     $('#exportData')?.addEventListener('click',async()=>{try{const data=await accountApi('export_account');const blob=new Blob([JSON.stringify(data,null,2)],{type:'application/json'});const url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download=`dlavie-account-${state.data.account.username}.json`;a.click();setTimeout(()=>URL.revokeObjectURL(url),1000);toast('Export created.')}catch(err){toast(err.message)}});
-    $('#deleteAccount')?.addEventListener('click',async()=>{const confirm=$('#deleteConfirmation').value.trim();if(confirm.toLowerCase()!==String(state.data?.account?.username||'').toLowerCase()){toast('Type your exact username to confirm.');return;}if(!window.confirm('Permanently delete this DLavie account? This cannot be undone.'))return;try{await accountApi('delete_account',{confirm});await sb.auth.signOut({scope:'local'}).catch(()=>{});state.session=null;localStorage.removeItem('dlavie.community.session.v1');location.replace('./#home');}catch(err){toast(err.message)}});
+    $('#deleteAccount')?.addEventListener('click',async()=>{const confirm=$('#deleteConfirmation').value.trim();if(confirm.toLowerCase()!==String(state.data?.account?.username||'').toLowerCase()){toast('Type your exact username to confirm.');return;}if(!window.confirm('Permanently delete this DLavie account? This cannot be undone.'))return;try{await accountApi('delete_account',{confirm});await sb.auth.signOut({scope:'local'}).catch(()=>{});state.session=null;clearHints();localStorage.removeItem('dlavie.community.session.v1');location.replace('./#home');}catch(err){toast(err.message)}});
   }
 
   function handleAuthEvent(event,session){
@@ -150,6 +186,7 @@
       }
       if(event==='SIGNED_OUT'){
         state.data=null;
+        clearHints();
         $('#accountView').hidden=true;
         $('#authView').hidden=false;
         if(!state.recovery)setAuthMode('login');
@@ -165,10 +202,11 @@
     if(params.get('mode')==='register')setAuthMode('register');
     if(params.get('mode')==='reset'){state.recovery=true;setAuthMode('reset-password')}
 
-    const {data:{session}}=await sb.auth.getSession();
+    const session=await restorePersistedSession();
     state.session=session||null;
     if(session&&!state.recovery)await applySession(session);
     else if(!state.recovery){$('#authView').hidden=false;$('#accountView').hidden=true;}
+    document.body.classList.add('account-auth-ready');
 
     sb.auth.onAuthStateChange(handleAuthEvent);
     if(params.get('verified')==='1'&&!session)message('Email confirmation received. You can sign in now.','success');
