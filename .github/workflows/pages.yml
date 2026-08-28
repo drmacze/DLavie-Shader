@@ -37,8 +37,7 @@ jobs:
           touch _site/.nojekyll
 
           # Keep the fast pre-home-polish architecture, then layer the lightweight
-          # Home refinement and theme locally. No font/animation/auth/API request is
-          # introduced on the Home render path.
+          # Home refinement and mobile interaction polish locally.
           for html in _site/index.html _site/site/index.html; do
             sed -i '/fonts.googleapis.com/d' "$html"
             sed -i '/fonts.gstatic.com/d' "$html"
@@ -61,23 +60,25 @@ jobs:
           # Make this transform idempotent across deployments.
           text = re.sub(r'\s*<link[^>]+href="home-refine\.css(?:\?v=\d+)?"[^>]*>', '', text)
           text = re.sub(r'\s*<script[^>]+src="home-refine\.js(?:\?v=\d+)?"[^>]*></script>', '', text)
+          text = re.sub(r'\s*<link[^>]+href="mobile-refine\.css(?:\?v=\d+)?"[^>]*>', '', text)
+          text = re.sub(r'\s*<script[^>]+src="mobile-refine\.js(?:\?v=\d+)?"[^>]*></script>', '', text)
           text = re.sub(r'\s*<script data-dlavie-theme-boot>.*?</script>', '', text, flags=re.S)
 
           theme_boot = '''  <script data-dlavie-theme-boot>(function(){try{var t=localStorage.getItem('dlavie.theme.v1');if(t!=='light'&&t!=='dark')t=matchMedia('(prefers-color-scheme: light)').matches?'light':'dark';document.documentElement.dataset.theme=t;}catch(e){document.documentElement.dataset.theme='dark';}})();</script>'''
           text = text.replace('  <title>DLavie</title>', '  <title>DLavie</title>\n' + theme_boot, 1)
 
-          text = re.sub(r'href="modrinth\.css(?:\?v=\d+)?"', 'href="modrinth.css?v=50"', text)
+          text = re.sub(r'href="modrinth\.css(?:\?v=\d+)?"', 'href="modrinth.css?v=51"', text)
           text = text.replace(
-              '<link rel="stylesheet" href="modrinth.css?v=50">',
-              '<link rel="stylesheet" href="modrinth.css?v=50">\n  <link rel="stylesheet" href="home-refine.css?v=50">',
+              '<link rel="stylesheet" href="modrinth.css?v=51">',
+              '<link rel="stylesheet" href="modrinth.css?v=51">\n  <link rel="stylesheet" href="home-refine.css?v=51">\n  <link rel="stylesheet" href="mobile-refine.css?v=51">',
               1,
           )
 
           text = re.sub(r'\s*<script src="auth-status-fix\.js(?:\?v=\d+)?"></script>', '', text)
-          text = re.sub(r'src="modrinth\.js(?:\?v=\d+)?"', 'src="modrinth.js?v=50"', text)
+          text = re.sub(r'src="modrinth\.js(?:\?v=\d+)?"', 'src="modrinth.js?v=51"', text)
           text = text.replace(
-              '<script src="modrinth.js?v=50"></script>',
-              '<script src="modrinth.js?v=50"></script>\n  <script src="auth-status-fix.js?v=50"></script>\n  <script src="home-refine.js?v=50"></script>',
+              '<script src="modrinth.js?v=51"></script>',
+              '<script src="modrinth.js?v=51"></script>\n  <script src="auth-status-fix.js?v=51"></script>\n  <script src="home-refine.js?v=51"></script>\n  <script src="mobile-refine.js?v=51"></script>',
               1,
           )
           path.write_text(text)
@@ -94,7 +95,7 @@ jobs:
           # not the old home-polish composition.
           text = text.replace('  loadHomePolish();', '  // Refined pre-polish Home: old home-polish layer intentionally disabled.', 1)
           text = text.replace("    scheduleIdle(()=>ensureSession(), IS_TOUCH ? 2200 : 1200);", "    // No automatic Supabase request on Home. Auth resolves on demand.")
-          text = re.sub(r"core\.src='modrinth-core\.js(?:\?v=\d+)?';", "core.src='modrinth-core.js?v=50';", text)
+          text = re.sub(r"core\.src='modrinth-core\.js(?:\?v=\d+)?';", "core.src='modrinth-core.js?v=51';", text)
           path.write_text(text)
           PY
           done
