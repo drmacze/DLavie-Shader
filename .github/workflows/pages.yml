@@ -36,9 +36,9 @@ jobs:
           cp brand/dlavie-logo.svg _site/brand/dlavie-logo.svg
           touch _site/.nojekyll
 
-          # Restore the original pre-home-polish Modrinth-style Home.
-          # Performance fixes stay: no blocking font/animation CDNs, no background
-          # Supabase request on Home, and GitHub metadata only loads on project pages.
+          # Keep the fast pre-home-polish architecture, then layer the lightweight
+          # Home refinement and theme locally. No font/animation/auth/API request is
+          # introduced on the Home render path.
           for html in _site/index.html _site/site/index.html; do
             sed -i '/fonts.googleapis.com/d' "$html"
             sed -i '/fonts.gstatic.com/d' "$html"
@@ -54,17 +54,30 @@ jobs:
           path = pathlib.Path(sys.argv[1])
           text = path.read_text()
 
-          # Explicitly remove every home-polish layer. This restores the exact
-          # visual structure that existed before commit 425ba6b introduced it.
+          # Never load the older experimental home-polish layer.
           text = re.sub(r'\s*<link[^>]+href="home-polish\.css(?:\?v=\d+)?"[^>]*>', '', text)
           text = re.sub(r'\s*<script[^>]+src="home-polish\.js(?:\?v=\d+)?"[^>]*></script>', '', text)
 
-          text = re.sub(r'href="modrinth\.css(?:\?v=\d+)?"', 'href="modrinth.css?v=49"', text)
-          text = re.sub(r'\s*<script src="auth-status-fix\.js(?:\?v=\d+)?"></script>', '', text)
-          text = re.sub(r'src="modrinth\.js(?:\?v=\d+)?"', 'src="modrinth.js?v=49"', text)
+          # Make this transform idempotent across deployments.
+          text = re.sub(r'\s*<link[^>]+href="home-refine\.css(?:\?v=\d+)?"[^>]*>', '', text)
+          text = re.sub(r'\s*<script[^>]+src="home-refine\.js(?:\?v=\d+)?"[^>]*></script>', '', text)
+          text = re.sub(r'\s*<script data-dlavie-theme-boot>.*?</script>', '', text, flags=re.S)
+
+          theme_boot = '''  <script data-dlavie-theme-boot>(function(){try{var t=localStorage.getItem('dlavie.theme.v1');if(t!=='light'&&t!=='dark')t=matchMedia('(prefers-color-scheme: light)').matches?'light':'dark';document.documentElement.dataset.theme=t;}catch(e){document.documentElement.dataset.theme='dark';}})();</script>'''
+          text = text.replace('  <title>DLavie</title>', '  <title>DLavie</title>\n' + theme_boot, 1)
+
+          text = re.sub(r'href="modrinth\.css(?:\?v=\d+)?"', 'href="modrinth.css?v=50"', text)
           text = text.replace(
-              '<script src="modrinth.js?v=49"></script>',
-              '<script src="modrinth.js?v=49"></script>\n  <script src="auth-status-fix.js?v=49"></script>',
+              '<link rel="stylesheet" href="modrinth.css?v=50">',
+              '<link rel="stylesheet" href="modrinth.css?v=50">\n  <link rel="stylesheet" href="home-refine.css?v=50">',
+              1,
+          )
+
+          text = re.sub(r'\s*<script src="auth-status-fix\.js(?:\?v=\d+)?"></script>', '', text)
+          text = re.sub(r'src="modrinth\.js(?:\?v=\d+)?"', 'src="modrinth.js?v=50"', text)
+          text = text.replace(
+              '<script src="modrinth.js?v=50"></script>',
+              '<script src="modrinth.js?v=50"></script>\n  <script src="auth-status-fix.js?v=50"></script>\n  <script src="home-refine.js?v=50"></script>',
               1,
           )
           path.write_text(text)
@@ -77,11 +90,11 @@ jobs:
           path = pathlib.Path(sys.argv[1])
           text = path.read_text()
 
-          # The source loader still knows how to load the later polish layer.
-          # Disable that call in the deployed build so Home stays pre-polish.
-          text = text.replace('  loadHomePolish();', '  // Pre-polish Modrinth Home: intentionally no home-polish layer.', 1)
+          # Keep the original Modrinth-style DOM. home-refine is a small local layer,
+          # not the old home-polish composition.
+          text = text.replace('  loadHomePolish();', '  // Refined pre-polish Home: old home-polish layer intentionally disabled.', 1)
           text = text.replace("    scheduleIdle(()=>ensureSession(), IS_TOUCH ? 2200 : 1200);", "    // No automatic Supabase request on Home. Auth resolves on demand.")
-          text = re.sub(r"core\.src='modrinth-core\.js(?:\?v=\d+)?';", "core.src='modrinth-core.js?v=49';", text)
+          text = re.sub(r"core\.src='modrinth-core\.js(?:\?v=\d+)?';", "core.src='modrinth-core.js?v=50';", text)
           path.write_text(text)
           PY
           done
