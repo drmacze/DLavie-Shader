@@ -37,7 +37,7 @@ jobs:
           cp brand/dlavie-logo.svg _site/brand/dlavie-logo.svg
           touch _site/.nojekyll
 
-          # Main DLavie site: keep first paint local and reduce request count.
+          # Main site: all first-load visual resources stay local.
           for html in _site/index.html _site/site/index.html; do
             sed -i '/fonts.googleapis.com/d' "$html"
             sed -i '/fonts.gstatic.com/d' "$html"
@@ -46,17 +46,23 @@ jobs:
             sed -i '/cdnjs.cloudflare.com\/ajax\/libs\/gsap\/3.13.0\/ScrollTrigger.min.js/d' "$html"
             sed -i '/unpkg.com\/lenis@1.3.26\/dist\/lenis.min.js/d' "$html"
             sed -i 's#\.\./pack_icon.png#assets/dlavie-shader.svg#g' "$html"
-            sed -i 's/<img src="https:\/\/cdn.simpleicons.org\//<img loading="lazy" decoding="async" src="https:\/\/cdn.simpleicons.org\//g' "$html"
 
             python3 - "$html" <<'PY'
           import pathlib, re, sys
           path = pathlib.Path(sys.argv[1])
           text = path.read_text()
 
+          # No third-party icon requests on the main site. These hidden-route images
+          # were enough to keep some iOS in-app browsers in a loading state.
+          text = text.replace('https://cdn.simpleicons.org/github/FFFFFF', 'assets/icon-github.svg?v=63')
+          text = text.replace('https://cdn.simpleicons.org/apple/FFFFFF', 'assets/icon-ios.svg?v=63')
+          text = text.replace('https://cdn.simpleicons.org/android/3DDC84', 'assets/icon-android.svg?v=63')
+          text = re.sub(r'<img\s+src="(assets/icon-(?:github|ios|android)\.svg\?v=63)"', r'<img decoding="async" src="\1"', text)
+
           css_names = (
               'modrinth','home-polish','home-refine','mobile-refine','modrinth-v2',
               'modrinth-home','hero-word-fix','light-vibrant','ui-icons-v5',
-              'home-fast-v61','dlavie-home-v61'
+              'home-fast-v61','home-fast-v62','dlavie-home-v61','dlavie-home-v63'
           )
           for name in css_names:
               text = re.sub(rf'\s*<link[^>]+href="{name}\.css(?:\?v=\d+)?"[^>]*>', '', text)
@@ -64,7 +70,7 @@ jobs:
           js_names = (
               'modrinth','home-polish','home-refine','mobile-refine','modrinth-v2',
               'modrinth-home','auth-status-fix','account-nav','account-site-bridge',
-              'ui-icons-v5','home-fast-v61','dlavie-app-v61'
+              'ui-icons-v5','home-fast-v61','home-fast-v62','dlavie-app-v61','dlavie-app-v63'
           )
           for name in js_names:
               text = re.sub(rf'\s*<script[^>]+src="{name}\.js(?:\?v=\d+)?"[^>]*></script>', '', text)
@@ -73,16 +79,16 @@ jobs:
           text = re.sub(r'\s*<link[^>]+rel="icon"[^>]*>', '', text)
 
           theme_boot = '''  <script data-dlavie-theme-boot>(function(){try{var t=localStorage.getItem('dlavie.theme.v1');if(!['light','dark','system'].includes(t))t='light';var r=t==='system'?(matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light'):t;document.documentElement.dataset.theme=r;var m=document.querySelector('meta[name="theme-color"]');if(m)m.content=r==='light'?'#f5f7f4':'#111113';}catch(e){document.documentElement.dataset.theme='light';}})();</script>'''
-          text = text.replace('  <title>DLavie</title>', '  <title>DLavie</title>\n  <link rel="icon" type="image/svg+xml" href="assets/dlavie-mark.svg?v=61">\n' + theme_boot, 1)
-          text = re.sub(r'assets/dlavie-mark\.svg(?:\?v=\d+)?', 'assets/dlavie-mark.svg?v=61', text)
+          text = text.replace('  <title>DLavie</title>', '  <title>DLavie</title>\n  <link rel="icon" type="image/svg+xml" href="assets/dlavie-mark.svg?v=63">\n' + theme_boot, 1)
+          text = re.sub(r'assets/dlavie-mark\.svg(?:\?v=\d+)?', 'assets/dlavie-mark.svg?v=63', text)
 
-          text = text.replace('</head>', '  <link rel="stylesheet" href="dlavie-home-v61.css?v=62">\n</head>', 1)
-          text = text.replace('</body>', '  <script src="dlavie-app-v61.js?v=62"></script>\n</body>', 1)
+          text = text.replace('</head>', '  <link rel="stylesheet" href="dlavie-home-v63.css?v=63">\n</head>', 1)
+          text = text.replace('</body>', '  <script src="dlavie-app-v63.js?v=63"></script>\n</body>', 1)
           path.write_text(text)
           PY
           done
 
-          # Account: preserve the already-stable Account/Login path and v60 icon polish.
+          # Account/Login stays on its already-stable path.
           for html in _site/account.html _site/site/account.html; do
             python3 - "$html" <<'PY'
           import pathlib, re, sys
@@ -99,14 +105,12 @@ jobs:
           text = text.replace('<title>Account — DLavie</title>', '<title>Account — DLavie</title>\n  <link rel="icon" type="image/svg+xml" href="assets/dlavie-mark.svg?v=60">\n' + theme_boot, 1)
           text = re.sub(r'assets/dlavie-mark\.svg(?:\?v=\d+)?', 'assets/dlavie-mark.svg?v=60', text)
           text = text.replace('</head>', '  <link rel="stylesheet" href="account-plus.css?v=59">\n  <link rel="stylesheet" href="account-plus-fix.css?v=59">\n  <link rel="stylesheet" href="account-ui-v3.css?v=59">\n  <link rel="stylesheet" href="account-ui-v3-fix.css?v=59">\n  <link rel="stylesheet" href="account-bottom-menu.css?v=59">\n  <link rel="stylesheet" href="ui-icons-v5.css?v=60">\n</head>', 1)
-
           text = re.sub(r'<script src="account\.js(?:\?v=\d+)?"></script>', '<script src="account-clean.js?v=59"></script>\n  <script src="account-plus.js?v=59"></script>\n  <script src="account-theme-restore.js?v=59"></script>\n  <script src="account-export-plus.js?v=59"></script>\n  <script src="account.js?v=59"></script>', text, count=1)
           text = re.sub(r'<script src="account-flow\.js(?:\?v=\d+)?"></script>', '<script src="account-flow.js?v=59"></script>\n  <script src="account-ui-v3.js?v=59"></script>\n  <script src="account-bottom-menu.js?v=59"></script>\n  <script src="ui-icons-v5.js?v=60"></script>', text, count=1)
           path.write_text(text)
           PY
           done
 
-          # Strengthen password acceptance from score 2 to score 3 without changing Supabase Auth behavior.
           for js in _site/account.js _site/site/account.js; do
             python3 - "$js" <<'PY'
           import pathlib, re, sys
@@ -117,7 +121,8 @@ jobs:
           PY
           done
 
-          # Home app: no old visual loader, no automatic Supabase request, and no dynamic core request.
+          # Main app: no old visual loader, no automatic Supabase request,
+          # and no dynamically inserted core script.
           for js in _site/modrinth.js _site/site/modrinth.js; do
             python3 - "$js" <<'PY'
           import pathlib, re, sys
@@ -134,7 +139,7 @@ jobs:
           PY
           done
 
-          # Only fetch GitHub repository metadata on the project page.
+          # Repository metadata is fetched only when a project page is opened.
           for js in _site/modrinth-core.js _site/site/modrinth-core.js; do
             python3 - "$js" <<'PY'
           import pathlib, sys
@@ -154,7 +159,7 @@ jobs:
           PY
           done
 
-          # One CSS + one JS request for the main site. This is intentionally not applied to Account.
+          # One local CSS request + one local JS request for the entire main site.
           for root in _site _site/site; do
             cat "$root/modrinth.css" \
                 "$root/modrinth-v2.css" \
@@ -162,7 +167,7 @@ jobs:
                 "$root/hero-word-fix.css" \
                 "$root/light-vibrant.css" \
                 "$root/ui-icons-v5.css" \
-                "$root/home-fast-v61.css" > "$root/dlavie-home-v61.css"
+                "$root/home-fast-v62.css" > "$root/dlavie-home-v63.css"
 
             cat "$root/modrinth.js" \
                 "$root/modrinth-core.js" \
@@ -172,7 +177,7 @@ jobs:
                 "$root/account-nav.js" \
                 "$root/account-site-bridge.js" \
                 "$root/ui-icons-v5.js" \
-                "$root/home-fast-v61.js" > "$root/dlavie-app-v61.js"
+                "$root/home-fast-v62.js" > "$root/dlavie-app-v63.js"
           done
 
       - uses: actions/upload-pages-artifact@v3
