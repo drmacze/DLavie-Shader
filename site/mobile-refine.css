@@ -1,0 +1,228 @@
+/* DLavie mobile interaction refinement.
+   Keeps the existing DOM/logic, but makes overlays compact and iPhone-friendly. */
+
+@media (max-width:760px){
+  /* Bottom navigation: compact, reachable, and clear of the iPhone home area. */
+  body{padding-bottom:76px}
+  .mobile-nav{
+    left:10px!important;
+    right:10px!important;
+    bottom:max(8px,env(safe-area-inset-bottom))!important;
+    width:auto!important;
+    height:58px!important;
+    min-height:58px!important;
+    padding:4px!important;
+    border-radius:17px!important;
+    gap:2px!important;
+  }
+  .mobile-nav a,.mobile-nav button{
+    min-height:48px!important;
+    height:48px!important;
+    margin:0!important;
+    padding:4px 8px!important;
+    border-radius:12px!important;
+  }
+  .mobile-nav svg{width:19px!important;height:19px!important}
+  .mobile-nav span{font-size:9.5px!important;line-height:1.1!important}
+
+  /* Dim only the page behind the menu; the menu itself no longer fills the viewport. */
+  .sheet-backdrop{
+    position:fixed!important;
+    inset:0!important;
+    z-index:88!important;
+    background:rgba(5,6,8,.48)!important;
+    backdrop-filter:blur(5px)!important;
+    -webkit-backdrop-filter:blur(5px)!important;
+  }
+
+  .mobile-sheet{
+    position:fixed!important;
+    z-index:89!important;
+    top:auto!important;
+    left:10px!important;
+    right:10px!important;
+    bottom:calc(74px + env(safe-area-inset-bottom))!important;
+    width:auto!important;
+    height:auto!important;
+    min-height:0!important;
+    max-height:min(72dvh,540px)!important;
+    padding:8px!important;
+    margin:0!important;
+    display:grid!important;
+    grid-template-columns:1fr!important;
+    gap:4px!important;
+    overflow:auto!important;
+    overscroll-behavior:contain!important;
+    border:1px solid var(--dlv-line-strong)!important;
+    border-radius:18px!important;
+    background:rgba(22,23,27,.97)!important;
+    box-shadow:0 22px 70px rgba(0,0,0,.38)!important;
+    transform:translateY(20px) scale(.985)!important;
+    transform-origin:bottom center!important;
+    opacity:0!important;
+    visibility:hidden!important;
+    pointer-events:none!important;
+    transition:transform .2s cubic-bezier(.22,.78,.2,1),opacity .16s ease,visibility .16s ease!important;
+  }
+  .mobile-sheet.open,
+  .mobile-sheet[aria-hidden="false"]{
+    transform:translateY(0) scale(1)!important;
+    opacity:1!important;
+    visibility:visible!important;
+    pointer-events:auto!important;
+  }
+  .sheet-handle{display:none!important}
+  .sheet-action{
+    width:100%!important;
+    min-height:50px!important;
+    height:50px!important;
+    margin:0!important;
+    padding:0 14px!important;
+    display:flex!important;
+    align-items:center!important;
+    justify-content:flex-start!important;
+    gap:12px!important;
+    border:0!important;
+    border-radius:12px!important;
+    background:transparent!important;
+    color:var(--text)!important;
+    font-size:14px!important;
+    line-height:1!important;
+    font-weight:700!important;
+    text-align:left!important;
+    box-shadow:none!important;
+  }
+  .sheet-action:hover,.sheet-action:active{background:rgba(255,255,255,.065)!important}
+  .sheet-action.primary{
+    background:rgba(255,255,255,.09)!important;
+    color:var(--text)!important;
+  }
+  .sheet-action svg,.sheet-action img{
+    width:20px!important;
+    height:20px!important;
+    flex:0 0 20px!important;
+  }
+  .theme-sheet-toggle{
+    margin-top:3px!important;
+    border-top:1px solid var(--dlv-line)!important;
+    border-radius:0 0 12px 12px!important;
+  }
+
+  /* Search: content-sized command panel instead of a large empty modal. */
+  .search-overlay{
+    position:fixed!important;
+    inset:0!important;
+    z-index:100!important;
+    padding:12px 10px calc(80px + env(safe-area-inset-bottom))!important;
+    display:flex!important;
+    align-items:flex-start!important;
+    justify-content:center!important;
+    overflow:auto!important;
+    background:rgba(5,6,8,.58)!important;
+    backdrop-filter:blur(8px)!important;
+    -webkit-backdrop-filter:blur(8px)!important;
+  }
+  .search-overlay[hidden]{display:none!important}
+  .search-dialog{
+    width:100%!important;
+    max-width:620px!important;
+    min-height:0!important;
+    height:auto!important;
+    max-height:min(70dvh,520px)!important;
+    margin:0!important;
+    padding:10px!important;
+    overflow:hidden!important;
+    border:1px solid var(--dlv-line-strong)!important;
+    border-radius:18px!important;
+    background:rgba(22,23,27,.98)!important;
+    box-shadow:0 24px 80px rgba(0,0,0,.42)!important;
+  }
+  .search-dialog-head{
+    width:100%!important;
+    margin:0!important;
+    padding:0!important;
+    display:grid!important;
+    grid-template-columns:minmax(0,1fr) 44px!important;
+    align-items:center!important;
+    gap:8px!important;
+  }
+  .search-dialog .search-field.large{
+    width:100%!important;
+    max-width:none!important;
+    height:46px!important;
+    min-height:46px!important;
+    margin:0!important;
+    padding:0 12px!important;
+    border-radius:12px!important;
+    background:rgba(255,255,255,.045)!important;
+  }
+  .search-dialog .search-field:focus-within{
+    border-color:rgba(244,201,76,.34)!important;
+    box-shadow:0 0 0 3px rgba(244,201,76,.08)!important;
+  }
+  .search-dialog input{
+    height:100%!important;
+    min-width:0!important;
+    padding:0!important;
+    font-size:16px!important;
+  }
+  .search-dialog input:focus,
+  .search-dialog input:focus-visible{
+    outline:none!important;
+    outline-offset:0!important;
+    box-shadow:none!important;
+  }
+  #searchClose{
+    width:44px!important;
+    height:44px!important;
+    min-width:44px!important;
+    border-radius:12px!important;
+  }
+  .search-results{
+    width:100%!important;
+    min-height:0!important;
+    max-height:calc(min(70dvh,520px) - 70px)!important;
+    margin:0!important;
+    padding:8px 0 0!important;
+    overflow:auto!important;
+    overscroll-behavior:contain!important;
+  }
+  .search-results>p{
+    margin:0!important;
+    padding:13px 12px!important;
+    border:0!important;
+    border-radius:11px!important;
+    background:transparent!important;
+    color:var(--muted)!important;
+    font-size:12.5px!important;
+    line-height:1.5!important;
+  }
+  .search-results a{
+    min-height:54px!important;
+    padding:9px 11px!important;
+    border-radius:11px!important;
+  }
+  .search-results a:hover,.search-results a:active{background:rgba(255,255,255,.06)!important}
+}
+
+@media (max-width:390px){
+  .mobile-sheet{left:8px!important;right:8px!important}
+  .sheet-action{min-height:47px!important;height:47px!important;font-size:13.5px!important}
+  .search-overlay{padding-left:8px!important;padding-right:8px!important}
+}
+
+html[data-theme="light"] .mobile-sheet{
+  background:rgba(252,252,253,.98)!important;
+  box-shadow:0 20px 58px rgba(25,31,40,.16)!important;
+}
+html[data-theme="light"] .search-dialog{
+  background:rgba(252,252,253,.99)!important;
+  box-shadow:0 20px 60px rgba(25,31,40,.16)!important;
+}
+html[data-theme="light"] .sheet-action:hover,
+html[data-theme="light"] .sheet-action:active,
+html[data-theme="light"] .sheet-action.primary,
+html[data-theme="light"] .search-results a:hover,
+html[data-theme="light"] .search-results a:active{
+  background:rgba(20,24,30,.055)!important;
+}
