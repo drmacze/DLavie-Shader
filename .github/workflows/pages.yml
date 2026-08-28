@@ -37,12 +37,13 @@ jobs:
           cp brand/dlavie-logo.svg _site/brand/dlavie-logo.svg
           touch _site/.nojekyll
 
-          # Preserve the full SPA as app.html. The public root is replaced later
-          # with a static-first Home that does not boot the SPA at all.
+          # Preserve the full DOM as app.html. The public root is replaced later
+          # with the static-first Home.
           cp _site/index.html _site/app.html
           cp _site/site/index.html _site/site/app.html
 
-          # Full application pages: Project, Update, Feedback, Voting, etc.
+          # Route-aware application shell. It intentionally does NOT ship the old
+          # monolithic SPA runtime; only the current route is initialized.
           for html in _site/app.html _site/site/app.html; do
             sed -i '/fonts.googleapis.com/d' "$html"
             sed -i '/fonts.gstatic.com/d' "$html"
@@ -57,15 +58,16 @@ jobs:
           path = pathlib.Path(sys.argv[1])
           text = path.read_text()
 
-          # All visual assets in the app remain local.
-          text = text.replace('https://cdn.simpleicons.org/github/FFFFFF', 'assets/icon-github.svg?v=64')
-          text = text.replace('https://cdn.simpleicons.org/apple/FFFFFF', 'assets/icon-ios.svg?v=64')
-          text = text.replace('https://cdn.simpleicons.org/android/3DDC84', 'assets/icon-android.svg?v=64')
+          text = text.replace('https://cdn.simpleicons.org/github/FFFFFF', 'assets/icon-github.svg?v=65')
+          text = text.replace('https://cdn.simpleicons.org/apple/FFFFFF', 'assets/icon-ios.svg?v=65')
+          text = text.replace('https://cdn.simpleicons.org/android/3DDC84', 'assets/icon-android.svg?v=65')
 
+          # Remove every old presentation/runtime layer from source HTML.
           css_names = (
               'modrinth','home-polish','home-refine','mobile-refine','modrinth-v2',
               'modrinth-home','hero-word-fix','light-vibrant','ui-icons-v5',
-              'home-fast-v61','home-fast-v62','dlavie-home-v61','dlavie-home-v63','dlavie-app-shell-v64'
+              'home-fast-v61','home-fast-v62','dlavie-home-v61','dlavie-home-v63',
+              'dlavie-app-shell-v64','dlavie-app-shell-v65','app-lite-v65'
           )
           for name in css_names:
               text = re.sub(rf'\s*<link[^>]+href="{name}\.css(?:\?v=\d+)?"[^>]*>', '', text)
@@ -73,7 +75,8 @@ jobs:
           js_names = (
               'modrinth','home-polish','home-refine','mobile-refine','modrinth-v2',
               'modrinth-home','auth-status-fix','account-nav','account-site-bridge',
-              'ui-icons-v5','home-fast-v61','home-fast-v62','dlavie-app-v61','dlavie-app-v63','dlavie-app-shell-v64'
+              'ui-icons-v5','home-fast-v61','home-fast-v62','dlavie-app-v61',
+              'dlavie-app-v63','dlavie-app-shell-v64','app-router-v65'
           )
           for name in js_names:
               text = re.sub(rf'\s*<script[^>]+src="{name}\.js(?:\?v=\d+)?"[^>]*></script>', '', text)
@@ -84,15 +87,15 @@ jobs:
 
           theme_boot = '''  <script data-dlavie-theme-boot>(function(){try{var t=localStorage.getItem('dlavie.theme.v1');if(!['light','dark','system'].includes(t))t='light';var r=t==='system'?(matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light'):t;document.documentElement.dataset.theme=r;}catch(e){document.documentElement.dataset.theme='light';}})();</script>'''
           app_guard = '''  <script>(function(){var h=(location.hash||'').replace(/^#\\/?/,'');if(!h||h==='home')location.replace('index.html');})();</script>'''
-          text = text.replace('  <title>DLavie</title>', '  <title>DLavie</title>\n  <link rel="icon" type="image/svg+xml" href="assets/dlavie-mark.svg?v=64">\n' + theme_boot + '\n' + app_guard, 1)
-          text = re.sub(r'assets/dlavie-mark\.svg(?:\?v=\d+)?', 'assets/dlavie-mark.svg?v=64', text)
-          text = text.replace('</head>', '  <link rel="stylesheet" href="dlavie-app-shell-v64.css?v=64">\n</head>', 1)
-          text = text.replace('</body>', '  <script src="dlavie-app-shell-v64.js?v=64"></script>\n</body>', 1)
+          text = text.replace('  <title>DLavie</title>', '  <title>DLavie</title>\n  <link rel="icon" type="image/svg+xml" href="assets/dlavie-mark.svg?v=65">\n' + theme_boot + '\n' + app_guard, 1)
+          text = re.sub(r'assets/dlavie-mark\.svg(?:\?v=\d+)?', 'assets/dlavie-mark.svg?v=65', text)
+          text = text.replace('</head>', '  <link rel="stylesheet" href="dlavie-app-shell-v65.css?v=65">\n</head>', 1)
+          text = text.replace('</body>', '  <script src="app-router-v65.js?v=65"></script>\n</body>', 1)
           path.write_text(text)
           PY
           done
 
-          # Account/Login stays on the known-stable Account v2/v5 path.
+          # Account/Login remains on its proven stable path.
           for html in _site/account.html _site/site/account.html; do
             python3 - "$html" <<'PY'
           import pathlib, re, sys
@@ -123,65 +126,16 @@ jobs:
           PY
           done
 
-          # Full app patches. Home itself is no longer rendered by this app.
-          for js in _site/modrinth.js _site/site/modrinth.js; do
-            python3 - "$js" <<'PY'
-          import pathlib, re, sys
-          path = pathlib.Path(sys.argv[1])
-          text = path.read_text()
-          text = text.replace('  loadHomePolish();', '  // Static Home is served by index.html.', 1)
-          text = text.replace("    scheduleIdle(()=>ensureSession(), IS_TOUCH ? 2200 : 1200);", "    // Auth resolves on demand.")
-          text = re.sub(
-              r"\n  const core=document\.createElement\('script'\);\n  core\.src='modrinth-core\.js(?:\?v=\d+)?';\n  core\.defer=true;\n  core\.onload=\(\)=>\{\n    injectAccountLinks\(\);\n    // No automatic Supabase request on Home\. Auth resolves on demand\.\n  \};\n  document\.head\.appendChild\(core\);",
-              "\n  injectAccountLinks();",
-              text,
-          )
-          path.write_text(text)
-          PY
-          done
-
-          for js in _site/modrinth-core.js _site/site/modrinth-core.js; do
-            python3 - "$js" <<'PY'
-          import pathlib, sys
-          path = pathlib.Path(sys.argv[1])
-          text = path.read_text()
-          text = text.replace(
-              "function route(){\n    const next = parseHash();",
-              "function route(){\n    const next = parseHash();\n    if(next.route==='home'){location.replace('index.html');return;}",
-              1,
-          )
-          text = text.replace(
-              "bindTabs();bindProjectActions();bindProjectSearch();bindFeedback();bindSearch();bindMobileSheet();renderVotes();renderVersions();loadProjectMeta();",
-              "bindTabs();bindProjectActions();bindProjectSearch();bindFeedback();bindSearch();bindMobileSheet();renderVotes();renderVersions();if(parseHash().route==='project')loadProjectMeta();",
-              1,
-          )
-          text = text.replace(
-              "window.addEventListener('hashchange',route);route();",
-              "window.addEventListener('hashchange',()=>{route();if(parseHash().route==='project'&&!state.repo)loadProjectMeta();});route();",
-              1,
-          )
-          path.write_text(text)
-          PY
-          done
-
-          # The full app bundle excludes every Home-only presentation layer.
+          # CSS still keeps the current product visual language, but drops the
+          # 10KB icon framework and every Home-only layer. JS is NOT bundled here.
           for root in _site _site/site; do
             cat "$root/modrinth.css" \
                 "$root/modrinth-v2.css" \
                 "$root/light-vibrant.css" \
-                "$root/ui-icons-v5.css" > "$root/dlavie-app-shell-v64.css"
-
-            cat "$root/modrinth.js" \
-                "$root/modrinth-core.js" \
-                "$root/auth-status-fix.js" \
-                "$root/modrinth-v2.js" \
-                "$root/account-nav.js" \
-                "$root/account-site-bridge.js" \
-                "$root/ui-icons-v5.js" > "$root/dlavie-app-shell-v64.js"
+                "$root/app-lite-v65.css" > "$root/dlavie-app-shell-v65.css"
           done
 
-          # Static-first Home is copied last. It contains inline CSS + tiny inline
-          # interaction JS, so the root has no stylesheet/script requests at all.
+          # Static-first Home stays independent from the app runtime.
           cp _site/home-static.html _site/index.html
           cp _site/site/home-static.html _site/site/index.html
 
