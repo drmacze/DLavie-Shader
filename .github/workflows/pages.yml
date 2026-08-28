@@ -37,8 +37,8 @@ jobs:
           cp brand/dlavie-logo.svg _site/brand/dlavie-logo.svg
           touch _site/.nojekyll
 
-          # Main site: keep the existing functional DOM, remove the old visual
-          # experiments, then apply one compact catalog-first presentation layer.
+          # Keep the existing functional DOM, remove previous visual layers,
+          # then apply the current DLavie + accurate Modrinth-home composition.
           for html in _site/index.html _site/site/index.html; do
             sed -i '/fonts.googleapis.com/d' "$html"
             sed -i '/fonts.gstatic.com/d' "$html"
@@ -54,8 +54,7 @@ jobs:
           path = pathlib.Path(sys.argv[1])
           text = path.read_text()
 
-          # Remove every previous home/mobile experiment from the deployed HTML.
-          for name in ('home-polish','home-refine','mobile-refine','modrinth-v2'):
+          for name in ('home-polish','home-refine','mobile-refine','modrinth-v2','modrinth-home'):
               text = re.sub(rf'\s*<link[^>]+href="{name}\.css(?:\?v=\d+)?"[^>]*>', '', text)
               text = re.sub(rf'\s*<script[^>]+src="{name}\.js(?:\?v=\d+)?"[^>]*></script>', '', text)
           text = re.sub(r'\s*<script data-dlavie-theme-boot>.*?</script>', '', text, flags=re.S)
@@ -63,18 +62,18 @@ jobs:
           theme_boot = '''  <script data-dlavie-theme-boot>(function(){try{var t=localStorage.getItem('dlavie.theme.v1');if(t!=='light'&&t!=='dark')t=matchMedia('(prefers-color-scheme: light)').matches?'light':'dark';document.documentElement.dataset.theme=t;}catch(e){document.documentElement.dataset.theme='dark';}})();</script>'''
           text = text.replace('  <title>DLavie</title>', '  <title>DLavie</title>\n' + theme_boot, 1)
 
-          text = re.sub(r'href="modrinth\.css(?:\?v=\d+)?"', 'href="modrinth.css?v=53"', text)
+          text = re.sub(r'href="modrinth\.css(?:\?v=\d+)?"', 'href="modrinth.css?v=54"', text)
           text = text.replace(
-              '<link rel="stylesheet" href="modrinth.css?v=53">',
-              '<link rel="stylesheet" href="modrinth.css?v=53">\n  <link rel="stylesheet" href="modrinth-v2.css?v=53">',
+              '<link rel="stylesheet" href="modrinth.css?v=54">',
+              '<link rel="stylesheet" href="modrinth.css?v=54">\n  <link rel="stylesheet" href="modrinth-v2.css?v=54">\n  <link rel="stylesheet" href="modrinth-home.css?v=54">',
               1,
           )
 
           text = re.sub(r'\s*<script src="auth-status-fix\.js(?:\?v=\d+)?"></script>', '', text)
-          text = re.sub(r'src="modrinth\.js(?:\?v=\d+)?"', 'src="modrinth.js?v=53"', text)
+          text = re.sub(r'src="modrinth\.js(?:\?v=\d+)?"', 'src="modrinth.js?v=54"', text)
           text = text.replace(
-              '<script src="modrinth.js?v=53"></script>',
-              '<script src="modrinth.js?v=53"></script>\n  <script src="auth-status-fix.js?v=53"></script>\n  <script src="modrinth-v2.js?v=53"></script>',
+              '<script src="modrinth.js?v=54"></script>',
+              '<script src="modrinth.js?v=54"></script>\n  <script src="auth-status-fix.js?v=54"></script>\n  <script src="modrinth-v2.js?v=54"></script>\n  <script src="modrinth-home.js?v=54"></script>',
               1,
           )
           path.write_text(text)
@@ -89,7 +88,7 @@ jobs:
           text = path.read_text()
           text = text.replace('  loadHomePolish();', '  // Old home-polish layer disabled.', 1)
           text = text.replace("    scheduleIdle(()=>ensureSession(), IS_TOUCH ? 2200 : 1200);", "    // Auth resolves on demand.")
-          text = re.sub(r"core\.src='modrinth-core\.js(?:\?v=\d+)?';", "core.src='modrinth-core.js?v=53';", text)
+          text = re.sub(r"core\.src='modrinth-core\.js(?:\?v=\d+)?';", "core.src='modrinth-core.js?v=54';", text)
           path.write_text(text)
           PY
           done
