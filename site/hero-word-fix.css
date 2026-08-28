@@ -1,0 +1,59 @@
+/* Stable rotating hero-word slot. Keeps the headline height fixed on Safari/iOS. */
+body.modrinth-home-v4 .home-hero h1 .mr-word-wrap{
+  position:relative!important;
+  display:block!important;
+  width:100%!important;
+  height:1.16em!important;
+  margin-top:.08em!important;
+  overflow:hidden!important;
+  color:var(--home-green)!important;
+  line-height:1.08!important;
+}
+
+body.modrinth-home-v4 .home-hero h1 .mr-word{
+  position:absolute!important;
+  inset:0!important;
+  display:block!important;
+  width:100%!important;
+  white-space:nowrap!important;
+  line-height:1.08!important;
+  opacity:0;
+  transform:translateY(.12em);
+  animation:dlvHeroWordFade 16s ease-in-out infinite!important;
+  will-change:opacity,transform;
+}
+
+body.modrinth-home-v4 .home-hero h1 .mr-word:nth-child(1){animation-delay:0s!important}
+body.modrinth-home-v4 .home-hero h1 .mr-word:nth-child(2){animation-delay:4s!important}
+body.modrinth-home-v4 .home-hero h1 .mr-word:nth-child(3){animation-delay:8s!important}
+body.modrinth-home-v4 .home-hero h1 .mr-word:nth-child(4){animation-delay:12s!important}
+
+@keyframes dlvHeroWordFade{
+  0%{opacity:0;transform:translateY(.12em)}
+  4%,21%{opacity:1;transform:translateY(0)}
+  25%,100%{opacity:0;transform:translateY(-.12em)}
+}
+
+@media(max-width:760px){
+  body.modrinth-home-v4 .home-hero h1{
+    line-height:1.02!important;
+    overflow:visible!important;
+  }
+  body.modrinth-home-v4 .home-hero h1 .mr-word-wrap{
+    height:1.18em!important;
+    margin-top:.10em!important;
+    line-height:1.1!important;
+  }
+  body.modrinth-home-v4 .home-hero h1 .mr-word{
+    line-height:1.1!important;
+  }
+}
+
+@media(max-width:390px){
+  body.modrinth-home-v4 .home-hero h1 .mr-word-wrap{height:1.2em!important}
+}
+
+@media(prefers-reduced-motion:reduce){
+  body.modrinth-home-v4 .home-hero h1 .mr-word{animation:none!important;display:none!important}
+  body.modrinth-home-v4 .home-hero h1 .mr-word:first-child{display:block!important;opacity:1!important;transform:none!important}
+}
