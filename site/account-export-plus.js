@@ -1,8 +1,8 @@
 (() => {
   'use strict';
-  const URL='https://ydaeukhqwishlrjyfktk.supabase.co';
+  const SUPABASE_URL='https://ydaeukhqwishlrjyfktk.supabase.co';
   const KEY='sb_publishable_XNXU6SVeM-D477Ymy1ORsw_4hCHOll9';
-  const API=`${URL}/functions/v1/dlavie-account`;
+  const API=`${SUPABASE_URL}/functions/v1/dlavie-account`;
   const DOWNLOAD_KEY='dlavie.download.history.v1';
   let client=null;
 
@@ -17,7 +17,7 @@
     event.preventDefault();event.stopImmediatePropagation();
     const button=event.currentTarget;button.disabled=true;
     try{
-      client ||= window.supabase.createClient(URL,KEY,{auth:{persistSession:true,autoRefreshToken:true,detectSessionInUrl:false}});
+      client ||= window.supabase.createClient(SUPABASE_URL,KEY,{auth:{persistSession:true,autoRefreshToken:true,detectSessionInUrl:false}});
       const {data}=await client.auth.getSession();const session=data?.session;
       if(!session)throw new Error('Silakan masuk terlebih dahulu.');
       const [server,saved]=await Promise.all([
@@ -36,7 +36,7 @@
       };
       const username=server?.profile?.username||server?.account?.username||'account';
       const blob=new Blob([JSON.stringify(out,null,2)],{type:'application/json'});
-      const url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download=`dlavie-account-${username}.json`;a.click();setTimeout(()=>URL.revokeObjectURL(url),1000);
+      const objectUrl=globalThis.URL.createObjectURL(blob),a=document.createElement('a');a.href=objectUrl;a.download=`dlavie-account-${username}.json`;a.click();setTimeout(()=>globalThis.URL.revokeObjectURL(objectUrl),1000);
       toast('Export lengkap berhasil dibuat.');
     }catch(error){toast(error.message||'Export gagal.');}
     finally{button.disabled=false;}
