@@ -76,8 +76,8 @@ jobs:
           text = text.replace('  <title>DLavie</title>', '  <title>DLavie</title>\n  <link rel="icon" type="image/svg+xml" href="assets/dlavie-mark.svg?v=61">\n' + theme_boot, 1)
           text = re.sub(r'assets/dlavie-mark\.svg(?:\?v=\d+)?', 'assets/dlavie-mark.svg?v=61', text)
 
-          text = text.replace('</head>', '  <link rel="stylesheet" href="dlavie-home-v61.css?v=61">\n</head>', 1)
-          text = text.replace('</body>', '  <script src="dlavie-app-v61.js?v=61"></script>\n</body>', 1)
+          text = text.replace('</head>', '  <link rel="stylesheet" href="dlavie-home-v61.css?v=62">\n</head>', 1)
+          text = text.replace('</body>', '  <script src="dlavie-app-v61.js?v=62"></script>\n</body>', 1)
           path.write_text(text)
           PY
           done
