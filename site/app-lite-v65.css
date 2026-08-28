@@ -1,0 +1,21 @@
+/* DLavie app v65 — lightweight route shell */
+@media(max-width:760px){
+  .mobile-nav{display:none!important}
+  .desktop-header,.desktop-header .header-shell{backdrop-filter:none!important;-webkit-backdrop-filter:none!important}
+  .desktop-header{position:sticky;top:0;z-index:40}
+  .header-actions .quiet-button{display:none!important}
+  body.ui-site-bottom-menu-v5{padding-bottom:calc(92px + env(safe-area-inset-bottom))}
+  .ui-site-menu-toggle{position:fixed;left:50%;bottom:calc(18px + env(safe-area-inset-bottom));transform:translateX(-50%);z-index:85;width:58px;height:58px;border-radius:18px;border:1px solid rgba(255,255,255,.14);background:#151619;color:#fff;display:grid;place-items:center;box-shadow:0 14px 32px rgba(0,0,0,.22);padding:0}
+  .ui-site-menu-toggle svg{width:26px;height:26px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round}
+  .mobile-sheet{position:fixed!important;left:16px!important;right:16px!important;bottom:calc(88px + env(safe-area-inset-bottom))!important;top:auto!important;max-height:min(68vh,560px)!important;border-radius:18px!important;overflow:auto!important;transform:translateY(18px)!important;opacity:0!important;pointer-events:none!important;visibility:hidden!important;display:block!important;backdrop-filter:none!important;-webkit-backdrop-filter:none!important;transition:opacity .16s ease,transform .16s ease!important}
+  .mobile-sheet.open{transform:none!important;opacity:1!important;pointer-events:auto!important;visibility:visible!important}
+  .sheet-backdrop{position:fixed!important;inset:0!important;z-index:70!important;background:rgba(12,14,13,.28)!important;backdrop-filter:none!important;-webkit-backdrop-filter:none!important}
+  .sheet-action{min-height:48px!important;border-radius:10px!important}
+  .project-page,.project-shell,.project-content-layout,.project-content,.tab-panel{contain:none!important;overflow:visible!important}
+}
+.dlv-save-project{display:inline-flex;align-items:center;justify-content:center;gap:7px;min-height:40px;padding:0 12px;border:1px solid var(--border,#343840);border-radius:8px;background:var(--surface,#202228);color:inherit;font:700 12px/1 system-ui,sans-serif;cursor:pointer;white-space:nowrap}
+.dlv-save-project svg{width:17px;height:17px;fill:none;stroke:currentColor;stroke-width:1.8}
+.dlv-save-project.is-saved{color:#08793a;background:rgba(31,207,103,.12);border-color:rgba(31,207,103,.38)}
+html[data-theme="light"] .dlv-save-project{background:#fff;border-color:#d7dfd9;color:#303732}
+html[data-theme="light"] .dlv-save-project.is-saved{color:#08793a;background:#e8faef;border-color:#a8e6bf}
+.vote-card{appearance:none;text-align:left;color:inherit;width:100%}.vote-card.selected{border-color:rgba(31,207,103,.48)!important;background:rgba(31,207,103,.08)!important}.vote-check{font-size:20px;color:#2dbd68}
