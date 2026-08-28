@@ -1,5 +1,5 @@
-/* DLavie Home performance/failsafe v61
-   Keep the menu backdrop cheap and impossible to leave in a blurred closed state. */
+/* DLavie Home performance/failsafe v62
+   Keep the menu backdrop cheap, reset stale states, and anchor the site menu to the real visual viewport. */
 @media (max-width:760px){
   #sheetBackdrop.sheet-backdrop{
     display:none!important;
@@ -25,6 +25,16 @@
   #mobileSheet[aria-hidden="true"],
   #mobileSheet:not(.open){
     pointer-events:none!important;
+  }
+
+  /* Safari/ChatGPT's visual viewport already excludes the browser toolbar.
+     Do not add that toolbar height a second time. */
+  .ui-site-menu-toggle{
+    bottom:max(12px,env(safe-area-inset-bottom))!important;
+  }
+
+  .mobile-sheet.ui-sheet-v5{
+    bottom:calc(max(68px,env(safe-area-inset-bottom) + 58px))!important;
   }
 
   .page[data-route="home"].active{content-visibility:visible!important}
