@@ -37,7 +37,7 @@ jobs:
           cp brand/dlavie-logo.svg _site/brand/dlavie-logo.svg
           touch _site/.nojekyll
 
-          # Main DLavie site.
+          # Main DLavie site: keep first paint local and reduce request count.
           for html in _site/index.html _site/site/index.html; do
             sed -i '/fonts.googleapis.com/d' "$html"
             sed -i '/fonts.gstatic.com/d' "$html"
@@ -53,37 +53,36 @@ jobs:
           path = pathlib.Path(sys.argv[1])
           text = path.read_text()
 
-          for name in ('home-polish','home-refine','mobile-refine','modrinth-v2','modrinth-home','hero-word-fix','light-vibrant','ui-icons-v5'):
+          css_names = (
+              'modrinth','home-polish','home-refine','mobile-refine','modrinth-v2',
+              'modrinth-home','hero-word-fix','light-vibrant','ui-icons-v5',
+              'home-fast-v61','dlavie-home-v61'
+          )
+          for name in css_names:
               text = re.sub(rf'\s*<link[^>]+href="{name}\.css(?:\?v=\d+)?"[^>]*>', '', text)
+
+          js_names = (
+              'modrinth','home-polish','home-refine','mobile-refine','modrinth-v2',
+              'modrinth-home','auth-status-fix','account-nav','account-site-bridge',
+              'ui-icons-v5','home-fast-v61','dlavie-app-v61'
+          )
+          for name in js_names:
               text = re.sub(rf'\s*<script[^>]+src="{name}\.js(?:\?v=\d+)?"[^>]*></script>', '', text)
-          for name in ('account-site-bridge','account-nav'):
-              text = re.sub(rf'\s*<script[^>]+src="{name}\.js(?:\?v=\d+)?"[^>]*></script>', '', text)
+
           text = re.sub(r'\s*<script data-dlavie-theme-boot>.*?</script>', '', text, flags=re.S)
           text = re.sub(r'\s*<link[^>]+rel="icon"[^>]*>', '', text)
 
           theme_boot = '''  <script data-dlavie-theme-boot>(function(){try{var t=localStorage.getItem('dlavie.theme.v1');if(!['light','dark','system'].includes(t))t='light';var r=t==='system'?(matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light'):t;document.documentElement.dataset.theme=r;var m=document.querySelector('meta[name="theme-color"]');if(m)m.content=r==='light'?'#f5f7f4':'#111113';}catch(e){document.documentElement.dataset.theme='light';}})();</script>'''
-          text = text.replace('  <title>DLavie</title>', '  <title>DLavie</title>\n  <link rel="icon" type="image/svg+xml" href="assets/dlavie-mark.svg?v=60">\n' + theme_boot, 1)
-          text = re.sub(r'assets/dlavie-mark\.svg(?:\?v=\d+)?', 'assets/dlavie-mark.svg?v=60', text)
+          text = text.replace('  <title>DLavie</title>', '  <title>DLavie</title>\n  <link rel="icon" type="image/svg+xml" href="assets/dlavie-mark.svg?v=61">\n' + theme_boot, 1)
+          text = re.sub(r'assets/dlavie-mark\.svg(?:\?v=\d+)?', 'assets/dlavie-mark.svg?v=61', text)
 
-          text = re.sub(r'href="modrinth\.css(?:\?v=\d+)?"', 'href="modrinth.css?v=57"', text)
-          text = text.replace(
-              '<link rel="stylesheet" href="modrinth.css?v=57">',
-              '<link rel="stylesheet" href="modrinth.css?v=57">\n  <link rel="stylesheet" href="modrinth-v2.css?v=57">\n  <link rel="stylesheet" href="modrinth-home.css?v=57">\n  <link rel="stylesheet" href="hero-word-fix.css?v=57">\n  <link rel="stylesheet" href="light-vibrant.css?v=57">\n  <link rel="stylesheet" href="ui-icons-v5.css?v=60">',
-              1,
-          )
-
-          text = re.sub(r'\s*<script src="auth-status-fix\.js(?:\?v=\d+)?"></script>', '', text)
-          text = re.sub(r'src="modrinth\.js(?:\?v=\d+)?"', 'src="modrinth.js?v=57"', text)
-          text = text.replace(
-              '<script src="modrinth.js?v=57"></script>',
-              '<script src="modrinth.js?v=57"></script>\n  <script src="auth-status-fix.js?v=57"></script>\n  <script src="modrinth-v2.js?v=57"></script>\n  <script src="modrinth-home.js?v=57"></script>\n  <script src="account-nav.js?v=57"></script>\n  <script src="account-site-bridge.js?v=57"></script>\n  <script src="ui-icons-v5.js?v=60"></script>',
-              1,
-          )
+          text = text.replace('</head>', '  <link rel="stylesheet" href="dlavie-home-v61.css?v=61">\n</head>', 1)
+          text = text.replace('</body>', '  <script src="dlavie-app-v61.js?v=61"></script>\n</body>', 1)
           path.write_text(text)
           PY
           done
 
-          # Account: preserve Account v2-v4 functionality, then apply v5 visual/icon polish last.
+          # Account: preserve the already-stable Account/Login path and v60 icon polish.
           for html in _site/account.html _site/site/account.html; do
             python3 - "$html" <<'PY'
           import pathlib, re, sys
@@ -118,7 +117,7 @@ jobs:
           PY
           done
 
-          # Keep Home lightweight and load repository metadata only on project pages.
+          # Home app: no old visual loader, no automatic Supabase request, and no dynamic core request.
           for js in _site/modrinth.js _site/site/modrinth.js; do
             python3 - "$js" <<'PY'
           import pathlib, re, sys
@@ -126,11 +125,16 @@ jobs:
           text = path.read_text()
           text = text.replace('  loadHomePolish();', '  // Old home-polish layer disabled.', 1)
           text = text.replace("    scheduleIdle(()=>ensureSession(), IS_TOUCH ? 2200 : 1200);", "    // Auth resolves on demand.")
-          text = re.sub(r"core\.src='modrinth-core\.js(?:\?v=\d+)?';", "core.src='modrinth-core.js?v=57';", text)
+          text = re.sub(
+              r"\n  const core=document\.createElement\('script'\);\n  core\.src='modrinth-core\.js(?:\?v=\d+)?';\n  core\.defer=true;\n  core\.onload=\(\)=>\{\n    injectAccountLinks\(\);\n    // No automatic Supabase request on Home\. Auth resolves on demand\.\n  \};\n  document\.head\.appendChild\(core\);",
+              "\n  injectAccountLinks();",
+              text,
+          )
           path.write_text(text)
           PY
           done
 
+          # Only fetch GitHub repository metadata on the project page.
           for js in _site/modrinth-core.js _site/site/modrinth-core.js; do
             python3 - "$js" <<'PY'
           import pathlib, sys
@@ -148,6 +152,27 @@ jobs:
           )
           path.write_text(text)
           PY
+          done
+
+          # One CSS + one JS request for the main site. This is intentionally not applied to Account.
+          for root in _site _site/site; do
+            cat "$root/modrinth.css" \
+                "$root/modrinth-v2.css" \
+                "$root/modrinth-home.css" \
+                "$root/hero-word-fix.css" \
+                "$root/light-vibrant.css" \
+                "$root/ui-icons-v5.css" \
+                "$root/home-fast-v61.css" > "$root/dlavie-home-v61.css"
+
+            cat "$root/modrinth.js" \
+                "$root/modrinth-core.js" \
+                "$root/auth-status-fix.js" \
+                "$root/modrinth-v2.js" \
+                "$root/modrinth-home.js" \
+                "$root/account-nav.js" \
+                "$root/account-site-bridge.js" \
+                "$root/ui-icons-v5.js" \
+                "$root/home-fast-v61.js" > "$root/dlavie-app-v61.js"
           done
 
       - uses: actions/upload-pages-artifact@v3
