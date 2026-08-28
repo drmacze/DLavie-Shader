@@ -13,6 +13,11 @@
     if(el) el.textContent = text;
   }
 
+  function openGlobalSearch(){
+    const trigger = document.querySelector('#mobileSearch') || document.querySelector('#searchOpen');
+    if(trigger) trigger.click();
+  }
+
   function makeMobileTopbar(){
     if(document.querySelector('.dlv-mobile-topbar')) return;
     const header = document.createElement('header');
@@ -22,46 +27,42 @@
       <button class="dlv-mobile-icon" type="button" data-dlv-search aria-label="Cari">${searchIcon}</button>
       <button class="dlv-mobile-icon" type="button" data-dlv-menu aria-label="Menu">${menuIcon}</button>`;
     body.prepend(header);
-    header.querySelector('[data-dlv-search]')?.addEventListener('click',()=>document.querySelector('#mobileSearch')?.click());
+    header.querySelector('[data-dlv-search]')?.addEventListener('click',openGlobalSearch);
     header.querySelector('[data-dlv-menu]')?.addEventListener('click',()=>document.querySelector('#mobileMenuOpen')?.click());
   }
 
   function refineHome(){
     const home = document.querySelector('.page[data-route="home"]');
     if(!home) return;
-    body.classList.add('modrinth-v2');
-    const hero = home.querySelector('.home-hero');
-    setText('.eyebrow','DLAVIE PROJECTS',hero);
-    const title = hero?.querySelector('h1');
-    if(title) title.innerHTML = 'Temukan shader & mod<br><span>Minecraft.</span>';
-    setText('.hero-lede','Project DLavie untuk Minecraft Bedrock dan Java, dengan informasi versi, kompatibilitas, changelog, dan download yang langsung terlihat.',hero);
+    body.classList.add('modrinth-v3');
 
-    const primary = hero?.querySelector('.primary-button');
-    if(primary){
-      primary.href = '#downloads';
-      primary.innerHTML = `${searchIcon}Jelajahi project`;
-    }
-    const secondary = hero?.querySelector('.secondary-button');
-    if(secondary){ secondary.href = '#project/dlavie-shader'; secondary.textContent = 'DLavie Shader'; }
+    const hero = home.querySelector('.home-hero');
+    setText('.eyebrow','DLAVIE',hero);
+    const title = hero?.querySelector('h1');
+    if(title) title.textContent = 'Jelajahi project Minecraft';
+    setText('.hero-lede','Shader, mod, dan resource pack DLavie dengan versi, kompatibilitas, changelog, dan download yang mudah ditemukan.',hero);
 
     if(hero && !hero.querySelector('.home-discover')){
       const discover = document.createElement('div');
       discover.className = 'home-discover';
       discover.innerHTML = `
-        <button class="home-search-trigger" type="button">${searchIcon}<span>Cari shader, mod, resource pack, atau versi…</span></button>
-        <div class="home-category-row" aria-label="Kategori project"><span>Shaders</span><span>Mods</span><span>Resource Packs</span><span>Bedrock</span><span>Java</span></div>`;
-      hero.querySelector('.hero-actions')?.insertAdjacentElement('afterend',discover);
-      discover.querySelector('.home-search-trigger')?.addEventListener('click',()=>document.querySelector('#mobileSearch')?.click() || document.querySelector('#searchOpen')?.click());
+        <button class="home-search-trigger" type="button">${searchIcon}<span>Cari project, versi, atau changelog…</span></button>
+        <div class="home-category-row" aria-label="Kategori project">
+          <span>Shaders</span><span>Mods</span><span>Resource packs</span><span>Bedrock</span><span>Java</span>
+        </div>`;
+      hero.appendChild(discover);
+      discover.querySelector('.home-search-trigger')?.addEventListener('click',openGlobalSearch);
     }
 
     const heads = [...home.querySelectorAll('.section-heading')];
     if(heads[0]){
-      setText('.section-kicker','FEATURED',heads[0]);
-      setText('h2','Project unggulan',heads[0]);
-      setText('a','Lihat semua →',heads[0]);
+      setText('.section-kicker','PROJECTS',heads[0]);
+      setText('h2','Project DLavie',heads[0]);
+      setText('a','Semua project →',heads[0]);
     }
+
     const featured = home.querySelector('.featured-project');
-    setText('.featured-copy > p','Shader Vibrant Visuals + PBR untuk Minecraft Bedrock, dengan godrays, material vanilla-faithful, dan preset performa untuk mobile.',featured || document);
+    setText('.featured-copy > p','Shader Vibrant Visuals + PBR untuk Minecraft Bedrock dengan godrays dan preset performa mobile.',featured || document);
   }
 
   function localizeNavigation(){
@@ -70,6 +71,7 @@
       const value = labels[link.dataset.routeLink];
       if(value) link.textContent = value;
     });
+
     const sheet = document.querySelector('#mobileSheet');
     if(sheet){
       const mapping = [
@@ -85,7 +87,18 @@
         const icon = el.querySelector('svg')?.outerHTML || el.querySelector('img')?.outerHTML || '';
         el.innerHTML = icon + text;
       });
+      sheet.querySelectorAll('[data-dlavie-account-link]').forEach(link=>{
+        const value = link.textContent.trim().toLowerCase();
+        if(value === 'account') setTextPreserveIcon(link,'Akun');
+        if(value === 'sign in') setTextPreserveIcon(link,'Masuk');
+      });
     }
+  }
+
+  function setTextPreserveIcon(el,text){
+    if(!el) return;
+    const icon = el.querySelector('svg')?.outerHTML || el.querySelector('img')?.outerHTML || '';
+    el.innerHTML = icon + text;
   }
 
   function refinePages(){
@@ -116,6 +129,8 @@
     if(news){setText('.page-head h1','Update',news);setText('.eyebrow','NEWS',news)}
     const community = document.querySelector('.page[data-route="community"]');
     if(community){setText('.page-head h1','Komunitas',community);setText('.eyebrow','COMMUNITY',community)}
+    const feedback = document.querySelector('.page[data-route="feedback"]');
+    if(feedback){setText('.page-head h1','Feedback',feedback)}
   }
 
   function localizeSearch(){
@@ -140,20 +155,29 @@
     root.dataset.theme = value;
     try{localStorage.setItem(THEME_KEY,value)}catch{}
     const meta = document.querySelector('meta[name="theme-color"]');
-    if(meta) meta.content = value === 'light' ? '#f4f4f5' : '#111113';
+    if(meta) meta.content = value === 'light' ? '#f5f5f6' : '#111112';
   }
+
   function addThemeToggle(){
     const actions = document.querySelector('.header-actions');
     if(actions && !actions.querySelector('[data-mr-theme]')){
       const btn = document.createElement('button');
-      btn.type='button';btn.className='icon-button';btn.dataset.mrTheme='true';btn.setAttribute('aria-label','Ganti tema');btn.innerHTML=moonIcon;
+      btn.type='button';
+      btn.className='icon-button';
+      btn.dataset.mrTheme='true';
+      btn.setAttribute('aria-label','Ganti tema');
+      btn.innerHTML=moonIcon;
       btn.addEventListener('click',()=>applyTheme(activeTheme()==='dark'?'light':'dark'));
       actions.insertBefore(btn,actions.firstChild);
     }
+
     const sheet = document.querySelector('#mobileSheet');
     if(sheet && !sheet.querySelector('[data-mr-theme]')){
       const btn = document.createElement('button');
-      btn.type='button';btn.className='sheet-action';btn.dataset.mrTheme='true';btn.innerHTML=moonIcon+'Tema';
+      btn.type='button';
+      btn.className='sheet-action';
+      btn.dataset.mrTheme='true';
+      btn.innerHTML=moonIcon+'Tema';
       btn.addEventListener('click',()=>applyTheme(activeTheme()==='dark'?'light':'dark'));
       sheet.appendChild(btn);
     }
