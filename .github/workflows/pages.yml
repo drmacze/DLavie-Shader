@@ -83,25 +83,25 @@ jobs:
           PY
           done
 
-          # Account v2: light-first theme, functional built-in avatars,
-          # overview/activity, saved projects, synced theme, and security summary.
+          # Account v3: clearer auth flow, understandable copy, and a dedicated
+          # desktop sidebar / mobile tab navigation while preserving Account v2 data features.
           for html in _site/account.html _site/site/account.html; do
             python3 - "$html" <<'PY'
           import pathlib, re, sys
           path = pathlib.Path(sys.argv[1])
           text = path.read_text()
-          for name in ('account-plus','account-plus-fix'):
+          for name in ('account-plus','account-plus-fix','account-ui-v3','account-ui-v3-fix'):
               text = re.sub(rf'\s*<link[^>]+href="{name}\.css(?:\?v=\d+)?"[^>]*>', '', text)
-          for name in ('account-clean','account-plus','account-theme-restore','account-export-plus'):
+          for name in ('account-clean','account-plus','account-theme-restore','account-export-plus','account-ui-v3'):
               text = re.sub(rf'\s*<script[^>]+src="{name}\.js(?:\?v=\d+)?"[^>]*></script>', '', text)
           text = re.sub(r'\s*<script data-dlavie-account-theme-boot>.*?</script>', '', text, flags=re.S)
 
           theme_boot = '''  <script data-dlavie-account-theme-boot>(function(){try{var t=localStorage.getItem('dlavie.theme.v1');if(!['light','dark','system'].includes(t))t='light';var r=t==='system'?(matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light'):t;document.documentElement.dataset.theme=r;var m=document.querySelector('meta[name="theme-color"]');if(m)m.content=r==='light'?'#f5f7f4':'#111113';}catch(e){document.documentElement.dataset.theme='light';}})();</script>'''
           text = text.replace('<title>Account — DLavie</title>', '<title>Account — DLavie</title>\n' + theme_boot, 1)
-          text = text.replace('</head>', '  <link rel="stylesheet" href="account-plus.css?v=57">\n  <link rel="stylesheet" href="account-plus-fix.css?v=57">\n</head>', 1)
+          text = text.replace('</head>', '  <link rel="stylesheet" href="account-plus.css?v=58">\n  <link rel="stylesheet" href="account-plus-fix.css?v=58">\n  <link rel="stylesheet" href="account-ui-v3.css?v=58">\n  <link rel="stylesheet" href="account-ui-v3-fix.css?v=58">\n</head>', 1)
 
-          text = re.sub(r'<script src="account\.js(?:\?v=\d+)?"></script>', '<script src="account-clean.js?v=57"></script>\n  <script src="account-plus.js?v=57"></script>\n  <script src="account-theme-restore.js?v=57"></script>\n  <script src="account-export-plus.js?v=57"></script>\n  <script src="account.js?v=57"></script>', text, count=1)
-          text = re.sub(r'<script src="account-flow\.js(?:\?v=\d+)?"></script>', '<script src="account-flow.js?v=57"></script>', text, count=1)
+          text = re.sub(r'<script src="account\.js(?:\?v=\d+)?"></script>', '<script src="account-clean.js?v=58"></script>\n  <script src="account-plus.js?v=58"></script>\n  <script src="account-theme-restore.js?v=58"></script>\n  <script src="account-export-plus.js?v=58"></script>\n  <script src="account.js?v=58"></script>', text, count=1)
+          text = re.sub(r'<script src="account-flow\.js(?:\?v=\d+)?"></script>', '<script src="account-flow.js?v=58"></script>\n  <script src="account-ui-v3.js?v=58"></script>', text, count=1)
           path.write_text(text)
           PY
           done

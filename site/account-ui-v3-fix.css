@@ -1,0 +1,13 @@
+/* Small final polish layer for Account UI v3. */
+.account-nav-icon svg{width:14px;height:14px;fill:none;stroke:currentColor;stroke-width:1.75;stroke-linecap:round;stroke-linejoin:round}
+.account-nav-icon svg path[d^="M4 4h6"]{fill:currentColor;stroke:none;opacity:.9}
+.account-tabs button:focus-visible,.ghost-link:focus-visible,.auth-tabs button:focus-visible,.account-nav-signout button:focus-visible{outline:2px solid var(--a3-brand);outline-offset:2px}
+.auth-form input:focus,.password-field:focus-within,.username-field:focus-within,.settings-form input:focus,.settings-form textarea:focus,.settings-section input:focus,.danger-zone input:focus,.account-theme-control select:focus{border-color:var(--a3-brand)!important;box-shadow:0 0 0 3px color-mix(in srgb,var(--a3-brand) 14%,transparent)!important;outline:none!important}
+.account-tabs button[data-panel] span{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.account-nav-signout #signOutButton{display:block!important;min-height:38px!important;background:transparent!important;border:0!important;color:inherit!important;box-shadow:none!important}
+.account-nav-signout #signOutButton:hover{background:transparent!important;color:var(--a3-danger)!important}
+@media(max-width:760px){
+  .account-tabs{overscroll-behavior-x:contain!important;-webkit-overflow-scrolling:touch}
+  .account-tabs button[data-panel] span{overflow:visible}
+  .auth-flow-note{font-size:9px;flex-wrap:wrap}
+}
