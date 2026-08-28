@@ -23,6 +23,14 @@
     setText('.top-actions a[href="./#home"]','Beranda');
   }
 
+  function localizePasswordToggles(){
+    $$('[data-toggle-password]').forEach(button=>{
+      const input=$('#'+button.dataset.togglePassword);
+      button.textContent=input?.type==='password'?'Tampilkan':'Sembunyikan';
+      button.addEventListener('click',()=>setTimeout(()=>{button.textContent=input?.type==='password'?'Tampilkan':'Sembunyikan';},0));
+    });
+  }
+
   function localizeAuth(){
     const intro=$('.auth-intro');
     if(intro){
@@ -59,6 +67,7 @@
     const recovery=$('#resetPasswordForm');
     if(recovery){setText('.form-head h2','Buat password baru',recovery);setText('.form-head p','Gunakan password baru yang belum pernah dipakai di akun ini.',recovery);setLabel('#recoveryPassword','Password baru');setLabel('#recoveryConfirm','Ulangi password baru');setText('button[type="submit"]','Simpan password baru',recovery);}
 
+    localizePasswordToggles();
     addAuthHints();
     updateAuthFlow();
   }
@@ -78,13 +87,15 @@
     const note=$('#authFlowNote');if(!note)return;
     const register=!$('#registerForm')?.hidden;
     const reset=!$('#resetRequestForm')?.hidden||!$('#resetPasswordForm')?.hidden;
-    if(reset) note.innerHTML='<span><i></i>Pemulihan akun</span><b>Gunakan email akunmu</b>';
-    else if(register) note.innerHTML='<span><i></i>1. Buat akun</span><b>2. Verifikasi email → 3. Selesai</b>';
-    else note.innerHTML='<span><i></i>Masuk aman</span><b>Lanjutkan ke akunmu</b>';
+    let html='';
+    if(reset) html='<span><i></i>Pemulihan akun</span><b>Gunakan email akunmu</b>';
+    else if(register) html='<span><i></i>1. Buat akun</span><b>2. Verifikasi email → 3. Selesai</b>';
+    else html='<span><i></i>Masuk aman</span><b>Lanjutkan ke akunmu</b>';
+    if(note.innerHTML!==html)note.innerHTML=html;
   }
 
   function localizeAccount(){
-    setText('#signOutButton','Keluar');
+    setText('#signOutButton','Keluar');setText('#verifiedBadge','EMAIL TERVERIFIKASI');
     setText('[data-account-panel="profile"] .kicker','PROFIL PUBLIK');
     setText('[data-account-panel="profile"] .panel-head h2','Profil');
     setText('#profileForm label:nth-of-type(1) > span','Nama tampilan');
@@ -136,14 +147,22 @@
       [/Please wait…?/i,'Memproses…'],
       [/Could not load account data\.?/i,'Data akun belum bisa dimuat. Coba beberapa saat lagi.'],
       [/Sign in failed\.?/i,'Tidak bisa masuk. Periksa email dan passwordmu.'],
-      [/Registration failed\.?/i,'Akun belum berhasil dibuat. Periksa data lalu coba lagi.']
+      [/Registration failed\.?/i,'Akun belum berhasil dibuat. Periksa data lalu coba lagi.'],
+      [/Profile saved\.?/i,'Profil berhasil disimpan.'],
+      [/Username updated\.?/i,'Username berhasil diperbarui.'],
+      [/Check your email to confirm the change\.?/i,'Cek email untuk mengonfirmasi perubahan.'],
+      [/Verification email sent\.?/i,'Email verifikasi sudah dikirim.'],
+      [/Password updated\.?/i,'Password berhasil diperbarui.'],
+      [/Preferences saved\.?/i,'Preferensi berhasil disimpan.'],
+      [/Current password is incorrect\.?/i,'Password saat ini salah.'],
+      [/Saved/i,'Tersimpan']
     ];
     for(const [re,replacement] of rules)if(re.test(raw))return replacement;
     return raw;
   }
 
   function watchMessages(){
-    const targets=[$('#authMessage'),$('#accountToast')].filter(Boolean);
+    const targets=[$('#authMessage'),$('#accountToast'),$('#profileSaveState')].filter(Boolean);
     targets.forEach(el=>new MutationObserver(()=>{const next=translateStatusText(el.textContent);if(next!==el.textContent)el.textContent=next;}).observe(el,{childList:true,subtree:true,characterData:true}));
     new MutationObserver(()=>{
       $$('button').forEach(b=>{if(/^Please wait/i.test(b.textContent))b.textContent='Memproses…';});
