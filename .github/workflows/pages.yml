@@ -54,26 +54,27 @@ jobs:
           path = pathlib.Path(sys.argv[1])
           text = path.read_text()
 
-          for name in ('home-polish','home-refine','mobile-refine','modrinth-v2','modrinth-home','hero-word-fix'):
+          for name in ('home-polish','home-refine','mobile-refine','modrinth-v2','modrinth-home','hero-word-fix','light-vibrant'):
               text = re.sub(rf'\s*<link[^>]+href="{name}\.css(?:\?v=\d+)?"[^>]*>', '', text)
               text = re.sub(rf'\s*<script[^>]+src="{name}\.js(?:\?v=\d+)?"[^>]*></script>', '', text)
           text = re.sub(r'\s*<script data-dlavie-theme-boot>.*?</script>', '', text, flags=re.S)
 
-          theme_boot = '''  <script data-dlavie-theme-boot>(function(){try{var t=localStorage.getItem('dlavie.theme.v1');if(t!=='light'&&t!=='dark')t=matchMedia('(prefers-color-scheme: light)').matches?'light':'dark';document.documentElement.dataset.theme=t;}catch(e){document.documentElement.dataset.theme='dark';}})();</script>'''
+          # New visitors start in light mode. Existing visitors keep their saved choice.
+          theme_boot = '''  <script data-dlavie-theme-boot>(function(){try{var t=localStorage.getItem('dlavie.theme.v1');if(t!=='light'&&t!=='dark')t='light';document.documentElement.dataset.theme=t;var m=document.querySelector('meta[name="theme-color"]');if(m)m.content=t==='light'?'#f5f7f4':'#111113';}catch(e){document.documentElement.dataset.theme='light';}})();</script>'''
           text = text.replace('  <title>DLavie</title>', '  <title>DLavie</title>\n' + theme_boot, 1)
 
-          text = re.sub(r'href="modrinth\.css(?:\?v=\d+)?"', 'href="modrinth.css?v=55"', text)
+          text = re.sub(r'href="modrinth\.css(?:\?v=\d+)?"', 'href="modrinth.css?v=56"', text)
           text = text.replace(
-              '<link rel="stylesheet" href="modrinth.css?v=55">',
-              '<link rel="stylesheet" href="modrinth.css?v=55">\n  <link rel="stylesheet" href="modrinth-v2.css?v=55">\n  <link rel="stylesheet" href="modrinth-home.css?v=55">\n  <link rel="stylesheet" href="hero-word-fix.css?v=55">',
+              '<link rel="stylesheet" href="modrinth.css?v=56">',
+              '<link rel="stylesheet" href="modrinth.css?v=56">\n  <link rel="stylesheet" href="modrinth-v2.css?v=56">\n  <link rel="stylesheet" href="modrinth-home.css?v=56">\n  <link rel="stylesheet" href="hero-word-fix.css?v=56">\n  <link rel="stylesheet" href="light-vibrant.css?v=56">',
               1,
           )
 
           text = re.sub(r'\s*<script src="auth-status-fix\.js(?:\?v=\d+)?"></script>', '', text)
-          text = re.sub(r'src="modrinth\.js(?:\?v=\d+)?"', 'src="modrinth.js?v=55"', text)
+          text = re.sub(r'src="modrinth\.js(?:\?v=\d+)?"', 'src="modrinth.js?v=56"', text)
           text = text.replace(
-              '<script src="modrinth.js?v=55"></script>',
-              '<script src="modrinth.js?v=55"></script>\n  <script src="auth-status-fix.js?v=55"></script>\n  <script src="modrinth-v2.js?v=55"></script>\n  <script src="modrinth-home.js?v=55"></script>',
+              '<script src="modrinth.js?v=56"></script>',
+              '<script src="modrinth.js?v=56"></script>\n  <script src="auth-status-fix.js?v=56"></script>\n  <script src="modrinth-v2.js?v=56"></script>\n  <script src="modrinth-home.js?v=56"></script>',
               1,
           )
           path.write_text(text)
@@ -88,7 +89,7 @@ jobs:
           text = path.read_text()
           text = text.replace('  loadHomePolish();', '  // Old home-polish layer disabled.', 1)
           text = text.replace("    scheduleIdle(()=>ensureSession(), IS_TOUCH ? 2200 : 1200);", "    // Auth resolves on demand.")
-          text = re.sub(r"core\.src='modrinth-core\.js(?:\?v=\d+)?';", "core.src='modrinth-core.js?v=55';", text)
+          text = re.sub(r"core\.src='modrinth-core\.js(?:\?v=\d+)?';", "core.src='modrinth-core.js?v=56';", text)
           path.write_text(text)
           PY
           done
