@@ -5,7 +5,8 @@
   const labels={overview:'Ringkasan',saved:'Tersimpan',profile:'Profil',security:'Keamanan',preferences:'Preferensi',data:'Data & privasi'};
   const SUPABASE_URL='https://ydaeukhqwishlrjyfktk.supabase.co';
   const SUPABASE_KEY='sb_publishable_XNXU6SVeM-D477Ymy1ORsw_4hCHOll9';
-  const TEAM_CONSOLE='team/dlv-ops-9f2c/?v=72';
+  const TEAM_CONSOLE='developer.html?team=dlv-ops-9f2c&v=74';
+  const OWNER_EMAIL='dlaviecom@gmail.com';
   let developerAccess=null;
 
   function activeSection(){
@@ -24,7 +25,7 @@
   function devLabel(){return developerAccess?.role==='owner'?'OWNER':'DEVELOPER'}
   function developerRow(){
     if(!developerAccess)return '';
-    return `<a href="${TEAM_CONSOLE}" data-dlv-developer-console class="dlv-developer-console-row"><span>Workspace tim</span><small>${devLabel()}</small><span class="dlv-menu-arrow">›</span></a>`;
+    return `<a href="${TEAM_CONSOLE}" data-dlv-developer-console class="dlv-developer-console-row"><span>Developer Console</span><small>${devLabel()}</small><span class="dlv-menu-arrow">›</span></a>`;
   }
 
   function buildContent(){
@@ -38,9 +39,9 @@
         </div>
         <div class="dlv-mobile-menu-group">
           <div class="dlv-mobile-menu-label">DLavie</div>
-          ${developerRow()}
           <a href="./#home"><span>Beranda</span><span class="dlv-menu-arrow">↗</span></a>
           <a href="community.html"><span>Komunitas</span><span class="dlv-menu-arrow">↗</span></a>
+          ${developerRow()}
           <button type="button" data-dlv-signout class="dlv-menu-danger"><span>Keluar dari akun</span><span class="dlv-menu-arrow">→</span></button>
         </div>`;
     }
@@ -66,15 +67,18 @@
   function applyDeveloperUI(){
     if(!developerAccess)return;
     document.body.dataset.dlvDeveloperRole=developerAccess.role;
+    document.body.classList.add('dlv-has-developer-access');
     const role=$('#roleBadge');
-    if(role){role.textContent=devLabel();role.classList.add('developer-role-badge');}
+    if(role){role.textContent=devLabel();role.classList.add('developer-role-badge');role.title=`DLavie Developer · ${developerAccess.role}`;}
+    const communityRole=$('#communityRole');
+    if(communityRole)communityRole.textContent=devLabel();
     const identity=$('.identity-line');
-    if(identity&&!$('#developerConsoleChip')) identity.insertAdjacentHTML('beforeend',`<a id="developerConsoleChip" class="developer-console-chip" href="${TEAM_CONSOLE}">Tim</a>`);
+    if(identity&&!$('#developerConsoleChip')) identity.insertAdjacentHTML('beforeend',`<a id="developerConsoleChip" class="developer-console-chip" href="${TEAM_CONSOLE}">Console</a>`);
     const side=[...document.querySelectorAll('.account-side .side-card')];
     const accountCard=side.find(x=>x.textContent.includes('ACCOUNT'));
     if(accountCard&&!$('#developerRoleValue')) $('dl',accountCard)?.insertAdjacentHTML('beforeend',`<div><dt>Developer role</dt><dd id="developerRoleValue">${devLabel()}</dd></div>`);
     const quick=side.find(x=>x.textContent.includes('QUICK LINKS'));
-    if(quick&&!$('#developerQuickLink')) $('.kicker',quick)?.insertAdjacentHTML('afterend',`<a id="developerQuickLink" class="developer-quick-link" href="${TEAM_CONSOLE}">Workspace tim <b>→</b></a>`);
+    if(quick&&!$('#developerQuickLink')) $('.kicker',quick)?.insertAdjacentHTML('afterend',`<a id="developerQuickLink" class="developer-quick-link" href="${TEAM_CONSOLE}">Developer Console <b>→</b></a>`);
     render();
   }
 
@@ -84,12 +88,28 @@
       const sb=window.supabase.createClient(SUPABASE_URL,SUPABASE_KEY,{auth:{persistSession:true,autoRefreshToken:true,detectSessionInUrl:false}});
       const {data:{session}}=await sb.auth.getSession();
       if(!session)return;
-      const {data,error}=await sb.from('dlavie_developers').select('role').eq('user_id',session.user.id).maybeSingle();
-      if(error||!data)return;
-      developerAccess=data;
-      applyDeveloperUI();
+
+      if(String(session.user?.email||'').toLowerCase()===OWNER_EMAIL){
+        developerAccess={role:'owner'};
+        applyDeveloperUI();
+      }
+
+      let resolved=null;
+      try{
+        const rpc=await sb.rpc('dlavie_my_developer_role');
+        if(!rpc.error&&rpc.data)resolved=rpc.data;
+      }catch(_){ }
+      if(!resolved){
+        const query=await sb.from('dlavie_developers').select('role').eq('user_id',session.user.id).maybeSingle();
+        if(!query.error&&query.data)resolved=query.data.role;
+      }
+      if(resolved){
+        developerAccess={role:resolved};
+        applyDeveloperUI();
+      }
       setTimeout(applyDeveloperUI,300);
       setTimeout(applyDeveloperUI,1000);
+      setTimeout(applyDeveloperUI,1800);
     }catch(_){ }
   }
 
