@@ -53,12 +53,112 @@
       "light_color": "#FF9B61",
       "light_type": "static_light"
     },
+    "minecraft:lit_redstone_lamp": {
+      "light_color": "#FF9B61",
+      "light_type": "static_light"
+    },
     "minecraft:campfire": {
       "light_color": "#FFB36D",
       "light_type": "static_light"
     },
     "minecraft:soul_campfire": {
       "light_color": "#73D7FF",
+      "light_type": "static_light"
+    },
+    "minecraft:magma": {
+      "light_color": "#FF8151",
+      "light_type": "static_light"
+    },
+    "minecraft:beacon": {
+      "light_color": "#D8F7FF",
+      "light_type": "static_light"
+    },
+    "minecraft:end_rod": {
+      "light_color": "#E8DCFF",
+      "light_type": "static_light"
+    },
+    "minecraft:respawn_anchor": {
+      "light_color": "#A578FF",
+      "light_type": "static_light"
+    },
+    "minecraft:crying_obsidian": {
+      "light_color": "#A56BFF",
+      "light_type": "static_light"
+    },
+    "minecraft:lit_pumpkin": {
+      "light_color": "#FFB260",
+      "light_type": "static_light"
+    },
+    "minecraft:jack_o_lantern": {
+      "light_color": "#FFB260",
+      "light_type": "static_light"
+    },
+    "minecraft:candle": {
+      "light_color": "#FFD5A0",
+      "light_type": "static_light"
+    },
+    "minecraft:white_candle": {
+      "light_color": "#FFE3C4",
+      "light_type": "static_light"
+    },
+    "minecraft:orange_candle": {
+      "light_color": "#FFAA65",
+      "light_type": "static_light"
+    },
+    "minecraft:magenta_candle": {
+      "light_color": "#F5A4E8",
+      "light_type": "static_light"
+    },
+    "minecraft:light_blue_candle": {
+      "light_color": "#9DDFFF",
+      "light_type": "static_light"
+    },
+    "minecraft:yellow_candle": {
+      "light_color": "#FFE88A",
+      "light_type": "static_light"
+    },
+    "minecraft:lime_candle": {
+      "light_color": "#CFFF8C",
+      "light_type": "static_light"
+    },
+    "minecraft:pink_candle": {
+      "light_color": "#FFB5CF",
+      "light_type": "static_light"
+    },
+    "minecraft:gray_candle": {
+      "light_color": "#C2BDB5",
+      "light_type": "static_light"
+    },
+    "minecraft:light_gray_candle": {
+      "light_color": "#DDD8CE",
+      "light_type": "static_light"
+    },
+    "minecraft:cyan_candle": {
+      "light_color": "#79E2DF",
+      "light_type": "static_light"
+    },
+    "minecraft:purple_candle": {
+      "light_color": "#C295FF",
+      "light_type": "static_light"
+    },
+    "minecraft:blue_candle": {
+      "light_color": "#8CAEFF",
+      "light_type": "static_light"
+    },
+    "minecraft:brown_candle": {
+      "light_color": "#CA956A",
+      "light_type": "static_light"
+    },
+    "minecraft:green_candle": {
+      "light_color": "#9FD28A",
+      "light_type": "static_light"
+    },
+    "minecraft:red_candle": {
+      "light_color": "#FF8B7C",
+      "light_type": "static_light"
+    },
+    "minecraft:black_candle": {
+      "light_color": "#A8A1B4",
       "light_type": "static_light"
     }
   }

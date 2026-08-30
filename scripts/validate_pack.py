@@ -9,6 +9,7 @@ ALLOWED_SHADOWS = {'blocky_shadows', 'soft_shadows'}
 WATER_WAVE_KEYS = {'enabled','frequency','octaves','depth','speed','shape','pull','mix','frequency_scaling','speed_scaling'}
 WATER_CAUSTIC_KEYS = {'enabled','frame_length','scale','power'}
 EXPECTED_PRESETS = {'low','medium','high','ultra'}
+MIN_LOCAL_LIGHTS = 30
 
 
 def fail(msg: str) -> None:
@@ -98,6 +99,23 @@ def validate_required_files() -> None:
         validate_atmosphere_file(ROOT/'subpacks'/preset/'atmospherics/atmospherics.json')
 
 
+def validate_mobile_budgets() -> None:
+    """Keep the presets meaningfully different and Medium safe for iPhone 11."""
+    totals = {}
+    for preset in EXPECTED_PRESETS:
+        data = load(ROOT/'subpacks'/preset/'local_lighting/local_lighting.json')
+        lights = data.get('minecraft:local_light_settings', {})
+        if len(lights) < MIN_LOCAL_LIGHTS:
+            fail(f'{preset}: expected at least {MIN_LOCAL_LIGHTS} authored local lights')
+        totals[preset] = sum(v.get('light_type') == 'point_light' for v in lights.values())
+    if totals['low'] != 0:
+        fail('low: point lights must remain disabled for the thermal fallback')
+    if not 0 < totals['medium'] < totals['high']:
+        fail('medium: must use a hybrid point/static light budget')
+    if totals['high'] != totals['ultra']:
+        fail('high and ultra must expose the same complete local-light palette')
+
+
 def validate_generators() -> None:
     biome=(ROOT/'scripts/sync_vanilla_biomes.py').read_text(encoding='utf-8')
     for token in ('minecraft:hell','minecraft:the_end','minecraft:water_identifier'):
@@ -108,7 +126,7 @@ def validate_generators() -> None:
 
 
 def main() -> None:
-    validate_manifest(); validate_required_files(); validate_visual_jsons(); validate_generators()
+    validate_manifest(); validate_required_files(); validate_visual_jsons(); validate_mobile_budgets(); validate_generators()
     print('DLavie Shader validation passed.')
 
 if __name__ == '__main__':
