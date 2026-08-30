@@ -2,6 +2,11 @@
 :root{--dlv-bottom-obstruction:0px}
 .dlv-mobile-menu-toggle,.dlv-mobile-menu,.dlv-mobile-menu-backdrop{display:none}
 
+.developer-role-badge{background:#e8fff0!important;border-color:#9be4b5!important;color:#168a48!important}
+.developer-console-chip{display:inline-flex;align-items:center;height:28px;padding:0 10px;border:1px solid #b8dfc5;border-radius:9px;background:#f1fff6;color:#167c43;text-decoration:none;font-size:11px;font-weight:800;letter-spacing:.04em}
+.developer-quick-link{color:#167c43!important;font-weight:800!important}
+#developerRoleValue{color:#168a48!important;font-weight:800!important}
+
 @media (max-width:760px){
   .top-actions{display:none!important}
   .account-topbar{height:58px!important;padding-inline:18px!important}
@@ -82,9 +87,14 @@
   .dlv-mobile-menu button.is-active{background:var(--a3-brand-soft);color:var(--a3-brand-deep)}
   .dlv-mobile-menu .dlv-menu-arrow{color:var(--a3-soft);font-size:14px;font-weight:500}
   .dlv-mobile-menu .dlv-menu-danger{color:var(--a3-danger)}
+  .dlv-mobile-menu .dlv-developer-console-row{min-height:52px;background:var(--a3-brand-soft);color:var(--a3-brand-deep);display:grid;grid-template-columns:1fr auto auto;column-gap:8px}
+  .dlv-developer-console-row small{font-size:8px;letter-spacing:.12em;color:var(--a3-brand);font-weight:900}
 
   html[data-theme="dark"] .dlv-mobile-menu-toggle{background:#f3f5f4;color:#111214;border-color:rgba(0,0,0,.16);box-shadow:0 14px 38px rgba(0,0,0,.42)}
+  .developer-console-chip{height:25px;padding:0 8px}
 }
+
+html[data-theme="dark"] .developer-role-badge,html[data-theme="dark"] .developer-console-chip{background:#14251b!important;border-color:#285d3b!important;color:#70df99!important}
 
 @media (prefers-reduced-motion:reduce){
   .dlv-mobile-menu-toggle span,.dlv-mobile-menu,.dlv-mobile-menu-backdrop{transition:none!important}
