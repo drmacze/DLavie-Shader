@@ -1,10 +1,10 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 96 96" role="img" aria-labelledby="title desc">
   <title id="title">DLavie</title>
   <desc id="desc">DLavie D monogram with optically centered blue, pink, and yellow signal accents.</desc>
-  <rect x="5" y="5" width="86" height="86" rx="24" fill="#121614"/>
-  <rect x="5.75" y="5.75" width="84.5" height="84.5" rx="23.25" fill="none" stroke="#ffffff" stroke-opacity=".11" stroke-width="1.5"/>
-  <g transform="translate(-2 -3)"><path fill="#f8faf8" d="M23 21h24.5C66.6 21 78 31.4 78 48S66.6 75 47.5 75H23V21Zm15 13v28h9.5C57.9 62 64 56.9 64 48s-6.1-14-16.5-14H38Z"/></g>
-  <rect x="25.5" y="76.5" width="12" height="3.5" rx="1.75" fill="#45bdf0"/>
-  <rect x="42" y="76.5" width="12" height="3.5" rx="1.75" fill="#ef5f98"/>
-  <rect x="58.5" y="76.5" width="12" height="3.5" rx="1.75" fill="#e9c342"/>
+  <rect x="4" y="4" width="88" height="88" rx="23" fill="#121614"/>
+  <rect x="4.75" y="4.75" width="86.5" height="86.5" rx="22.25" fill="none" stroke="#ffffff" stroke-opacity=".11" stroke-width="1.5"/>
+  <path fill="#f8faf8" d="M23 19h25.5C67.2 19 79 30 79 48S67.2 77 48.5 77H23V19Zm15 14v30h10.5C58.1 63 64 57.5 64 48s-5.9-15-15.5-15H38Z"/>
+  <rect x="24.5" y="79" width="12" height="3.5" rx="1.75" fill="#45bdf0"/>
+  <rect x="42" y="79" width="12" height="3.5" rx="1.75" fill="#ef5f98"/>
+  <rect x="59.5" y="79" width="12" height="3.5" rx="1.75" fill="#e9c342"/>
 </svg>
