@@ -9,6 +9,8 @@
     });
     $$('.project-sidebar .side-links a[href*="github.com"]').forEach(a=>{const issue=/issues/.test(a.href);a.innerHTML=`${gh}<span>${issue?'Laporkan masalah':'Lihat di GitHub'}</span><b>↗</b>`});
     $$('#projectMenu a[href*="github.com"]').forEach(a=>{const issue=/issues/.test(a.href);a.innerHTML=`${gh}<span>${issue?'Laporkan masalah':'Lihat di GitHub'}</span>`});
+    const copy=$('#copyPermanent');
+    if(copy&&!copy.dataset.v67Bound){copy.dataset.v67Bound='1';copy.addEventListener('click',()=>navigator.clipboard?.writeText(location.href).then(()=>{const t=$('#toast');if(t){t.textContent='Link disalin';t.classList.add('show');setTimeout(()=>t.classList.remove('show'),1600)}}).catch(()=>{}))}
   }
   function minecraftBrand(){
     const identity=$('.project-page .project-identity');
