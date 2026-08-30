@@ -31,7 +31,18 @@
   function centerBrand(){
     $$('.brand-logo,.hero-project-icon,.project-icon,.brand-icon,.round-action img').forEach(el=>{el.style.objectPosition='50% 50%';el.style.transform='none'});
   }
-  function run(){github();minecraft();contextMenu();centerBrand()}
+  function accountLinks(){
+    $$('a[href^="account.html"]').forEach(a=>{
+      const raw=a.getAttribute('href')||'account.html';
+      try{
+        const u=new URL(raw,location.href);
+        u.searchParams.set('v','75');
+        if(!u.hash)u.hash='overview';
+        a.setAttribute('href','account.html'+u.search+u.hash);
+      }catch(_){a.setAttribute('href','account.html?v=75#overview')}
+    });
+  }
+  function run(){github();minecraft();contextMenu();centerBrand();accountLinks()}
   if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',run,{once:true});else run();
   window.addEventListener('hashchange',()=>setTimeout(run,0),{passive:true});
 })();
