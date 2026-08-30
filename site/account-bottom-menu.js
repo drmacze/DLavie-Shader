@@ -5,6 +5,7 @@
   const labels={overview:'Ringkasan',saved:'Tersimpan',profile:'Profil',security:'Keamanan',preferences:'Preferensi',data:'Data & privasi'};
   const SUPABASE_URL='https://ydaeukhqwishlrjyfktk.supabase.co';
   const SUPABASE_KEY='sb_publishable_XNXU6SVeM-D477Ymy1ORsw_4hCHOll9';
+  const TEAM_CONSOLE='team/dlv-ops-9f2c/?v=72';
   let developerAccess=null;
 
   function activeSection(){
@@ -23,7 +24,7 @@
   function devLabel(){return developerAccess?.role==='owner'?'OWNER':'DEVELOPER'}
   function developerRow(){
     if(!developerAccess)return '';
-    return `<a href="developer.html?v=71" data-dlv-developer-console class="dlv-developer-console-row"><span>Developer Console</span><small>${devLabel()}</small><span class="dlv-menu-arrow">›</span></a>`;
+    return `<a href="${TEAM_CONSOLE}" data-dlv-developer-console class="dlv-developer-console-row"><span>Workspace tim</span><small>${devLabel()}</small><span class="dlv-menu-arrow">›</span></a>`;
   }
 
   function buildContent(){
@@ -68,12 +69,12 @@
     const role=$('#roleBadge');
     if(role){role.textContent=devLabel();role.classList.add('developer-role-badge');}
     const identity=$('.identity-line');
-    if(identity&&!$('#developerConsoleChip')) identity.insertAdjacentHTML('beforeend',`<a id="developerConsoleChip" class="developer-console-chip" href="developer.html?v=71">Console</a>`);
+    if(identity&&!$('#developerConsoleChip')) identity.insertAdjacentHTML('beforeend',`<a id="developerConsoleChip" class="developer-console-chip" href="${TEAM_CONSOLE}">Tim</a>`);
     const side=[...document.querySelectorAll('.account-side .side-card')];
     const accountCard=side.find(x=>x.textContent.includes('ACCOUNT'));
     if(accountCard&&!$('#developerRoleValue')) $('dl',accountCard)?.insertAdjacentHTML('beforeend',`<div><dt>Developer role</dt><dd id="developerRoleValue">${devLabel()}</dd></div>`);
     const quick=side.find(x=>x.textContent.includes('QUICK LINKS'));
-    if(quick&&!$('#developerQuickLink')) $('.kicker',quick)?.insertAdjacentHTML('afterend',`<a id="developerQuickLink" class="developer-quick-link" href="developer.html?v=71">Developer Console <b>→</b></a>`);
+    if(quick&&!$('#developerQuickLink')) $('.kicker',quick)?.insertAdjacentHTML('afterend',`<a id="developerQuickLink" class="developer-quick-link" href="${TEAM_CONSOLE}">Workspace tim <b>→</b></a>`);
     render();
   }
 
