@@ -1,29 +1,15 @@
 (() => {
   'use strict';
 
-  /* Keep /developer.html out of normal public navigation. The short team route
-     forwards here with an internal marker; actual access is still enforced by
-     Supabase Auth + dlavie_developers/RLS inside developer.js. */
-  try {
-    const params = new URLSearchParams(location.search);
-    const teamEntry = params.get('team') === 'dlv-ops-9f2c';
-    const topLevel = window.top === window.self;
-    const sameOriginParent = !topLevel && window.top.location.origin === window.location.origin;
-    if ((topLevel && !teamEntry) || (!topLevel && !sameOriginParent)) {
-      window.location.replace('index.html');
-      return;
-    }
-    let robots = document.querySelector('meta[name="robots"]');
-    if (!robots) {
-      robots = document.createElement('meta');
-      robots.name = 'robots';
-      document.head.appendChild(robots);
-    }
-    robots.content = 'noindex,nofollow,noarchive,nosnippet';
-  } catch (_) {
-    window.location.replace('index.html');
+  const TEAM_PATH='/team/dlv-ops-9f2c/';
+  if(!location.pathname.includes(TEAM_PATH)){
+    location.replace('index.html');
     return;
   }
+
+  let robots=document.querySelector('meta[name="robots"]');
+  if(!robots){robots=document.createElement('meta');robots.name='robots';document.head.appendChild(robots)}
+  robots.content='noindex,nofollow,noarchive,nosnippet';
 
   const $=(s,r=document)=>r.querySelector(s), $$=(s,r=document)=>[...r.querySelectorAll(s)];
   const MC_BEDROCK='https://www.minecraft.net/content/dam/minecraftnet/games/minecraft/logos/icon_bedrock.jpg';
