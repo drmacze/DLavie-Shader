@@ -12,10 +12,6 @@
     return role === 'owner' ? 'OWNER' : 'DEVELOPER';
   }
 
-  function consoleLink(className, label) {
-    return `<a class="${className}" href="${CONSOLE_URL}">${icon}<span>${label}</span></a>`;
-  }
-
   function applyUI() {
     if (!role) return;
     const label = roleLabel();
@@ -29,28 +25,39 @@
       badge.title = `DLavie Developer · ${role}`;
     }
 
+    const profile = $('.profile-header');
+    if (profile && !$('#developerConsoleAccess')) {
+      profile.insertAdjacentHTML('afterend', `
+        <section id="developerConsoleAccess" class="developer-console-access" aria-label="Developer Console">
+          <div class="developer-console-access-icon">${icon}</div>
+          <div class="developer-console-access-copy">
+            <span>DLAVIE TEAM · ${label}</span>
+            <strong>Developer Console</strong>
+            <p>Kelola project, thumbnail, versi Minecraft, tag, repository, branch, draft, dan publish.</p>
+          </div>
+          <a href="${CONSOLE_URL}" class="developer-console-access-button">Buka Console <b>→</b></a>
+        </section>`);
+    }
+
     const identity = $('.identity-line');
     if (identity && !$('#developerConsoleChip')) {
       identity.insertAdjacentHTML('beforeend', `<a id="developerConsoleChip" class="developer-console-chip" href="${CONSOLE_URL}">${icon}<span>Console</span></a>`);
     }
 
-    const profile = $('.profile-header');
     const signout = $('#signOutButton');
     if (profile && signout && !$('#developerConsoleButton')) {
-      signout.insertAdjacentHTML('beforebegin', consoleLink('developer-console-button', 'Buka Developer Console').replace('class="developer-console-button"', 'id="developerConsoleButton" class="developer-console-button"'));
+      signout.insertAdjacentHTML('beforebegin', `<a id="developerConsoleButton" class="developer-console-button" href="${CONSOLE_URL}">${icon}<span>Developer Console</span></a>`);
     }
 
     const sideCards = [...document.querySelectorAll('.account-side .side-card')];
     const accountCard = sideCards.find(card => card.textContent.includes('ACCOUNT'));
     if (accountCard && !$('#developerRoleValue')) {
-      const dl = $('dl', accountCard);
-      dl?.insertAdjacentHTML('beforeend', `<div class="developer-role-row"><dt>Developer role</dt><dd id="developerRoleValue">${label}</dd></div>`);
+      $('dl', accountCard)?.insertAdjacentHTML('beforeend', `<div class="developer-role-row"><dt>Developer role</dt><dd id="developerRoleValue">${label}</dd></div>`);
     }
 
     const quick = sideCards.find(card => card.textContent.includes('QUICK LINKS'));
     if (quick && !$('#developerQuickLink')) {
-      const kicker = $('.kicker', quick);
-      kicker?.insertAdjacentHTML('afterend', `<a id="developerQuickLink" class="developer-quick-link" href="${CONSOLE_URL}">${icon}<span>Developer Console</span><b>→</b></a>`);
+      $('.kicker', quick)?.insertAdjacentHTML('afterend', `<a id="developerQuickLink" class="developer-quick-link" href="${CONSOLE_URL}">${icon}<span>Developer Console</span><b>→</b></a>`);
     }
 
     const menu = $('#dlvMobileMenu');
@@ -70,10 +77,9 @@
   }
 
   async function readRole(sb) {
-    const { data, error } = await sb.rpc('dlavie_my_developer_role');
-    if (!error && (data === 'owner' || data === 'developer' || data === 'editor')) return data;
+    const rpc = await sb.rpc('dlavie_my_developer_role');
+    if (!rpc.error && ['owner', 'developer', 'editor'].includes(rpc.data)) return rpc.data;
 
-    // Compatibility fallback for older database state.
     const { data: sessionData } = await sb.auth.getSession();
     const session = sessionData?.session;
     if (!session) return null;
@@ -92,13 +98,9 @@
       role = await readRole(sb);
       if (!role) return;
       applyUI();
-
-      // Account UI is assembled by several lightweight runtime layers.
-      // Re-apply only a few times so developer controls survive those renders.
       setTimeout(applyUI, 250);
       setTimeout(applyUI, 800);
       setTimeout(applyUI, 1600);
-
       const menu = $('#dlvMobileMenu');
       if (menu) new MutationObserver(applyUI).observe(menu, { childList: true, subtree: false });
     } catch (_) {}
