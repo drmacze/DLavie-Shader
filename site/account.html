@@ -6,12 +6,21 @@
   <meta name="theme-color" content="#111214">
   <meta name="description" content="DLavie Account — sign in, register, profile, security, preferences, and account data.">
   <title>Account — DLavie</title>
+  <link rel="icon" type="image/svg+xml" href="assets/dlavie-mark.svg?v=73">
+  <script data-dlavie-account-theme-boot>(function(){try{var t=localStorage.getItem('dlavie.theme.v1');if(!['light','dark','system'].includes(t))t='light';var r=t==='system'?(matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light'):t;document.documentElement.dataset.theme=r;}catch(e){document.documentElement.dataset.theme='light';}})();</script>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="account.css">
   <link rel="stylesheet" href="account-flow.css">
   <link rel="stylesheet" href="account-developer-v73.css?v=73">
+  <link rel="stylesheet" href="account-plus.css?v=59">
+  <link rel="stylesheet" href="account-plus-fix.css?v=59">
+  <link rel="stylesheet" href="account-ui-v3.css?v=59">
+  <link rel="stylesheet" href="account-ui-v3-fix.css?v=59">
+  <link rel="stylesheet" href="account-bottom-menu.css?v=71">
+  <link rel="stylesheet" href="ui-icons-v5.css?v=60">
+  <link rel="stylesheet" href="account-developer-v71.css?v=73">
 </head>
 <body>
   <header class="account-topbar">
@@ -145,8 +154,16 @@
 
   <div class="toast" id="accountToast" role="status" aria-live="polite"></div>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-  <script src="account.js"></script>
-  <script src="account-flow.js"></script>
+  <script src="account-clean.js?v=59"></script>
+  <script src="account-plus.js?v=59"></script>
+  <script src="account-theme-restore.js?v=59"></script>
+  <script src="account-export-plus.js?v=59"></script>
+  <script src="account.js?v=59"></script>
+  <script src="account-flow.js?v=59"></script>
+  <script src="account-ui-v3.js?v=59"></script>
+  <script src="account-bottom-menu.js?v=71"></script>
+  <script src="ui-icons-v5.js?v=60"></script>
   <script src="account-developer-v73.js?v=73"></script>
+  <script src="account-session-v75.js?v=75"></script>
 </body>
 </html>
