@@ -12,6 +12,23 @@
     document.head.appendChild(script);
   }
 
+  function loadDeveloperLayer(){
+    if(!document.querySelector('link[data-dlavie-developer-layer]')){
+      const link=document.createElement('link');
+      link.rel='stylesheet';
+      link.href='account-developer-v71.css?v=73';
+      link.dataset.dlavieDeveloperLayer='true';
+      document.head.appendChild(link);
+    }
+    if(!document.querySelector('script[data-dlavie-developer-layer]')){
+      const script=document.createElement('script');
+      script.src='account-developer-v73.js?v=73';
+      script.dataset.dlavieDeveloperLayer='true';
+      script.defer=true;
+      document.head.appendChild(script);
+    }
+  }
+
   function scheduleIdle(fn, timeout=1400){
     if('requestIdleCallback' in window) window.requestIdleCallback(fn,{timeout});
     else setTimeout(fn,650);
@@ -96,6 +113,7 @@
 
   function bind(){
     loadEasyUsername();
+    loadDeveloperLayer();
     scheduleIdle(warmHomeCache);
 
     document.addEventListener('click', fastHomeReturn, true);

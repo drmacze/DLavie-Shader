@@ -3,7 +3,7 @@
 
   const SUPABASE_URL = 'https://ydaeukhqwishlrjyfktk.supabase.co';
   const SUPABASE_KEY = 'sb_publishable_XNXU6SVeM-D477Ymy1ORsw_4hCHOll9';
-  const CONSOLE_URL = 'team/dlv-ops-9f2c/?v=73';
+  const CONSOLE_URL = 'team-dlv-ops-9f2c.html?v=73';
   const $ = (selector, root = document) => root.querySelector(selector);
   const icon = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 9 3 12l5 3M16 9l5 3-5 3M14 5l-4 14"/></svg>';
   let role = null;
@@ -61,17 +61,22 @@
     }
 
     const menu = $('#dlvMobileMenu');
-    if (menu && !menu.querySelector('[data-dlv-developer-console]')) {
-      const groups = [...menu.querySelectorAll('.dlv-mobile-menu-group')];
-      const dlavieGroup = groups.find(group => group.querySelector('.dlv-mobile-menu-label')?.textContent.trim() === 'DLavie');
-      if (dlavieGroup) {
-        const signOut = dlavieGroup.querySelector('[data-dlv-signout]');
-        const link = document.createElement('a');
-        link.href = CONSOLE_URL;
-        link.dataset.dlvDeveloperConsole = 'true';
-        link.className = 'dlv-developer-console-row';
-        link.innerHTML = `<span class="dlv-dev-menu-icon">${icon}</span><span class="dlv-dev-menu-copy"><strong>Developer Console</strong><small>${label}</small></span><span class="dlv-menu-arrow">›</span>`;
-        dlavieGroup.insertBefore(link, signOut || null);
+    if (menu) {
+      const existing = menu.querySelector('[data-dlv-developer-console]');
+      if (existing) {
+        existing.href = CONSOLE_URL;
+      } else {
+        const groups = [...menu.querySelectorAll('.dlv-mobile-menu-group')];
+        const dlavieGroup = groups.find(group => group.querySelector('.dlv-mobile-menu-label')?.textContent.trim() === 'DLavie');
+        if (dlavieGroup) {
+          const signOut = dlavieGroup.querySelector('[data-dlv-signout]');
+          const link = document.createElement('a');
+          link.href = CONSOLE_URL;
+          link.dataset.dlvDeveloperConsole = 'true';
+          link.className = 'dlv-developer-console-row';
+          link.innerHTML = `<span class="dlv-dev-menu-icon">${icon}</span><span class="dlv-dev-menu-copy"><strong>Developer Console</strong><small>${label}</small></span><span class="dlv-menu-arrow">›</span>`;
+          dlavieGroup.insertBefore(link, signOut || null);
+        }
       }
     }
   }
