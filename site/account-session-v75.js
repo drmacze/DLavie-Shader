@@ -3,7 +3,7 @@
   const SUPABASE_URL='https://ydaeukhqwishlrjyfktk.supabase.co';
   const SUPABASE_KEY='sb_publishable_XNXU6SVeM-D477Ymy1ORsw_4hCHOll9';
   const ACCOUNT_API=`${SUPABASE_URL}/functions/v1/dlavie-account`;
-  const CONSOLE_URL='team/dlv-ops-9f2c/?v=75';
+  const CONSOLE_URL='team/dlv-ops-9f2c/console-v75.html?v=75';
   const OWNER_EMAIL='dlaviecom@gmail.com';
   const $=(s,r=document)=>r.querySelector(s);
   let sb=null, busy=false, developerRole=null;
