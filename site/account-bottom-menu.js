@@ -3,6 +3,9 @@
   const $=(s,r=document)=>r.querySelector(s);
   const validSections=new Set(['overview','saved','profile','security','preferences','data']);
   const labels={overview:'Ringkasan',saved:'Tersimpan',profile:'Profil',security:'Keamanan',preferences:'Preferensi',data:'Data & privasi'};
+  const SUPABASE_URL='https://ydaeukhqwishlrjyfktk.supabase.co';
+  const SUPABASE_KEY='sb_publishable_XNXU6SVeM-D477Ymy1ORsw_4hCHOll9';
+  let developerAccess=null;
 
   function activeSection(){
     const hash=location.hash.replace(/^#/,'').toLowerCase();
@@ -17,6 +20,11 @@
   }
 
   function signedIn(){return !$('#accountView')?.hidden;}
+  function devLabel(){return developerAccess?.role==='owner'?'OWNER':'DEVELOPER'}
+  function developerRow(){
+    if(!developerAccess)return '';
+    return `<a href="developer.html?v=71" data-dlv-developer-console class="dlv-developer-console-row"><span>Developer Console</span><small>${devLabel()}</small><span class="dlv-menu-arrow">›</span></a>`;
+  }
 
   function buildContent(){
     const current=activeSection();
@@ -29,6 +37,7 @@
         </div>
         <div class="dlv-mobile-menu-group">
           <div class="dlv-mobile-menu-label">DLavie</div>
+          ${developerRow()}
           <a href="./#home"><span>Beranda</span><span class="dlv-menu-arrow">↗</span></a>
           <a href="community.html"><span>Komunitas</span><span class="dlv-menu-arrow">↗</span></a>
           <button type="button" data-dlv-signout class="dlv-menu-danger"><span>Keluar dari akun</span><span class="dlv-menu-arrow">→</span></button>
@@ -51,6 +60,36 @@
   function render(){
     const menu=$('#dlvMobileMenu');
     if(menu) menu.innerHTML=buildContent();
+  }
+
+  function applyDeveloperUI(){
+    if(!developerAccess)return;
+    document.body.dataset.dlvDeveloperRole=developerAccess.role;
+    const role=$('#roleBadge');
+    if(role){role.textContent=devLabel();role.classList.add('developer-role-badge');}
+    const identity=$('.identity-line');
+    if(identity&&!$('#developerConsoleChip')) identity.insertAdjacentHTML('beforeend',`<a id="developerConsoleChip" class="developer-console-chip" href="developer.html?v=71">Console</a>`);
+    const side=[...document.querySelectorAll('.account-side .side-card')];
+    const accountCard=side.find(x=>x.textContent.includes('ACCOUNT'));
+    if(accountCard&&!$('#developerRoleValue')) $('dl',accountCard)?.insertAdjacentHTML('beforeend',`<div><dt>Developer role</dt><dd id="developerRoleValue">${devLabel()}</dd></div>`);
+    const quick=side.find(x=>x.textContent.includes('QUICK LINKS'));
+    if(quick&&!$('#developerQuickLink')) $('.kicker',quick)?.insertAdjacentHTML('afterend',`<a id="developerQuickLink" class="developer-quick-link" href="developer.html?v=71">Developer Console <b>→</b></a>`);
+    render();
+  }
+
+  async function loadDeveloperAccess(){
+    try{
+      if(!window.supabase)return;
+      const sb=window.supabase.createClient(SUPABASE_URL,SUPABASE_KEY,{auth:{persistSession:true,autoRefreshToken:true,detectSessionInUrl:false}});
+      const {data:{session}}=await sb.auth.getSession();
+      if(!session)return;
+      const {data,error}=await sb.from('dlavie_developers').select('role').eq('user_id',session.user.id).maybeSingle();
+      if(error||!data)return;
+      developerAccess=data;
+      applyDeveloperUI();
+      setTimeout(applyDeveloperUI,300);
+      setTimeout(applyDeveloperUI,1000);
+    }catch(_){ }
   }
 
   function setOpen(open){
@@ -76,7 +115,7 @@
   }
 
   function bind(){
-    inject();updateViewportInset();
+    inject();updateViewportInset();loadDeveloperAccess();
     $('#dlvMobileMenuToggle')?.addEventListener('click',()=>setOpen($('#dlvMobileMenuToggle')?.getAttribute('aria-expanded')!=='true'));
     $('#dlvMobileMenuBackdrop')?.addEventListener('click',()=>setOpen(false));
     $('#dlvMobileMenu')?.addEventListener('click',event=>{
@@ -109,7 +148,7 @@
     window.visualViewport?.addEventListener('scroll',updateViewportInset,{passive:true});
 
     const accountView=$('#accountView');
-    if(accountView)new MutationObserver(()=>{render();setOpen(false)}).observe(accountView,{attributes:true,attributeFilter:['hidden']});
+    if(accountView)new MutationObserver(()=>{render();setOpen(false);if(signedIn())loadDeveloperAccess()}).observe(accountView,{attributes:true,attributeFilter:['hidden']});
   }
 
   if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',bind,{once:true});else bind();
