@@ -10,7 +10,19 @@ DLavie Shader is a long-term Minecraft Bedrock shader/resource-pack project buil
 
 > **Important:** DLavie Shader is an original Bedrock implementation. Other shader/resource packs are visual references only; DLavie does not redistribute their source code or copyrighted assets.
 
-## v0.1.2 — Godrays Pass
+## v0.1.3 — Mobile Lighting Pass
+
+- Expanded colored lighting to 36 common vanilla emitters, including every candle color, end rods, beacons, magma, respawn anchors and jack o'lanterns.
+- Medium now uses a hybrid local-light budget: small nearby emitters receive dynamic point lights while broad emitters stay static to limit overdraw and heat on iPhone 11.
+- Low retains static lights; High and Ultra enable point lighting for the complete authored palette.
+
+### Rendering scope
+
+Bedrock resource packs cannot directly run Java Edition GLSL. DLavie recreates the visual direction with supported Vibrant Visuals controls, so an exact 100% pixel match with Derivative is not technically possible. Fog/light shafts, sun response, reflections, water waves, time-of-day color, local lights and engine-driven moving clouds are tuned together; cloud geometry and motion remain controlled by Bedrock itself.
+
+The compatibility target is Minecraft Bedrock **26.4x (including 26.45)** on iOS. Mojang's current public Vibrant Visuals resources still use the stable `1.21.40`–`1.21.120` component schemas; those component schema numbers are intentionally retained rather than being replaced with the marketing release number.
+
+### Previous: Godrays Pass
 
 - Added true Vibrant Visuals **volumetric fog + terrain-aware light shafts** instead of relying only on sky glare.
 - Sunlight can form visible shafts through leaves, windows, cave openings, roofs and narrow terrain gaps.
@@ -33,7 +45,7 @@ DLavie Shader is a long-term Minecraft Bedrock shader/resource-pack project buil
 
 ## Install / use
 
-1. Build or obtain `DLavie-Shader-v0.1.2.mcpack` from an authenticated/trusted file source.
+1. Build or obtain `DLavie-Shader-v0.1.3.mcpack` from an authenticated/trusted file source.
 2. Open the `.mcpack` with Minecraft.
 3. Activate **DLavie Shader** in Global Resources or the world resource packs.
 4. Enable **Vibrant Visuals** in Minecraft's Video settings.

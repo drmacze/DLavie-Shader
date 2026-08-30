@@ -29,6 +29,12 @@ Every preset owns the same paths:
 
 That makes comparisons deterministic and prevents hidden fallback differences.
 
+## iPhone 11 performance contract
+
+Medium is the baseline preset for the A13-class minimum target. It combines eight-octave water, soft shadows without caustics, restrained volumetric density and a hybrid local-light palette. Torches, lanterns, campfires and end rods use point lights; broad or commonly repeated surfaces use the cheaper static-light path. Low disables water waves and point lights as a thermal fallback. High and Ultra trade battery and sustained frame pacing for full point-light coverage, additional wave octaves, caustics and stronger atmosphere.
+
+Cloud animation is owned by Bedrock's renderer and cannot be replaced by a Vibrant Visuals resource-pack component. Clouds still respond dynamically to the authored sky, sun, fog and time-of-day lighting. This project does not use unsupported RenderDragon injection on iOS.
+
 ## PBR strategy
 
 `pbr/global.json` supplies a conservative non-metallic rough fallback for blocks, actors, particles and items. Per-material normal/MERS texture sets should only be added when the corresponding source textures can be redistributed or are authored specifically for DLavie.

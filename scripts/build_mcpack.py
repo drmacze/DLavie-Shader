@@ -31,7 +31,7 @@ def verify_archive(path: pathlib.Path) -> None:
 
 def main():
     ap = argparse.ArgumentParser()
-    ap.add_argument("--output", default="dist/DLavie-Shader-v0.1.2.mcpack")
+    ap.add_argument("--output", default="dist/DLavie-Shader-v0.1.3.mcpack")
     ap.add_argument("--skip-biome-sync", action="store_true")
     ap.add_argument("--skip-fog-sync", action="store_true")
     args = ap.parse_args()

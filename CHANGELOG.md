@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.1.3 — Mobile Lighting Pass
+
+- Expanded colored local-light coverage from 15 to 36 vanilla emitter blocks, including candles, end rods, beacons, magma, respawn anchors and jack o’lanterns.
+- Added a hybrid Medium lighting budget for iPhone 11: compact lights use real point lights while large-area emitters remain static to reduce overdraw and heat.
+- Kept Low entirely static and High/Ultra fully point-lit, so every quality choice changes actual renderer work.
+- Added automated tier budget checks to prevent future presets from silently exceeding the mobile lighting contract.
+
 ## 0.1.2 — Godrays Pass
 
 - Added a vanilla-preserving fog generator for Vibrant Visuals volumetric fog and terrain-aware light shafts.
