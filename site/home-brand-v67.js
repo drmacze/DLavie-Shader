@@ -1,5 +1,6 @@
 (() => {
   'use strict';
+  const ACCOUNT='account.html?v=75#overview';
   const card=document.querySelector('.project-card');
   if(card&&!card.querySelector('.home-mc-brand')){
     const tags=card.querySelector('.tag-row');
@@ -13,4 +14,5 @@
   document.querySelectorAll('a[href*="github.com/drmacze/DLavie-Shader"]').forEach(a=>{
     if(!a.querySelector('img')){a.classList.add('home-github-link');a.insertAdjacentHTML('afterbegin','<img src="assets/icon-github.svg?v=68" alt="GitHub">')}
   });
+  document.querySelectorAll('a[href^="account.html"]').forEach(a=>a.setAttribute('href',ACCOUNT));
 })();
