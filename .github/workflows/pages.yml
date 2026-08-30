@@ -137,11 +137,11 @@ jobs:
             python3 - "$html" <<'PY'
           import pathlib,re,sys
           path=pathlib.Path(sys.argv[1]); text=path.read_text()
-          text=re.sub(r'assets/dlavie-mark\.svg\?v=\d+','assets/dlavie-mark.svg?v=70',text)
-          text=re.sub(r'assets/icon-github\.svg\?v=\d+','assets/icon-github.svg?v=70',text)
+          text=re.sub(r'assets/dlavie-mark\.svg\?v=\d+','assets/dlavie-mark.svg?v=73',text)
+          text=re.sub(r'assets/icon-github\.svg\?v=\d+','assets/icon-github.svg?v=73',text)
           text=re.sub(r'app\.html\?v=\d+','app.html?v=70',text)
-          text=text.replace('</head>','  <link rel="stylesheet" href="developer-fix-v70.css?v=70">\n</head>',1)
-          text=text.replace('</body>','  <script src="developer-fix-v70.js?v=70"></script>\n</body>',1)
+          text=text.replace('</head>','  <link rel="stylesheet" href="developer-fix-v70.css?v=73">\n</head>',1)
+          text=text.replace('</body>','  <script src="developer-fix-v70.js?v=73"></script>\n</body>',1)
           path.write_text(text)
           PY
           done
