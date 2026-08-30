@@ -2,6 +2,7 @@
   'use strict';
   const AUTH='dlavie.auth.state.v1';
   const PROFILE='dlavie.profile.cache.v1';
+  const ACCOUNT_URL='account.html?v=75#overview';
   const AVATARS=new Set(['aurora','orbit','bloom','wave','ember','mono','pixel']);
   const $=(s,r=document)=>r.querySelector(s);
 
@@ -38,7 +39,8 @@
     const actions=$('.header-actions');
     if(actions){
       let link=$('#dlvAccountNav');
-      if(!link){link=document.createElement('a');link.id='dlvAccountNav';link.className='dlv-account-nav';link.href='account.html';actions.appendChild(link);}
+      if(!link){link=document.createElement('a');link.id='dlvAccountNav';link.className='dlv-account-nav';actions.appendChild(link);}
+      link.href=ACCOUNT_URL;
       link.innerHTML=`<img src="${img}" alt=""><span><b>${name}</b><small>${sub}</small></span>`;
       link.setAttribute('aria-label',member?`Akun ${name}`:'Masuk ke DLavie');
     }
@@ -46,7 +48,8 @@
     const sheet=$('#mobileSheet');
     if(sheet){
       let link=$('#dlvAccountSheet');
-      if(!link){link=document.createElement('a');link.id='dlvAccountSheet';link.className='sheet-action dlv-account-sheet';link.href='account.html';sheet.insertAdjacentElement('afterbegin',link);}
+      if(!link){link=document.createElement('a');link.id='dlvAccountSheet';link.className='sheet-action dlv-account-sheet';sheet.insertAdjacentElement('afterbegin',link);}
+      link.href=ACCOUNT_URL;
       link.innerHTML=`<img src="${img}" alt=""><span><b>${name}</b><small>${sub}</small></span>`;
     }
   }
