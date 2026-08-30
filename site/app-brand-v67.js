@@ -1,0 +1,22 @@
+(() => {
+  'use strict';
+  const $=(s,r=document)=>r.querySelector(s), $$=(s,r=document)=>[...r.querySelectorAll(s)];
+  const gh='<img class="brand-icon github-mark" src="assets/icon-github.svg?v=67" alt="">';
+  const mc='<span class="mc-brand-row"><img src="assets/icon-minecraft-block.svg?v=67" alt=""><span>Minecraft Bedrock</span></span>';
+  function githubBrand(){
+    $$('.project-page a[href*="github.com/drmacze/DLavie-Shader"]').forEach(a=>{
+      if(a.closest('.project-action-row')){let img=$('img',a);if(!img){a.innerHTML=gh}else{img.src='assets/icon-github.svg?v=67';img.className='brand-icon github-mark'}}
+    });
+    $$('.project-sidebar .side-links a[href*="github.com"]').forEach(a=>{const issue=/issues/.test(a.href);a.innerHTML=`${gh}<span>${issue?'Laporkan masalah':'Lihat di GitHub'}</span><b>↗</b>`});
+    $$('#projectMenu a[href*="github.com"]').forEach(a=>{const issue=/issues/.test(a.href);a.innerHTML=`${gh}<span>${issue?'Laporkan masalah':'Lihat di GitHub'}</span>`});
+  }
+  function minecraftBrand(){
+    const identity=$('.project-page .project-identity');
+    if(identity&&!$('.mc-brand-row',identity)) identity.insertAdjacentHTML('beforeend',mc);
+    const compat=$$('.project-sidebar .side-card').find(card=>/kompatibilitas/i.test($('h3',card)?.textContent||''));
+    if(compat&&!$('.mc-brand-row',compat)) compat.insertAdjacentHTML('afterbegin',mc);
+    if(compat&&!$('.brand-disclaimer',compat)) compat.insertAdjacentHTML('beforeend','<p class="brand-disclaimer">DLavie adalah project independen dan tidak berafiliasi dengan Mojang atau Microsoft.</p>');
+  }
+  function init(){githubBrand();minecraftBrand()}
+  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',init,{once:true});else init();
+})();
