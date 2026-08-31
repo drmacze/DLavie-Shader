@@ -1,8 +1,8 @@
 (() => {
   'use strict';
   const $=(s,r=document)=>r.querySelector(s), $$=(s,r=document)=>[...r.querySelectorAll(s)];
-  const GH_MARK='assets/icon-github.svg?v=70';
-  const GH_LOCKUP='assets/logo-github-official.svg?v=70';
+  const GH_MARK='assets/icon-github.svg?v=80';
+  const GH_LOCKUP='assets/logo-github-official.svg?v=80';
   const MC_BEDROCK='https://www.minecraft.net/content/dam/minecraftnet/games/minecraft/logos/icon_bedrock.jpg';
   function github(){
     $$('.project-page img[src*="icon-github.svg"]').forEach(img=>{img.src=GH_MARK;img.alt='GitHub';img.classList.add('github-mark')});
@@ -42,7 +42,14 @@
       }catch(_){a.setAttribute('href','account.html?v=75#overview')}
     });
   }
-  function run(){github();minecraft();contextMenu();centerBrand();accountLinks()}
+  function publicProjectSync(){
+    if(document.querySelector('script[data-public-project-sync]'))return;
+    const s=document.createElement('script');
+    s.src='public-project-sync-v80.js?v=80';
+    s.dataset.publicProjectSync='1';
+    document.body.appendChild(s);
+  }
+  function run(){github();minecraft();contextMenu();centerBrand();accountLinks();publicProjectSync()}
   if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',run,{once:true});else run();
   window.addEventListener('hashchange',()=>setTimeout(run,0),{passive:true});
 })();
