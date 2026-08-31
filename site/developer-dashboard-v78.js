@@ -1,344 +1,116 @@
 (() => {
   'use strict';
 
-  const SUPABASE_URL = 'https://ydaeukhqwishlrjyfktk.supabase.co';
-  const API = `${SUPABASE_URL}/functions/v1/dlavie-console-pin`;
-  const TOKEN_KEY = 'dlavie.console.pin.session.v1';
-  const $ = (s, r = document) => r.querySelector(s);
-  const $$ = (s, r = document) => [...r.querySelectorAll(s)];
-  const dash = { projects: [], github: new Map(), refreshing: false, booted: false };
-  const esc = (v) => String(v ?? '').replace(/[&<>"']/g, (c) => ({ '&':'&amp;', '<':'&lt;', '>':'&gt;', '"':'&quot;', "'":'&#39;' }[c]));
-  const cleanRepo = (v) => String(v || '').trim().replace(/^https?:\/\/github\.com\//i, '').replace(/\.git$/i, '').replace(/^\/+|\/+$/g, '').split('/').slice(0, 2).join('/');
-  const token = () => localStorage.getItem(TOKEN_KEY) || '';
+  const SUPABASE_URL='https://ydaeukhqwishlrjyfktk.supabase.co';
+  const API=`${SUPABASE_URL}/functions/v1/dlavie-console-pin`;
+  const ADMIN_API=`${SUPABASE_URL}/functions/v1/dlavie-console-project-admin`;
+  const TOKEN_KEY='dlavie.console.pin.session.v1';
+  const $=(s,r=document)=>r.querySelector(s), $$=(s,r=document)=>[...r.querySelectorAll(s)];
+  const esc=v=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+  const cleanRepo=v=>String(v||'').trim().replace(/^https?:\/\/github\.com\//i,'').replace(/\.git$/i,'').replace(/^\/+|\/+$/g,'').split('/').slice(0,2).join('/');
+  const csv=v=>String(v||'').split(',').map(x=>x.trim()).filter(Boolean).filter((x,i,a)=>a.indexOf(x)===i);
+  const state={projects:[],github:new Map(),currentId:'',pendingVisibility:'public',changelog:[],editingChange:null,refreshing:false,booted:false};
+  const token=()=>localStorage.getItem(TOKEN_KEY)||'';
 
-  function toast(message) {
-    const el = $('#devToast');
-    if (!el) return;
-    el.textContent = message;
-    el.classList.add('show');
-    clearTimeout(toast.timer);
-    toast.timer = setTimeout(() => el.classList.remove('show'), 2400);
-  }
+  const style=document.createElement('link');
+  style.rel='stylesheet'; style.href='developer-project-v79.css?v=79'; style.dataset.projectV79='';
+  if(!document.querySelector('link[data-project-v79]')) document.head.appendChild(style);
 
-  async function api(action, payload = {}) {
-    const t = token();
-    if (!t) throw new Error('PIN_REQUIRED');
-    const res = await fetch(API, {
-      method: 'POST',
-      headers: { 'Content-Type':'application/json', 'x-dlavie-console-token': t },
-      body: JSON.stringify({ action, ...payload })
-    });
-    const data = await res.json().catch(() => ({ ok:false, error:`HTTP ${res.status}` }));
-    if (!res.ok || !data.ok) throw new Error(data.error || 'Request gagal');
+  function toast(message){const el=$('#devToast');if(!el)return;el.textContent=message;el.classList.add('show');clearTimeout(toast.t);toast.t=setTimeout(()=>el.classList.remove('show'),2400)}
+  async function call(url,action,payload={}){
+    const t=token(); if(!t) throw new Error('PIN_REQUIRED');
+    const res=await fetch(url,{method:'POST',headers:{'Content-Type':'application/json','x-dlavie-console-token':t},body:JSON.stringify({action,...payload})});
+    const data=await res.json().catch(()=>({ok:false,error:`HTTP ${res.status}`}));
+    if(!res.ok||!data.ok) throw new Error(data.error||'Request gagal');
     return data;
   }
+  const api=(action,payload={})=>call(API,action,payload);
+  const admin=(action,payload={})=>call(ADMIN_API,action,payload);
+  function dateValue(v){const n=Date.parse(v||'');return Number.isFinite(n)?n:0}
+  function relativeDate(v){const t=dateValue(v);if(!t)return'—';const d=Date.now()-t,m=60000,h=3600000,day=86400000;if(d<m)return'baru saja';if(d<h)return`${Math.max(1,Math.floor(d/m))} mnt lalu`;if(d<day)return`${Math.floor(d/h)} jam lalu`;if(d<7*day)return`${Math.floor(d/day)} hari lalu`;return new Intl.DateTimeFormat('id-ID',{day:'numeric',month:'short',year:'numeric'}).format(new Date(t))}
+  function health(p){let score=0,issues=[];[[p.thumbnail_url,12,'Thumbnail belum ada'],[String(p.summary||'').trim().length>=25,10,'Deskripsi singkat terlalu pendek'],[String(p.description||'').trim().length>=120,14,'Deskripsi lengkap masih tipis'],[p.version,8,'Versi project belum diisi'],[p.minecraft_versions?.length,12,'Versi Minecraft belum diisi'],[p.platforms?.length,10,'Platform belum dipilih'],[p.tags?.length>=2,8,'Tambahkan minimal 2 tag'],[cleanRepo(p.github_repo).includes('/'),12,'Repository GitHub belum valid'],[String(p.github_branch||'').trim(),8,'Branch GitHub belum diisi'],[p.status!=='published'||p.published_at,6,'Tanggal publish belum tercatat']].forEach(([ok,n,msg])=>{if(ok)score+=n;else issues.push(msg)});return{score:Math.min(100,score),issues}}
+  function safeSet(id,v){const e=$(id);if(e)e.textContent=v}
 
-  function dateValue(v) {
-    const n = Date.parse(v || '');
-    return Number.isFinite(n) ? n : 0;
-  }
-  function relativeDate(v) {
-    const time = dateValue(v);
-    if (!time) return '—';
-    const diff = Date.now() - time;
-    const minute = 60_000, hour = 3_600_000, day = 86_400_000;
-    if (diff < minute) return 'baru saja';
-    if (diff < hour) return `${Math.max(1, Math.floor(diff / minute))} mnt lalu`;
-    if (diff < day) return `${Math.floor(diff / hour)} jam lalu`;
-    if (diff < 7 * day) return `${Math.floor(diff / day)} hari lalu`;
-    return new Intl.DateTimeFormat('id-ID', { day:'numeric', month:'short', year:'numeric' }).format(new Date(time));
-  }
+  function activityItems(){const items=[];state.projects.forEach(p=>{if(p.created_at)items.push({type:'created',at:p.created_at,p});if(p.updated_at&&p.updated_at!==p.created_at)items.push({type:'updated',at:p.updated_at,p});if(p.published_at)items.push({type:'published',at:p.published_at,p})});return items.sort((a,b)=>dateValue(b.at)-dateValue(a.at))}
+  function activityHtml(x){const label=x.type==='published'?'Dipublish':x.type==='created'?'Dibuat':'Diperbarui',icon=x.type==='published'?'↑':x.type==='created'?'+':'↻';return`<button type="button" class="activity-row" data-dash-edit="${esc(x.p.id)}"><span class="activity-icon ${x.type}">${icon}</span><span><strong>${label} · ${esc(x.p.name||x.p.slug)}</strong><small>${relativeDate(x.at)} · ${esc(x.p.version||'tanpa versi')}</small></span></button>`}
 
-  function health(project) {
-    let score = 0;
-    const issues = [];
-    const checks = [
-      [project.thumbnail_url, 12, 'Thumbnail belum ada'],
-      [String(project.summary || '').trim().length >= 25, 10, 'Deskripsi singkat terlalu pendek'],
-      [String(project.description || '').trim().length >= 120, 14, 'Deskripsi lengkap masih tipis'],
-      [project.version, 8, 'Versi project belum diisi'],
-      [Array.isArray(project.minecraft_versions) && project.minecraft_versions.length, 12, 'Versi Minecraft belum diisi'],
-      [Array.isArray(project.platforms) && project.platforms.length, 10, 'Platform belum dipilih'],
-      [Array.isArray(project.tags) && project.tags.length >= 2, 8, 'Tambahkan minimal 2 tag'],
-      [cleanRepo(project.github_repo).includes('/'), 12, 'Repository GitHub belum valid'],
-      [String(project.github_branch || '').trim(), 8, 'Branch GitHub belum diisi'],
-      [project.status !== 'published' || project.published_at, 6, 'Tanggal publish belum tercatat']
-    ];
-    checks.forEach(([ok, points, issue]) => { if (ok) score += points; else issues.push(issue); });
-    return { score: Math.min(100, score), issues };
+  function renderDashboard(){
+    const p=state.projects,published=p.filter(x=>x.status==='published').length,draft=p.filter(x=>x.status==='draft').length,archived=p.filter(x=>x.status==='archived').length,featured=p.filter(x=>x.featured).length;
+    safeSet('#metricPublished',published);safeSet('#metricDraft',draft);safeSet('#metricTotal',p.length);safeSet('#metricFeatured',featured);safeSet('#metricArchived',archived);safeSet('#metricBedrock',p.filter(x=>(x.platforms||[]).includes('bedrock')).length);safeSet('#metricJava',p.filter(x=>(x.platforms||[]).includes('java')).length);safeSet('#metricNeedsWork',p.filter(x=>health(x).score<75).length);safeSet('#metricUpdatedWeek',p.filter(x=>Date.now()-dateValue(x.updated_at||x.created_at)<=7*86400000).length);
+    const scores=p.map(x=>health(x).score),avg=scores.length?Math.round(scores.reduce((a,b)=>a+b,0)/scores.length):100,src=p.filter(x=>cleanRepo(x.github_repo).includes('/')&&x.github_branch).length;
+    safeSet('#catalogHealthScore',`${avg}%`);safeSet('#sourceReadyCount',`${src}/${p.length}`);const ring=$('#catalogHealthRing');if(ring)ring.style.setProperty('--score',`${avg*3.6}deg`);const bar=$('#sourceCoverageBar');if(bar)bar.style.width=`${p.length?src/p.length*100:100}%`;
+    const dist=$('#statusDistribution');if(dist){const n=Math.max(1,p.length);dist.innerHTML=`<span class="bar-published" style="width:${published/n*100}%"></span><span class="bar-draft" style="width:${draft/n*100}%"></span><span class="bar-archived" style="width:${archived/n*100}%"></span>`}
+    const att=$('#dashboardAttention');if(att){const rows=p.map(project=>({project,h:health(project)})).filter(x=>x.h.score<85).sort((a,b)=>a.h.score-b.h.score).slice(0,4);att.innerHTML=rows.length?rows.map(({project,h})=>`<button class="attention-row" type="button" data-dash-edit="${esc(project.id)}"><span class="health-dot ${h.score<60?'bad':'warn'}"></span><span><strong>${esc(project.name||project.slug)}</strong><small>${esc(h.issues[0]||'Perlu dilengkapi')}</small></span><b>${h.score}%</b></button>`).join(''):'<div class="dash-empty good">Semua project sudah dalam kondisi baik.</div>'}
+    const recent=$('#dashboardRecentActivity');if(recent)recent.innerHTML=activityItems().slice(0,5).map(activityHtml).join('')||'<div class="dash-empty">Belum ada aktivitas.</div>';
+    injectPrivateMetric();
   }
+  function injectPrivateMetric(){const grid=$('.dashboard-mini-metrics');if(!grid||$('#metricPrivate'))return;const card=document.createElement('article');card.innerHTML='<span>Private</span><strong id="metricPrivate">0</strong><small>Tidak tampil ke publik</small>';grid.appendChild(card);safeSet('#metricPrivate',state.projects.filter(x=>x.visibility==='private').length)}
 
-  function projectStatusCounts(projects) {
-    return {
-      published: projects.filter(p => p.status === 'published').length,
-      draft: projects.filter(p => p.status === 'draft').length,
-      archived: projects.filter(p => p.status === 'archived').length,
-      featured: projects.filter(p => p.featured).length,
-      bedrock: projects.filter(p => (p.platforms || []).includes('bedrock')).length,
-      java: projects.filter(p => (p.platforms || []).includes('java')).length
-    };
+  function renderHealth(){const root=$('#healthProjectList');if(!root)return;const f=$('#healthFilter')?.value||'all';const rows=state.projects.map(project=>({project,h:health(project)})).filter(x=>f==='all'||f==='problem'&&x.h.score<75||f==='good'&&x.h.score>=75).sort((a,b)=>a.h.score-b.h.score);root.innerHTML=rows.length?rows.map(({project,h})=>{const gh=state.github.get(project.id),ghClass=gh?.ok?'ok':gh?.checked?'bad':'idle',ghText=gh?.ok?`GitHub OK · ${esc(gh.sha||'')}`:gh?.checked?esc(gh.message||'Source bermasalah'):'Belum dicek';return`<article class="health-row"><div class="health-score ${h.score<60?'bad':h.score<80?'warn':'good'}"><strong>${h.score}</strong><small>/100</small></div><div class="health-copy"><strong>${esc(project.name||project.slug)}</strong><p>${h.issues.length?esc(h.issues.slice(0,3).join(' · ')):'Metadata lengkap dan siap.'}</p><div class="health-meta"><span class="source-state ${ghClass}">${ghText}</span><span>${esc(project.status)}</span><span>${esc(project.visibility||'public')}</span></div></div><div class="health-actions"><button type="button" data-dash-check="${esc(project.id)}">Cek source</button><button type="button" data-dash-edit="${esc(project.id)}">Edit</button></div></article>`}).join(''):'<div class="dash-empty">Tidak ada project untuk filter ini.</div>'}
+  function renderActivity(){const root=$('#activityTimeline');if(!root)return;const q=($('#activitySearch')?.value||'').trim().toLowerCase();const rows=activityItems().filter(x=>!q||`${x.p.name} ${x.p.slug} ${x.type}`.toLowerCase().includes(q));root.innerHTML=rows.length?rows.slice(0,100).map(activityHtml).join(''):'<div class="dash-empty">Belum ada aktivitas yang cocok.</div>'}
+
+  function cloneForSave(p,overrides={}){return{slug:p.slug,name:p.name||'',summary:p.summary||'',description:p.description||'',version:p.version||'',minecraft_versions:[...(p.minecraft_versions||[])],platforms:[...(p.platforms||[])],tags:[...(p.tags||[])],github_repo:p.github_repo||'',github_branch:p.github_branch||'main',thumbnail_url:p.thumbnail_url||null,gallery_urls:[...(p.gallery_urls||[])],featured:!!p.featured,status:p.status||'draft',sort_order:Number(p.sort_order)||100,metadata:p.metadata||{},...overrides}}
+  function uniqueCopySlug(p){const base=`${p.slug||'project'}-copy`,used=new Set(state.projects.map(x=>x.slug));let s=base,i=2;while(used.has(s))s=`${base}-${i++}`;return s}
+  async function duplicateProject(id){const p=state.projects.find(x=>String(x.id)===String(id));if(!p)return;const r=await api('save_project',{id:null,project:cloneForSave(p,{slug:uniqueCopySlug(p),name:`${p.name||p.slug} Copy`,status:'draft',featured:false})});if(p.visibility==='private')await admin('set_visibility',{id:r.project.id,visibility:'private'});toast('Project diduplikat sebagai draft');await refresh(true)}
+  async function toggleArchive(id){const p=state.projects.find(x=>String(x.id)===String(id));if(!p)return;await api('save_project',{id:p.id,project:cloneForSave(p,{status:p.status==='archived'?'draft':'archived',featured:p.status==='archived'?p.featured:false})});toast(p.status==='archived'?'Project dipulihkan':'Project diarsipkan');await refresh(true)}
+  async function checkGithub(id){const p=state.projects.find(x=>String(x.id)===String(id));if(!p)return;const repo=cleanRepo(p.github_repo),branch=String(p.github_branch||'').trim();if(!repo.includes('/')||!branch){state.github.set(p.id,{checked:true,ok:false,message:'Repo/branch belum lengkap'});renderHealth();return}state.github.set(p.id,{checked:true,ok:false,message:'Memeriksa…'});renderHealth();try{const r=await fetch(`https://api.github.com/repos/${repo}/branches/${encodeURIComponent(branch)}`,{headers:{Accept:'application/vnd.github+json'}});if(!r.ok)throw new Error(r.status===404?'Repo/branch tidak ditemukan':`GitHub ${r.status}`);const j=await r.json();state.github.set(p.id,{checked:true,ok:true,sha:String(j.commit?.sha||'').slice(0,7)})}catch(e){state.github.set(p.id,{checked:true,ok:false,message:e.message||'Gagal cek GitHub'})}renderHealth()}
+  async function checkAll(){const btn=$('[data-dash-check-all]');if(btn){btn.disabled=true;btn.textContent='Memeriksa…'}for(const p of state.projects.filter(x=>cleanRepo(x.github_repo).includes('/')&&x.github_branch).slice(0,20))await checkGithub(p.id);if(btn){btn.disabled=false;btn.textContent='Cek semua source'}toast('Pemeriksaan source selesai')}
+  function exportCatalog(){const a=document.createElement('a'),blob=new Blob([JSON.stringify(state.projects,null,2)],{type:'application/json'});a.href=URL.createObjectURL(blob);a.download=`dlavie-catalog-${new Date().toISOString().slice(0,10)}.json`;a.click();setTimeout(()=>URL.revokeObjectURL(a.href),1000);toast('Katalog JSON diexport')}
+
+  function enhanceRows(){
+    $$('.project-admin-row').forEach(row=>{const id=row.dataset.editProject,p=state.projects.find(x=>String(x.id)===String(id));if(!p)return;let meta=row.querySelector('.row-meta')||row;if(!row.querySelector('.visibility-chip')){const chip=document.createElement('span');chip.className=`visibility-chip ${p.visibility==='private'?'private':''}`;chip.textContent=p.visibility==='private'?'Private':'Public';meta.prepend(chip)}if(row.querySelector('.dash-row-actions'))return;const actions=document.createElement('div');actions.className='dash-row-actions';const repo=cleanRepo(p.github_repo);actions.innerHTML=`${repo.includes('/')?`<button type="button" data-dash-github="${esc(p.id)}" title="GitHub">GH</button>`:''}<button type="button" data-dash-duplicate="${esc(p.id)}" title="Duplikat">⧉</button><button type="button" data-dash-archive="${esc(p.id)}" title="${p.status==='archived'?'Pulihkan':'Arsipkan'}">${p.status==='archived'?'↥':'⌁'}</button><button type="button" class="danger" data-project-delete-row="${esc(p.id)}" title="Hapus">×</button>`;meta.appendChild(actions)})
   }
 
-  function safeSet(id, value) { const el = $(id); if (el) el.textContent = value; }
-
-  function renderDashboard() {
-    const p = dash.projects;
-    const c = projectStatusCounts(p);
-    const scores = p.map(x => health(x).score);
-    const avg = scores.length ? Math.round(scores.reduce((a,b) => a+b, 0) / scores.length) : 100;
-    const needsWork = p.filter(x => health(x).score < 75).length;
-    const updatedWeek = p.filter(x => Date.now() - dateValue(x.updated_at || x.created_at) <= 7 * 86_400_000).length;
-    const sourceReady = p.filter(x => cleanRepo(x.github_repo).includes('/') && x.github_branch).length;
-
-    safeSet('#metricArchived', c.archived);
-    safeSet('#metricBedrock', c.bedrock);
-    safeSet('#metricJava', c.java);
-    safeSet('#metricNeedsWork', needsWork);
-    safeSet('#metricUpdatedWeek', updatedWeek);
-    safeSet('#catalogHealthScore', `${avg}%`);
-    safeSet('#sourceReadyCount', `${sourceReady}/${p.length}`);
-
-    const ring = $('#catalogHealthRing');
-    if (ring) ring.style.setProperty('--score', `${avg * 3.6}deg`);
-    const statusBar = $('#statusDistribution');
-    if (statusBar) {
-      const total = Math.max(1, p.length);
-      statusBar.innerHTML = `
-        <span class="bar-published" style="width:${(c.published/total)*100}%"></span>
-        <span class="bar-draft" style="width:${(c.draft/total)*100}%"></span>
-        <span class="bar-archived" style="width:${(c.archived/total)*100}%"></span>`;
-    }
-    const sourceBar = $('#sourceCoverageBar');
-    if (sourceBar) sourceBar.style.width = `${p.length ? (sourceReady / p.length) * 100 : 100}%`;
-
-    const attention = $('#dashboardAttention');
-    if (attention) {
-      const rows = [...p]
-        .map(project => ({ project, h:health(project) }))
-        .filter(x => x.h.score < 85)
-        .sort((a,b) => a.h.score - b.h.score)
-        .slice(0,4);
-      attention.innerHTML = rows.length ? rows.map(({project,h}) => `
-        <button class="attention-row" type="button" data-dash-edit="${esc(project.id)}">
-          <span class="health-dot ${h.score < 60 ? 'bad' : 'warn'}"></span>
-          <span><strong>${esc(project.name || project.slug)}</strong><small>${esc(h.issues[0] || 'Perlu dilengkapi')}</small></span>
-          <b>${h.score}%</b>
-        </button>`).join('') : '<div class="dash-empty good">Semua project sudah dalam kondisi baik.</div>';
-    }
-
-    const recent = $('#dashboardRecentActivity');
-    if (recent) recent.innerHTML = activityItems(p).slice(0,5).map(activityHtml).join('') || '<div class="dash-empty">Belum ada aktivitas.</div>';
+  function injectEditor(){
+    const fields=$('.editor-fields'),publish=$('#projectFeatured')?.closest('.form-section'),actions=$('.editor-actions');if(!fields||!publish)return;
+    if(!$('#projectVisibilityPublic')){const box=document.createElement('div');box.className='project-visibility-card';box.innerHTML=`<div class="project-visibility-head"><div><h3>Akses project</h3><p>Publish menentukan status rilis. Public/Private menentukan siapa yang bisa melihat project.</p></div><span id="visibilityState" class="visibility-state">Public</span></div><div class="visibility-options"><label class="visibility-option"><input id="projectVisibilityPublic" type="radio" name="projectVisibility" value="public" checked><span class="vicon"><svg viewBox="0 0 24 24"><path d="M3 12s3.5-6 9-6 9 6 9 6-3.5 6-9 6-9-6-9-6Z"/><circle cx="12" cy="12" r="2.5"/></svg></span><span><b>Public</b><small>Project published dapat tampil di katalog publik.</small></span><i></i></label><label class="visibility-option private"><input id="projectVisibilityPrivate" type="radio" name="projectVisibility" value="private"><span class="vicon"><svg viewBox="0 0 24 24"><rect x="5" y="10" width="14" height="10" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></svg></span><span><b>Private</b><small>Hanya terlihat di Developer Console meski sudah dipublish.</small></span><i></i></label></div>`;publish.appendChild(box)}
+    if(actions&&!$('#deleteProjectV79')){const b=document.createElement('button');b.type='button';b.id='deleteProjectV79';b.className='project-delete-btn';b.textContent='Hapus project';b.hidden=true;actions.prepend(b)}
+    if(!$('#changelogSectionV79')){const sec=document.createElement('section');sec.id='changelogSectionV79';sec.className='form-section changelog-section';sec.innerHTML=`<div class="section-title"><span>05</span><div><h2>Changelog</h2><p>Riwayat update dan perubahan per versi project.</p></div></div><div class="changelog-toolbar"><p id="changelogHint">Simpan project terlebih dahulu untuk menambah changelog.</p><button id="addChangelogV79" class="changelog-add" type="button">+ Tambah changelog</button></div><div id="changelogListV79" class="changelog-list"><div class="changelog-lock-note">Belum ada project yang dipilih.</div></div><div id="changelogEditorV79" class="changelog-editor" hidden><div class="changelog-editor-grid"><label><span>Versi</span><input id="changeVersionV79" placeholder="0.1.3"></label><label><span>Judul update</span><input id="changeTitleV79" placeholder="Visual & performance update"></label><label><span>Versi Minecraft</span><input id="changeMinecraftV79" placeholder="1.21.120+, 1.21.130"></label><label><span>Urutan</span><input id="changeSortV79" type="number" value="100" min="0" max="9999"></label><label class="changelog-body-field"><span>Isi changelog</span><textarea id="changeBodyV79" placeholder="- Improved lighting&#10;- Fixed water reflection&#10;- Optimized mobile performance"></textarea></label><label class="changelog-switch"><input id="changePublishedV79" type="checkbox" checked><span>Publish changelog ini untuk project public</span></label><div class="changelog-editor-actions"><button id="cancelChangelogV79" class="changelog-cancel" type="button">Batal</button><button id="saveChangelogV79" class="changelog-save" type="button">Simpan changelog</button></div></div></div>`;fields.appendChild(sec)}
   }
 
-  function renderHealth() {
-    const root = $('#healthProjectList');
-    if (!root) return;
-    const filter = $('#healthFilter')?.value || 'all';
-    const rows = dash.projects.map(project => ({ project, h:health(project) }))
-      .filter(x => filter === 'all' || (filter === 'problem' && x.h.score < 75) || (filter === 'good' && x.h.score >= 75))
-      .sort((a,b) => a.h.score - b.h.score);
-    root.innerHTML = rows.length ? rows.map(({project,h}) => {
-      const gh = dash.github.get(project.id);
-      const ghClass = gh?.ok ? 'ok' : gh?.checked ? 'bad' : 'idle';
-      const ghText = gh?.ok ? `GitHub OK · ${esc(gh.sha || '')}` : gh?.checked ? esc(gh.message || 'Source bermasalah') : 'Belum dicek';
-      return `<article class="health-row">
-        <div class="health-score ${h.score < 60 ? 'bad' : h.score < 80 ? 'warn' : 'good'}"><strong>${h.score}</strong><small>/100</small></div>
-        <div class="health-copy"><strong>${esc(project.name || project.slug)}</strong><p>${h.issues.length ? esc(h.issues.slice(0,3).join(' · ')) : 'Metadata lengkap dan siap.'}</p><div class="health-meta"><span class="source-state ${ghClass}">${ghText}</span><span>${esc(project.status)}</span><span>${relativeDate(project.updated_at || project.created_at)}</span></div></div>
-        <div class="health-actions"><button type="button" data-dash-check="${esc(project.id)}">Cek source</button><button type="button" data-dash-edit="${esc(project.id)}">Edit</button></div>
-      </article>`;
-    }).join('') : '<div class="dash-empty">Tidak ada project untuk filter ini.</div>';
+  function setVisibilityUI(v){state.pendingVisibility=v==='private'?'private':'public';const pub=$('#projectVisibilityPublic'),priv=$('#projectVisibilityPrivate'),badge=$('#visibilityState');if(pub)pub.checked=state.pendingVisibility==='public';if(priv)priv.checked=state.pendingVisibility==='private';if(badge){badge.textContent=state.pendingVisibility==='private'?'Private':'Public';badge.classList.toggle('private',state.pendingVisibility==='private')}}
+  async function syncEditor(){injectEditor();const id=$('#projectId')?.value||state.currentId,p=state.projects.find(x=>String(x.id)===String(id));state.currentId=p?.id||'';setVisibilityUI(p?.visibility||state.pendingVisibility||'public');const del=$('#deleteProjectV79');if(del)del.hidden=!state.currentId;await loadChangelog()}
+  async function resolveSavedProject(){await refresh(true);const slug=$('#projectSlug')?.value.trim(),p=state.projects.find(x=>x.slug===slug);if(!p)return;state.currentId=p.id;if($('#projectId'))$('#projectId').value=p.id;if(state.pendingVisibility!==p.visibility){await admin('set_visibility',{id:p.id,visibility:state.pendingVisibility});await refresh(true)}await syncEditor()}
+  async function changeVisibility(v){setVisibilityUI(v);if(!state.currentId){toast(`${v==='private'?'Private':'Public'} akan diterapkan setelah project disimpan`);return}try{await admin('set_visibility',{id:state.currentId,visibility:v});const p=state.projects.find(x=>String(x.id)===String(state.currentId));if(p)p.visibility=v;renderDashboard();renderHealth();enhanceRows();toast(v==='private'?'Project sekarang Private':'Project sekarang Public')}catch(e){toast(e.message);setVisibilityUI(state.projects.find(x=>String(x.id)===String(state.currentId))?.visibility||'public')}}
+
+  async function deleteProject(id){const p=state.projects.find(x=>String(x.id)===String(id));if(!p)return;const typed=prompt(`Hapus project secara permanen?\n\nKetik slug berikut untuk konfirmasi:\n${p.slug}`,'');if(typed===null)return;if(typed.trim()!==p.slug){toast('Slug konfirmasi tidak cocok');return}try{await admin('delete_project',{id:p.id,confirm_slug:p.slug});toast('Project dihapus permanen');setTimeout(()=>location.reload(),500)}catch(e){toast(e.message)}}
+
+  async function loadChangelog(){const root=$('#changelogListV79'),hint=$('#changelogHint'),add=$('#addChangelogV79');if(!root)return;if(!state.currentId){state.changelog=[];root.innerHTML='<div class="changelog-lock-note">Simpan project terlebih dahulu untuk menambah changelog.</div>';if(hint)hint.textContent='Simpan project terlebih dahulu untuk menambah changelog.';if(add)add.disabled=true;closeChangeEditor();return}if(add)add.disabled=false;if(hint)hint.textContent='Kelola riwayat perubahan project ini.';try{const d=await admin('list_changelog',{project_id:state.currentId});state.changelog=d.changelog||[];renderChangelog()}catch(e){root.innerHTML=`<div class="changelog-lock-note">${esc(e.message)}</div>`}}
+  function renderChangelog(){const root=$('#changelogListV79');if(!root)return;root.innerHTML=state.changelog.length?state.changelog.map(c=>`<article class="changelog-item"><div class="changelog-item-head"><div><h3><span>v${esc(c.version)}</span>${c.title?` · ${esc(c.title)}`:''}</h3><p class="change-title">${relativeDate(c.published_at||c.created_at)}</p></div><div class="changelog-actions"><button type="button" data-change-edit="${esc(c.id)}">Edit</button><button class="danger" type="button" data-change-delete="${esc(c.id)}">Hapus</button></div></div><p class="change-body">${esc(c.body)}</p><div class="changelog-meta">${(c.minecraft_versions||[]).map(v=>`<span>${esc(v)}</span>`).join('')}<span class="${c.is_published?'published':'draft'}">${c.is_published?'Published':'Draft'}</span></div></article>`).join(''):'<div class="changelog-empty">Belum ada changelog. Tambahkan update pertama untuk project ini.</div>'}
+  function openChangeEditor(entry=null){if(!state.currentId){toast('Simpan project terlebih dahulu');return}state.editingChange=entry;$('#changeVersionV79').value=entry?.version||$('#projectVersion')?.value||'';$('#changeTitleV79').value=entry?.title||'';$('#changeMinecraftV79').value=(entry?.minecraft_versions||[]).join(', ');$('#changeSortV79').value=entry?.sort_order??100;$('#changeBodyV79').value=entry?.body||'';$('#changePublishedV79').checked=entry?.is_published!==false;$('#changelogEditorV79').hidden=false;$('#changeVersionV79').focus()}
+  function closeChangeEditor(){state.editingChange=null;const e=$('#changelogEditorV79');if(e)e.hidden=true}
+  async function saveChangelog(){if(!state.currentId)return;const entry={version:$('#changeVersionV79').value.trim(),title:$('#changeTitleV79').value.trim(),minecraft_versions:csv($('#changeMinecraftV79').value),sort_order:Number($('#changeSortV79').value)||100,body:$('#changeBodyV79').value.trim(),is_published:$('#changePublishedV79').checked};if(!entry.version||!entry.body){toast('Versi dan isi changelog wajib diisi');return}const b=$('#saveChangelogV79');b.disabled=true;try{await admin('save_changelog',{project_id:state.currentId,id:state.editingChange?.id||null,entry});toast(state.editingChange?'Changelog diperbarui':'Changelog ditambahkan');closeChangeEditor();await loadChangelog()}catch(e){toast(e.message)}finally{b.disabled=false}}
+  async function deleteChangelog(id){const c=state.changelog.find(x=>String(x.id)===String(id));if(!c||!confirm(`Hapus changelog v${c.version}?`))return;try{await admin('delete_changelog',{project_id:state.currentId,id:c.id});toast('Changelog dihapus');await loadChangelog()}catch(e){toast(e.message)}}
+
+  async function refresh(silent=false){if(state.refreshing||!token())return;state.refreshing=true;try{const d=await api('list_projects');state.projects=d.projects||[];renderDashboard();renderHealth();renderActivity();setTimeout(enhanceRows,50);if(!silent)toast('Dashboard diperbarui')}catch(e){if(!['PIN_REQUIRED','SESSION_EXPIRED'].includes(e.message)&&!silent)toast(e.message)}finally{state.refreshing=false}}
+
+  function bind(){
+    injectEditor();
+    document.addEventListener('click',e=>{const t=e.target.closest('button,a,[data-edit-project]');if(!t)return;
+      if(t.matches('[data-dash-refresh]')){e.preventDefault();refresh();return}
+      if(t.matches('[data-dash-check-all]')){e.preventDefault();checkAll();return}
+      if(t.matches('[data-dash-export]')){e.preventDefault();exportCatalog();return}
+      if(t.dataset.dashCheck){e.preventDefault();checkGithub(t.dataset.dashCheck);return}
+      if(t.dataset.dashGithub){e.preventDefault();e.stopPropagation();const p=state.projects.find(x=>String(x.id)===String(t.dataset.dashGithub));if(p)open(`https://github.com/${cleanRepo(p.github_repo)}`,'_blank','noopener');return}
+      if(t.dataset.dashDuplicate){e.preventDefault();e.stopPropagation();duplicateProject(t.dataset.dashDuplicate);return}
+      if(t.dataset.dashArchive){e.preventDefault();e.stopPropagation();toggleArchive(t.dataset.dashArchive);return}
+      if(t.dataset.projectDeleteRow){e.preventDefault();e.stopPropagation();deleteProject(t.dataset.projectDeleteRow);return}
+      if(t.dataset.dashEdit){e.preventDefault();const id=t.dataset.dashEdit;$('[data-panel="projects"]')?.click();setTimeout(()=>document.querySelector(`[data-edit-project="${CSS.escape(id)}"]`)?.click(),80);return}
+      if(t.matches('[data-edit-project]')){setTimeout(()=>{state.currentId=t.dataset.editProject||$('#projectId')?.value||'';syncEditor()},30)}
+      if(t.matches('[data-new-project]')){state.currentId='';state.pendingVisibility='public';setTimeout(syncEditor,30)}
+      if(t.id==='deleteProjectV79'){e.preventDefault();deleteProject(state.currentId);return}
+      if(t.id==='addChangelogV79'){e.preventDefault();openChangeEditor();return}
+      if(t.id==='cancelChangelogV79'){e.preventDefault();closeChangeEditor();return}
+      if(t.id==='saveChangelogV79'){e.preventDefault();saveChangelog();return}
+      if(t.dataset.changeEdit){e.preventDefault();openChangeEditor(state.changelog.find(x=>String(x.id)===String(t.dataset.changeEdit)));return}
+      if(t.dataset.changeDelete){e.preventDefault();deleteChangelog(t.dataset.changeDelete);return}
+    },true);
+    document.addEventListener('change',e=>{if(e.target.matches('input[name="projectVisibility"]'))changeVisibility(e.target.value)});
+    $('#healthFilter')?.addEventListener('change',renderHealth);$('#activitySearch')?.addEventListener('input',renderActivity);
+    const saveState=$('#saveState');if(saveState)new MutationObserver(()=>{const txt=saveState.textContent||'';if(/Published|tersimpan/i.test(txt))setTimeout(resolveSavedProject,80)}).observe(saveState,{childList:true,subtree:true,characterData:true});
+    const listRoot=$('#allProjects');if(listRoot)new MutationObserver(()=>setTimeout(enhanceRows,20)).observe(listRoot,{childList:true,subtree:true});
   }
 
-  function activityItems(projects) {
-    const items = [];
-    projects.forEach(p => {
-      if (p.created_at) items.push({ type:'created', at:p.created_at, project:p });
-      if (p.updated_at && p.updated_at !== p.created_at) items.push({ type:'updated', at:p.updated_at, project:p });
-      if (p.published_at) items.push({ type:'published', at:p.published_at, project:p });
-    });
-    return items.sort((a,b) => dateValue(b.at) - dateValue(a.at));
-  }
-  function activityHtml(item) {
-    const label = item.type === 'published' ? 'Dipublish' : item.type === 'created' ? 'Dibuat' : 'Diperbarui';
-    const icon = item.type === 'published' ? '↑' : item.type === 'created' ? '+' : '↻';
-    return `<button type="button" class="activity-row" data-dash-edit="${esc(item.project.id)}"><span class="activity-icon ${item.type}">${icon}</span><span><strong>${label} · ${esc(item.project.name || item.project.slug)}</strong><small>${relativeDate(item.at)} · ${esc(item.project.version || 'tanpa versi')}</small></span></button>`;
-  }
-  function renderActivity() {
-    const root = $('#activityTimeline');
-    if (!root) return;
-    const q = ($('#activitySearch')?.value || '').trim().toLowerCase();
-    const rows = activityItems(dash.projects).filter(x => !q || `${x.project.name} ${x.project.slug} ${x.type}`.toLowerCase().includes(q));
-    root.innerHTML = rows.length ? rows.slice(0,100).map(activityHtml).join('') : '<div class="dash-empty">Belum ada aktivitas yang cocok.</div>';
-  }
-
-  function renderProjectActions() {
-    $$('.project-admin-row').forEach(row => {
-      if (row.querySelector('.dash-row-actions')) return;
-      const id = row.dataset.editProject;
-      const p = dash.projects.find(x => String(x.id) === String(id));
-      if (!p) return;
-      const meta = row.querySelector('.row-meta') || row;
-      const actions = document.createElement('div');
-      actions.className = 'dash-row-actions';
-      const repo = cleanRepo(p.github_repo);
-      actions.innerHTML = `
-        ${repo.includes('/') ? `<button type="button" title="Buka GitHub" data-dash-github="${esc(p.id)}">GH</button>` : ''}
-        <button type="button" title="Duplikat" data-dash-duplicate="${esc(p.id)}">⧉</button>
-        <button type="button" title="${p.status === 'archived' ? 'Pulihkan' : 'Arsipkan'}" data-dash-archive="${esc(p.id)}">${p.status === 'archived' ? '↥' : '⌁'}</button>`;
-      meta.appendChild(actions);
-    });
-  }
-
-  function uniqueCopySlug(p) {
-    const base = `${p.slug || 'project'}-copy`;
-    let candidate = base, i = 2;
-    const used = new Set(dash.projects.map(x => x.slug));
-    while (used.has(candidate)) candidate = `${base}-${i++}`;
-    return candidate;
-  }
-  function cloneForSave(p, overrides = {}) {
-    return {
-      slug:p.slug, name:p.name || '', summary:p.summary || '', description:p.description || '', version:p.version || '',
-      minecraft_versions:[...(p.minecraft_versions || [])], platforms:[...(p.platforms || [])], tags:[...(p.tags || [])],
-      github_repo:p.github_repo || '', github_branch:p.github_branch || 'main', thumbnail_url:p.thumbnail_url || null,
-      gallery_urls:[...(p.gallery_urls || [])], featured:!!p.featured, status:p.status || 'draft', sort_order:Number(p.sort_order) || 100,
-      metadata:p.metadata || {}, ...overrides
-    };
-  }
-
-  async function duplicateProject(id) {
-    const p = dash.projects.find(x => String(x.id) === String(id));
-    if (!p) return;
-    const copy = cloneForSave(p, { id:undefined, slug:uniqueCopySlug(p), name:`${p.name || p.slug} Copy`, status:'draft', featured:false });
-    await api('save_project', { id:null, project:copy });
-    toast('Project berhasil diduplikat sebagai draft');
-    await refresh(true);
-  }
-  async function toggleArchive(id) {
-    const p = dash.projects.find(x => String(x.id) === String(id));
-    if (!p) return;
-    const restoring = p.status === 'archived';
-    await api('save_project', { id:p.id, project:cloneForSave(p, { status:restoring ? 'draft' : 'archived', featured:restoring ? p.featured : false }) });
-    toast(restoring ? 'Project dipulihkan ke draft' : 'Project diarsipkan');
-    await refresh(true);
-  }
-
-  function editProject(id) {
-    const search = $('#projectAdminSearch');
-    const filter = $('#projectStatusFilter');
-    if (search) { search.value = ''; search.dispatchEvent(new Event('input', { bubbles:true })); }
-    if (filter) { filter.value = 'all'; filter.dispatchEvent(new Event('change', { bubbles:true })); }
-    const row = $(`[data-edit-project="${CSS.escape(String(id))}"]`, $('#allProjects') || document) || $(`[data-edit-project="${CSS.escape(String(id))}"]`);
-    if (row) { row.click(); return; }
-    $('[data-panel="projects"]')?.click();
-    setTimeout(() => $(`[data-edit-project="${CSS.escape(String(id))}"]`)?.click(), 80);
-  }
-
-  async function checkGithubProject(id) {
-    const p = dash.projects.find(x => String(x.id) === String(id));
-    if (!p) return;
-    const repo = cleanRepo(p.github_repo), branch = String(p.github_branch || '').trim();
-    if (!repo.includes('/') || !branch) {
-      dash.github.set(p.id, { checked:true, ok:false, message:'Repo/branch belum lengkap' });
-      renderHealth(); return;
-    }
-    dash.github.set(p.id, { checked:true, ok:false, message:'Memeriksa…' });
-    renderHealth();
-    try {
-      const res = await fetch(`https://api.github.com/repos/${repo}/branches/${encodeURIComponent(branch)}`, { headers:{ Accept:'application/vnd.github+json' } });
-      if (!res.ok) throw new Error(res.status === 404 ? 'Repo/branch tidak ditemukan' : `GitHub ${res.status}`);
-      const json = await res.json();
-      dash.github.set(p.id, { checked:true, ok:true, sha:String(json.commit?.sha || '').slice(0,7) });
-    } catch (e) {
-      dash.github.set(p.id, { checked:true, ok:false, message:e.message || 'Gagal cek GitHub' });
-    }
-    renderHealth();
-  }
-  async function checkAllGithub() {
-    const btn = $('[data-dash-check-all]');
-    if (btn) { btn.disabled = true; btn.textContent = 'Memeriksa…'; }
-    const candidates = dash.projects.filter(p => cleanRepo(p.github_repo).includes('/') && p.github_branch).slice(0,20);
-    for (const p of candidates) await checkGithubProject(p.id);
-    if (btn) { btn.disabled = false; btn.textContent = 'Cek semua source'; }
-    toast(`Pemeriksaan GitHub selesai · ${candidates.length} project`);
-  }
-
-  function exportCatalog() {
-    const data = JSON.stringify(dash.projects, null, 2);
-    const blob = new Blob([data], { type:'application/json' });
-    const a = document.createElement('a');
-    a.href = URL.createObjectURL(blob);
-    a.download = `dlavie-catalog-${new Date().toISOString().slice(0,10)}.json`;
-    a.click();
-    setTimeout(() => URL.revokeObjectURL(a.href), 1000);
-    toast('Katalog JSON diexport');
-  }
-
-  async function refresh(silent = false) {
-    if (dash.refreshing || !token()) return;
-    dash.refreshing = true;
-    const refreshBtn = $('[data-dash-refresh]');
-    if (refreshBtn) refreshBtn.classList.add('spinning');
-    try {
-      const data = await api('list_projects');
-      dash.projects = data.projects || [];
-      renderDashboard(); renderHealth(); renderActivity();
-      setTimeout(renderProjectActions, 40);
-      if (!silent) toast('Dashboard diperbarui');
-    } catch (e) {
-      if (e.message !== 'PIN_REQUIRED' && e.message !== 'SESSION_EXPIRED') toast(e.message || 'Gagal memuat dashboard');
-    } finally {
-      dash.refreshing = false;
-      if (refreshBtn) refreshBtn.classList.remove('spinning');
-    }
-  }
-
-  function bindActions() {
-    document.addEventListener('click', async (e) => {
-      const button = e.target.closest('[data-dash-refresh],[data-dash-check-all],[data-dash-export],[data-dash-edit],[data-dash-check],[data-dash-duplicate],[data-dash-archive],[data-dash-github]');
-      if (!button) return;
-      e.preventDefault(); e.stopPropagation();
-      try {
-        if (button.hasAttribute('data-dash-refresh')) await refresh();
-        else if (button.hasAttribute('data-dash-check-all')) await checkAllGithub();
-        else if (button.hasAttribute('data-dash-export')) exportCatalog();
-        else if (button.dataset.dashEdit) editProject(button.dataset.dashEdit);
-        else if (button.dataset.dashCheck) await checkGithubProject(button.dataset.dashCheck);
-        else if (button.dataset.dashDuplicate) await duplicateProject(button.dataset.dashDuplicate);
-        else if (button.dataset.dashArchive) await toggleArchive(button.dataset.dashArchive);
-        else if (button.dataset.dashGithub) {
-          const p = dash.projects.find(x => String(x.id) === String(button.dataset.dashGithub));
-          const repo = cleanRepo(p?.github_repo); if (repo.includes('/')) window.open(`https://github.com/${repo}/tree/${encodeURIComponent(p.github_branch || 'main')}`, '_blank', 'noopener');
-        }
-      } catch (err) { toast(err.message || 'Aksi gagal'); }
-    }, true);
-    $('#healthFilter')?.addEventListener('change', renderHealth);
-    $('#activitySearch')?.addEventListener('input', renderActivity);
-  }
-
-  function watchProjectRows() {
-    ['allProjects','recentProjects'].forEach(id => {
-      const el = document.getElementById(id);
-      if (!el) return;
-      new MutationObserver(() => setTimeout(renderProjectActions, 0)).observe(el, { childList:true });
-    });
-  }
-
-  function maybeStart() {
-    const app = $('#consoleApp');
-    if (!app || app.hidden || getComputedStyle(app).display === 'none' || !token()) return;
-    refresh(true);
-  }
-
-  function boot() {
-    if (dash.booted) return;
-    dash.booted = true;
-    bindActions(); watchProjectRows();
-    const app = $('#consoleApp');
-    if (app) new MutationObserver(maybeStart).observe(app, { attributes:true, attributeFilter:['hidden','style','class'] });
-    maybeStart();
-  }
-
-  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', boot, { once:true });
-  else boot();
+  async function boot(){if(state.booted)return;state.booted=true;bind();const wait=async()=>{if(!token()){setTimeout(wait,300);return}try{await refresh(true);await syncEditor()}catch(_){setTimeout(wait,400)}};wait()}
+  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',boot,{once:true});else boot();
 })();
