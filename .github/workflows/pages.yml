@@ -38,20 +38,18 @@ jobs:
           cp brand/dlavie-logo.svg _site/brand/dlavie-logo.svg
           touch _site/.nojekyll
 
-          # Build the routed application from the project-first source before
-          # replacing index.html with the lightweight Home page.
+          # Routed app bundle. Public catalog remains database-driven; v82 adds
+          # the DLavie Store interaction/layout layer without replacing data logic.
           for root in _site _site/site; do
             cp "$root/index.html" "$root/app.html"
-            cat "$root/modrinth.css" "$root/modrinth-v2.css" "$root/light-vibrant.css" "$root/app-lite-v65.css" "$root/app-polish-v66.css" "$root/app-brand-v67.css" "$root/app-fix-v69.css" "$root/app-fix-v70.css" > "$root/dlavie-app-shell-v81.css"
-            cat "$root/app-router-v65.js" "$root/app-polish-v66.js" "$root/app-brand-v67.js" "$root/app-projects-v69.js" "$root/app-brand-v70.js" > "$root/app-router-v81.js"
+            cat "$root/modrinth.css" "$root/modrinth-v2.css" "$root/light-vibrant.css" "$root/app-lite-v65.css" "$root/app-polish-v66.css" "$root/app-brand-v67.css" "$root/app-fix-v69.css" "$root/app-fix-v70.css" > "$root/dlavie-app-shell-v82.css"
+            cat "$root/app-router-v65.js" "$root/app-polish-v66.js" "$root/app-brand-v67.js" "$root/app-projects-v69.js" "$root/app-brand-v70.js" > "$root/app-router-v82.js"
           done
 
           for html in _site/app.html _site/site/app.html; do
             python3 - "$html" <<'PY'
           import pathlib, re, sys
           path=pathlib.Path(sys.argv[1]); text=path.read_text()
-          # Remove legacy network-heavy assets and source app assets that are
-          # replaced by the deterministic v81 bundles below.
           text=re.sub(r'\s*<link[^>]+href="https://fonts\.googleapis\.com[^>]+>', '', text)
           text=re.sub(r'\s*<link[^>]+href="https://unpkg\.com/lenis[^>]+>', '', text)
           text=re.sub(r'\s*<script[^>]+src="https://cdnjs\.cloudflare\.com/ajax/libs/gsap[^>]+></script>', '', text)
@@ -62,69 +60,64 @@ jobs:
           text=re.sub(r'\s*<script data-dlavie-theme-boot>.*?</script>', '', text, flags=re.S)
           text=re.sub(r'\s*<script data-dlavie-app-guard>.*?</script>', '', text, flags=re.S)
           text=re.sub(r'\s*<link[^>]+href="dlavie-app-shell-v\d+\.css(?:\?v=\d+)?"[^>]*>', '', text)
+          text=re.sub(r'\s*<link[^>]+href="marketplace-v\d+\.css(?:\?v=\d+)?"[^>]*>', '', text)
           text=re.sub(r'\s*<script[^>]+src="app-router-v\d+\.js(?:\?v=\d+)?"[^>]*></script>', '', text)
-          text=text.replace('../pack_icon.png','assets/dlavie-mark.svg?v=81')
-          text=text.replace('href="#home"','href="index.html"')
-          text=re.sub(r'assets/dlavie-mark\.svg(?:\?v=\d+)?','assets/dlavie-mark.svg?v=81',text)
+          text=text.replace('../pack_icon.png','assets/dlavie-mark.svg?v=82')
+          text=text.replace('href="#home"','href="index.html?v=82"')
+          text=re.sub(r'assets/dlavie-mark\.svg(?:\?v=\d+)?','assets/dlavie-mark.svg?v=82',text)
+          text=re.sub(r'app\.html\?v=\d+','app.html?v=82',text)
+          text=re.sub(r'account\.html(?:\?v=\d+)?(?:#\w+)?','account.html?v=82#profile',text)
           theme="""<script data-dlavie-theme-boot>(function(){try{var t=localStorage.getItem('dlavie.theme.v1');if(!['light','dark','system'].includes(t))t='light';document.documentElement.dataset.theme=t==='system'?(matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light'):t}catch(e){document.documentElement.dataset.theme='light'}})();</script>"""
-          guard="""<script data-dlavie-app-guard>(function(){var h=(location.hash||'').replace(/^#\\/?/,'');if(!h||h==='home')location.replace('index.html?v=81')})();</script>"""
-          text=text.replace('</head>',f'<link rel="icon" type="image/svg+xml" href="assets/dlavie-mark.svg?v=81">\n{theme}\n{guard}\n<link rel="stylesheet" href="dlavie-app-shell-v81.css?v=81">\n</head>',1)
-          # public-project-sync-v80.js?v=81 and session-nav-v81.js?v=81 are
-          # intentionally preserved from source and run before the router.
-          text=text.replace('</body>','<script src="app-router-v81.js?v=81"></script>\n</body>',1)
+          guard="""<script data-dlavie-app-guard>(function(){var h=(location.hash||'').replace(/^#\\/?/,'');if(!h||h==='home')location.replace('index.html?v=82')})();</script>"""
+          text=text.replace('</head>',f'<link rel="icon" type="image/svg+xml" href="assets/dlavie-mark.svg?v=82">\n{theme}\n{guard}\n<link rel="stylesheet" href="dlavie-app-shell-v82.css?v=82">\n<link rel="stylesheet" href="marketplace-v82.css?v=82">\n</head>',1)
+          text=text.replace('</body>','<script src="app-router-v82.js?v=82"></script>\n</body>',1)
           path.write_text(text)
           PY
           done
 
-          # Account source now owns its asset order. Keep the v81 session
-          # recovery layer intact instead of rewriting it back to v59/v71.
+          # Account stays on the stable auth implementation. Only normalize
+          # cross-links/cache-busting to the current public shell version.
           for html in _site/account.html _site/site/account.html; do
             python3 - "$html" <<'PY'
           import pathlib,re,sys
           path=pathlib.Path(sys.argv[1]); text=path.read_text()
-          text=re.sub(r'assets/dlavie-mark\.svg(?:\?v=\d+)?','assets/dlavie-mark.svg?v=81',text)
-          text=re.sub(r'app\.html\?v=\d+','app.html?v=81',text)
+          text=re.sub(r'assets/dlavie-mark\.svg(?:\?v=\d+)?','assets/dlavie-mark.svg?v=82',text)
+          text=re.sub(r'app\.html\?v=\d+','app.html?v=82',text)
           path.write_text(text)
           PY
           done
 
-          # Home remains visually lightweight, but its project surfaces are
-          # always controlled by the live public-project sync. Remove stale
-          # injected JS markers, then inject the current Home behavior every build.
+          # Lightweight Home. Static project content is hidden before first
+          # paint and only Published + Public Supabase records may be revealed.
           cp _site/home-static.html _site/index.html
           cp _site/site/home-static.html _site/site/index.html
           for html in _site/index.html _site/site/index.html; do
             python3 - "$html" <<'PY'
           import pathlib,re,sys
           path=pathlib.Path(sys.argv[1]); text=path.read_text(); root=path.parent
-          text=re.sub(r'app\.html\?v=\d+','app.html?v=81',text)
-          text=re.sub(r'account\.html(?:\?v=\d+)?(?:#\w+)?','account.html?v=81#profile',text)
-          text=re.sub(r'assets/dlavie-mark\.svg(?:\?v=\d+)?','assets/dlavie-mark.svg?v=81',text)
-          text=re.sub(r'<script data-v(?:70|81)-brand>.*?</script>','',text,flags=re.S)
-          # Fail closed before JS: deleted/private projects must never flash as
-          # a static fallback while the database request is being resolved.
-          boot="""<style data-v81-project-boot>html.dlv-project-sync-pending .hero .visual,html.dlv-project-sync-pending .discover .result,html.dlv-project-sync-pending .hero .cta a[href*='#project/']{display:none!important}</style><script>document.documentElement.classList.add('dlv-project-sync-pending')</script>"""
-          if 'data-v81-project-boot' not in text:text=text.replace('</head>',boot+'</head>',1)
+          text=re.sub(r'app\.html\?v=\d+','app.html?v=82',text)
+          text=re.sub(r'account\.html(?:\?v=\d+)?(?:#\w+)?','account.html?v=82#profile',text)
+          text=re.sub(r'assets/dlavie-mark\.svg(?:\?v=\d+)?','assets/dlavie-mark.svg?v=82',text)
+          text=re.sub(r'<script data-v(?:70|81|82)-brand>.*?</script>','',text,flags=re.S)
+          text=re.sub(r'<link[^>]+href="marketplace-v\d+\.css(?:\?v=\d+)?"[^>]*>','',text)
+          boot="""<style data-v82-project-boot>html.dlv-project-sync-pending .hero .visual,html.dlv-project-sync-pending .discover .result,html.dlv-project-sync-pending .hero .cta a[href*='#project/']{display:none!important}</style><script>document.documentElement.classList.add('dlv-project-sync-pending')</script>"""
+          if 'data-v82-project-boot' not in text:text=text.replace('</head>',boot+'</head>',1)
           css=root/'home-brand-v67.css'
-          if css.exists() and 'data-v81-brand-css' not in text:
-              text=text.replace('</head>','<style data-v81-brand-css>\n'+css.read_text()+'\n</style></head>',1)
+          if css.exists() and 'data-v82-brand-css' not in text:text=text.replace('</head>','<style data-v82-brand-css>\n'+css.read_text()+'\n</style><link rel="stylesheet" href="marketplace-v82.css?v=82"></head>',1)
           js=root/'home-brand-v67.js'
           inject=''
-          if js.exists(): inject+='<script data-v81-brand>\n'+js.read_text()+'\n</script>'
-          inject+='\n<script src="public-project-sync-v80.js?v=81"></script>\n<script src="session-nav-v81.js?v=81"></script>'
+          if js.exists(): inject+='<script data-v82-brand>\n'+js.read_text()+'\n</script>'
           text=text.replace('</body>',inject+'\n</body>',1)
           path.write_text(text)
           PY
           done
 
-          # Keep the existing direct team console files copied from site/.
-          # Only normalize the public redirect version and noindex metadata.
           for html in _site/developer.html _site/site/developer.html; do
             python3 - "$html" <<'PY'
           import pathlib,re,sys
           path=pathlib.Path(sys.argv[1]); text=path.read_text()
           if 'name="robots"' not in text:text=text.replace('<head>','<head><meta name="robots" content="noindex,nofollow,noarchive,nosnippet">',1)
-          text=re.sub(r'dlv-ops-console-7c1a\.html\?v=\d+','dlv-ops-console-7c1a.html?v=81',text)
+          text=re.sub(r'dlv-ops-console-7c1a\.html\?v=\d+','dlv-ops-console-7c1a.html?v=82',text)
           path.write_text(text)
           PY
           done
