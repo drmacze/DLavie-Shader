@@ -3,46 +3,47 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-  <meta name="theme-color" content="#090c0a">
-  <meta name="description" content="DLavie Community — ruang komunitas dengan channels, threads, Inbox, Direct Messages, saved messages, roles, forum, moderation, dan presence.">
+  <meta name="theme-color" content="#090d0a">
+  <meta name="description" content="DLavie Community — workspace komunitas dengan channels, Inbox, Direct Messages, forum, threads, roles, moderation, dan presence.">
   <title>Community — DLavie</title>
-  <link rel="icon" type="image/svg+xml" href="assets/dlavie-mark.svg?v=93">
-  <link rel="stylesheet" href="community-v84.css?v=93">
-  <link rel="stylesheet" href="community-enhance-v85.css?v=93">
-  <link rel="stylesheet" href="community-experience-v86.css?v=93">
-  <link rel="stylesheet" href="community-hotfix-v87.css?v=93">
-  <link rel="stylesheet" href="community-verify-v88.css?v=93">
-  <link rel="stylesheet" href="community-admin-v89.css?v=93">
-  <link rel="stylesheet" href="community-discord-v90.css?v=93">
-  <link rel="stylesheet" href="community-discord-chat-v90.css?v=93">
-  <link rel="stylesheet" href="community-discord-v91.css?v=93">
-  <link rel="stylesheet" href="community-ui-v92.css?v=93">
-  <link rel="stylesheet" href="community-prism-v93.css?v=93">
+  <link rel="icon" type="image/svg+xml" href="assets/dlavie-mark.svg?v=94">
+  <link rel="stylesheet" href="community-v84.css?v=94">
+  <link rel="stylesheet" href="community-enhance-v85.css?v=94">
+  <link rel="stylesheet" href="community-experience-v86.css?v=94">
+  <link rel="stylesheet" href="community-hotfix-v87.css?v=94">
+  <link rel="stylesheet" href="community-verify-v88.css?v=94">
+  <link rel="stylesheet" href="community-admin-v89.css?v=94">
+  <link rel="stylesheet" href="community-discord-v90.css?v=94">
+  <link rel="stylesheet" href="community-discord-chat-v90.css?v=94">
+  <link rel="stylesheet" href="community-discord-v91.css?v=94">
+  <link rel="stylesheet" href="community-ui-v92.css?v=94">
+  <link rel="stylesheet" href="community-prism-v93.css?v=94">
+  <link rel="stylesheet" href="community-map-v94.css?v=94">
 </head>
-<body class="community-v93">
+<body class="community-v93 community-v94">
 <div class="c84">
   <header class="c84-top">
     <button class="c84-mobile-menu" id="sidebarToggle" type="button" aria-label="Buka channel" aria-expanded="false">☰</button>
-    <a class="c84-brand" href="index.html?v=93"><img src="assets/dlavie-mark.svg?v=93" alt=""><div><strong>DLavie</strong><span>Community</span></div></a>
-    <div class="c84-top-title"><strong>DLavie Community</strong><span>Spaces untuk chat, support, karya, forum, dan kolaborasi.</span></div>
+    <a class="c84-brand" href="index.html?v=94"><img src="assets/dlavie-mark.svg?v=94" alt=""><div><strong>DLavie</strong><span>Community</span></div></a>
+    <div class="c84-top-title"><strong>DLavie Community</strong><span>Workspace untuk channels, Inbox, forum, roles, dan kolaborasi.</span></div>
     <div class="c84-top-spacer"></div>
     <div class="c84-online" title="Member online"><i></i><b id="onlineCount">0</b><span>online</span></div>
-    <a class="c84-account" id="topAccount" href="account.html?v=93"><span class="c84-account-avatar" id="topAvatar">?</span><span id="topAccountName">Masuk</span></a>
+    <a class="c84-account" id="topAccount" href="account.html?v=94"><span class="c84-account-avatar" id="topAvatar">?</span><span id="topAccountName">Masuk</span></a>
   </header>
 
   <div class="c84-body">
     <aside class="c84-sidebar" id="sidebar">
       <section class="c84-server">
-        <small>DLAVIE SPACE</small>
+        <small>DLAVIE WORKSPACE</small>
         <strong>DLavie Hub</strong>
-        <p>Tempat utama untuk ngobrol, cari bantuan, berbagi karya, mengikuti update, dan terhubung dengan member DLavie.</p>
+        <p>Chat, support, karya, forum, Direct Message, dan pengelolaan Community dalam satu workspace.</p>
         <div class="c85-server-meta" style="margin-top:10px;display:flex;gap:5px;flex-wrap:wrap">
-          <span>CHANNELS</span><span>THREADS</span><span>DM</span><span>FORUM</span>
+          <span>CHANNELS</span><span>INBOX</span><span>FORUM</span><span>DM</span>
         </div>
       </section>
 
       <section class="c84-group">
-        <div class="c84-group-label">Start here</div>
+        <div class="c84-group-label">Access</div>
         <button class="c84-nav" data-view="rules" type="button"><span class="c84-nav-icon">✓</span><span class="c84-nav-copy"><strong>rules</strong><span>Aturan & verifikasi</span></span><span class="c84-nav-badge">WAJIB</span></button>
         <button class="c84-nav" data-view="roles" type="button"><span class="c84-nav-icon">◆</span><span class="c84-nav-copy"><strong>roles</strong><span>Identity & role</span></span></button>
       </section>
@@ -50,16 +51,16 @@
       <section class="c84-group"><div class="c84-group-label">Channels</div><div id="channelList"></div></section>
 
       <section class="c84-group">
-        <div class="c84-group-label">Forum</div>
+        <div class="c84-group-label">Community</div>
         <button class="c84-nav" data-view="feedback" type="button"><span class="c84-nav-icon">▤</span><span class="c84-nav-copy"><strong>feedback</strong><span>Ide & improvement</span></span></button>
         <button class="c84-nav" data-view="vote" type="button"><span class="c84-nav-icon">◉</span><span class="c84-nav-copy"><strong>voting</strong><span>Poll komunitas</span></span></button>
         <button class="c84-nav" data-view="report" type="button"><span class="c84-nav-icon">!</span><span class="c84-nav-copy"><strong>report</strong><span>Laporan privat</span></span></button>
       </section>
 
       <section class="c84-group">
-        <div class="c84-group-label">DLavie</div>
-        <a class="c84-nav" href="index.html?v=93"><span class="c84-nav-icon">⌂</span><span class="c84-nav-copy"><strong>Beranda</strong><span>Kembali ke website</span></span></a>
-        <a class="c84-nav" href="app.html?v=93#downloads"><span class="c84-nav-icon">▣</span><span class="c84-nav-copy"><strong>Project</strong><span>Katalog publik</span></span></a>
+        <div class="c84-group-label">Resources</div>
+        <a class="c84-nav" href="index.html?v=94"><span class="c84-nav-icon">⌂</span><span class="c84-nav-copy"><strong>Beranda</strong><span>Kembali ke website</span></span></a>
+        <a class="c84-nav" href="app.html?v=94#downloads"><span class="c84-nav-icon">▣</span><span class="c84-nav-copy"><strong>Project</strong><span>Katalog publik</span></span></a>
       </section>
     </aside>
     <div class="c84-scrim" id="sidebarScrim"></div>
@@ -141,14 +142,15 @@
 <div class="c86-lightbox" id="imageLightbox" hidden><button class="c86-lightbox-close" id="lightboxClose" type="button" aria-label="Tutup gambar">×</button><img id="lightboxImage" alt=""></div>
 <div class="c84-toast" id="c84Toast" role="status" aria-live="polite"></div>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script src="community-app-v88.js?v=93"></script>
-<script src="community-admin-v89.js?v=93"></script>
-<script src="community-admin-patch-v89.js?v=93"></script>
-<script src="community-discord-core-v90.js?v=93"></script>
-<script src="community-discord-chat-v90.js?v=93"></script>
-<script src="community-discord-search-v90.js?v=93"></script>
-<script src="community-discord-v91.js?v=93"></script>
-<script src="community-ui-v92.js?v=93"></script>
-<script src="community-prism-v93.js?v=93"></script>
+<script src="community-app-v88.js?v=94"></script>
+<script src="community-admin-v89.js?v=94"></script>
+<script src="community-admin-patch-v89.js?v=94"></script>
+<script src="community-discord-core-v90.js?v=94"></script>
+<script src="community-discord-chat-v90.js?v=94"></script>
+<script src="community-discord-search-v90.js?v=94"></script>
+<script src="community-discord-v91.js?v=94"></script>
+<script src="community-ui-v92.js?v=94"></script>
+<script src="community-prism-v93.js?v=94"></script>
+<script src="community-map-v94.js?v=94"></script>
 </body>
 </html>
