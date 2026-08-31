@@ -56,6 +56,7 @@ jobs:
           text=re.sub(r'\s*<script[^>]+src="https://unpkg\.com/lenis[^>]+></script>', '', text)
           text=re.sub(r'\s*<link[^>]+href="modrinth\.css(?:\?v=\d+)?"[^>]*>', '', text)
           text=re.sub(r'\s*<script[^>]+src="modrinth\.js(?:\?v=\d+)?"[^>]*></script>', '', text)
+          text=re.sub(r'\s*<script[^>]+src="public-project-sync-v\d+\.js(?:\?v=\d+)?"[^>]*></script>', '', text)
           text=re.sub(r'\s*<link[^>]+rel="icon"[^>]*>', '', text)
           text=re.sub(r'\s*<script data-dlavie-theme-boot>.*?</script>', '', text, flags=re.S)
           text=re.sub(r'\s*<script data-dlavie-app-guard>.*?</script>', '', text, flags=re.S)
@@ -67,6 +68,7 @@ jobs:
           text=re.sub(r'assets/dlavie-mark\.svg(?:\?v=\d+)?','assets/dlavie-mark.svg?v=82',text)
           text=re.sub(r'app\.html\?v=\d+','app.html?v=82',text)
           text=re.sub(r'account\.html(?:\?v=\d+)?(?:#\w+)?','account.html?v=82#profile',text)
+          text=re.sub(r'session-nav-v81\.js\?v=\d+','session-nav-v81.js?v=82',text)
           theme="""<script data-dlavie-theme-boot>(function(){try{var t=localStorage.getItem('dlavie.theme.v1');if(!['light','dark','system'].includes(t))t='light';document.documentElement.dataset.theme=t==='system'?(matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light'):t}catch(e){document.documentElement.dataset.theme='light'}})();</script>"""
           guard="""<script data-dlavie-app-guard>(function(){var h=(location.hash||'').replace(/^#\\/?/,'');if(!h||h==='home')location.replace('index.html?v=82')})();</script>"""
           text=text.replace('</head>',f'<link rel="icon" type="image/svg+xml" href="assets/dlavie-mark.svg?v=82">\n{theme}\n{guard}\n<link rel="stylesheet" href="dlavie-app-shell-v82.css?v=82">\n<link rel="stylesheet" href="marketplace-v82.css?v=82">\n</head>',1)
