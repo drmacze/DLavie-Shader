@@ -17,10 +17,22 @@
 
   function toast(msg){const el=$('#devToast');if(!el)return;el.textContent=msg;el.classList.add('show');clearTimeout(toast.t);toast.t=setTimeout(()=>el.classList.remove('show'),2200)}
   function setGate(msg,bad=false){const m=$('#gateMessage');if(m){m.textContent=msg;m.classList.toggle('bad',bad)}}
-  function showGate(msg='Masukkan PIN tim DLavie.'){state.token='';localStorage.removeItem(TOKEN_KEY);$('#accessGate').hidden=false;$('#consoleApp').hidden=true;setGate(msg,false);setTimeout(()=>$('#consolePin')?.focus(),80)}
-  function showConsole(){$('#accessGate').hidden=true;$('#consoleApp').hidden=false;$('#devDisplay').textContent='DLavie Team';$('#welcomeName').textContent='Tim DLavie';$('#devRole').textContent='PIN ACCESS'}
+  function showGate(msg='Masukkan PIN tim DLavie.'){
+    state.token='';localStorage.removeItem(TOKEN_KEY);
+    const gate=$('#accessGate'),app=$('#consoleApp');
+    if(gate){gate.hidden=false;gate.style.display='grid'}
+    if(app){app.hidden=true;app.style.display='none'}
+    setGate(msg,false);setTimeout(()=>$('#consolePin')?.focus(),80)
+  }
+  function showConsole(){
+    const gate=$('#accessGate'),app=$('#consoleApp');
+    if(gate){gate.hidden=true;gate.style.setProperty('display','none','important')}
+    if(app){app.hidden=false;app.style.removeProperty('display')}
+    setGate('',false);
+    $('#devDisplay').textContent='DLavie Team';$('#welcomeName').textContent='Tim DLavie';$('#devRole').textContent='PIN ACCESS'
+  }
   function panel(name){$$('[data-console-panel]').forEach(x=>x.classList.toggle('active',x.dataset.consolePanel===name));$$('[data-panel]').forEach(x=>x.classList.toggle('active',x.dataset.panel===name));window.scrollTo(0,0)}
-  function imageSrc(url){if(!url)return 'assets/dlavie-mark.svg?v=76';return /^https?:\/\//.test(url)?url:url.replace(/^\//,'')}
+  function imageSrc(url){if(!url)return 'assets/dlavie-mark.svg?v=77';return /^https?:\/\//.test(url)?url:url.replace(/^\//,'')}
 
   async function api(action,payload={},token=state.token){
     const headers={'Content-Type':'application/json'};
@@ -40,6 +52,7 @@
       const data=await api('login',{pin},'');
       state.token=data.token;localStorage.setItem(TOKEN_KEY,data.token);
       await enterConsole();
+      $('#consolePin').value='';
     }catch(e){setGate(e.message==='PIN_SALAH'?'PIN salah. Coba lagi.':e.message,true);$('#consolePin').value='';$('#consolePin').focus()}
     finally{button.disabled=false}
   }
@@ -98,7 +111,7 @@
   function setThumbnail(file,clear=false,dirty=true){if(clear){state.thumbnailFile=null;state.thumbnailUrl='';if($('#thumbnailFile'))$('#thumbnailFile').value='';showThumbnailUrl('');updatePreview();if(dirty)markDirty();return}if(!file)return;if(!/^image\/(png|jpeg|webp|gif)$/.test(file.type)){toast('Format thumbnail tidak didukung');return}if(file.size>8*1024*1024){toast('Thumbnail maksimal 8 MB');return}state.thumbnailFile=file;showThumbnailUrl(URL.createObjectURL(file));updatePreview();markDirty()}
   function addGalleryFiles(files){for(const file of files){if(state.galleryFiles.length+state.galleryUrls.length>=8)break;if(/^image\/(png|jpeg|webp|gif)$/.test(file.type)&&file.size<=8*1024*1024)state.galleryFiles.push(file)}renderGallery();markDirty();$('#galleryFiles').value=''}
   function renderGallery(){const root=$('#galleryPreview');const existing=state.galleryUrls.map((url,i)=>({url:imageSrc(url),type:'url',i}));const local=state.galleryFiles.map((f,i)=>({url:URL.createObjectURL(f),type:'file',i}));root.innerHTML=[...existing,...local].map(x=>`<div class="gallery-item"><img src="${esc(x.url)}" alt=""><button type="button" data-gallery-remove="${x.type}:${x.i}" aria-label="Hapus">×</button></div>`).join('');$$('[data-gallery-remove]',root).forEach(b=>b.addEventListener('click',()=>{const [type,index]=b.dataset.galleryRemove.split(':');if(type==='url')state.galleryUrls.splice(+index,1);else state.galleryFiles.splice(+index,1);renderGallery();markDirty()}))}
-  function updatePreview(){if(!$('#cardPreviewName'))return;$('#cardPreviewName').textContent=$('#projectName').value||'Nama project';$('#cardPreviewSummary').textContent=$('#projectSummary').value||'Deskripsi singkat project akan tampil di sini.';const tags=csv($('#projectTags').value).slice(0,3);$('#cardPreviewTags').innerHTML=(tags.length?tags:['Project']).map(x=>`<i>${esc(x)}</i>`).join('');const src=(state.thumbnailFile&&$('#thumbnailPreview').src)||state.thumbnailUrl;$('#cardPreviewImage').src=imageSrc(src||'assets/dlavie-mark.svg?v=76')}
+  function updatePreview(){if(!$('#cardPreviewName'))return;$('#cardPreviewName').textContent=$('#projectName').value||'Nama project';$('#cardPreviewSummary').textContent=$('#projectSummary').value||'Deskripsi singkat project akan tampil di sini.';const tags=csv($('#projectTags').value).slice(0,3);$('#cardPreviewTags').innerHTML=(tags.length?tags:['Project']).map(x=>`<i>${esc(x)}</i>`).join('');const src=(state.thumbnailFile&&$('#thumbnailPreview').src)||state.thumbnailUrl;$('#cardPreviewImage').src=imageSrc(src||'assets/dlavie-mark.svg?v=77')}
 
   async function checkBranch(){const repo=cleanRepo($('#githubRepo').value),branch=$('#githubBranch').value.trim();const box=$('#branchState');box.hidden=false;box.className='branch-state';if(!/^[\w.-]+\/[\w.-]+$/.test(repo)||!branch){box.textContent='Isi repository owner/repo dan branch terlebih dahulu.';box.classList.add('error');return false}$('#githubRepo').value=repo;box.textContent='Memeriksa branch GitHub…';try{const r=await fetch(`https://api.github.com/repos/${repo}/branches/${encodeURIComponent(branch)}`,{headers:{Accept:'application/vnd.github+json'}});if(!r.ok)throw new Error(r.status===404?'Repository atau branch tidak ditemukan':`GitHub API ${r.status}`);const j=await r.json();box.textContent=`Branch ditemukan · ${j.name} · commit ${String(j.commit?.sha||'').slice(0,7)}`;box.classList.add('ok');return true}catch(e){box.textContent=e.message;box.classList.add('error');return false}}
 
