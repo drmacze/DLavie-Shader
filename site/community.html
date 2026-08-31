@@ -3,117 +3,107 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-  <meta name="theme-color" content="#0f1210">
-  <meta name="description" content="DLavie Community — public chat, rules verification, roles, feedback, voting, reports, files, and project discussion.">
+  <meta name="theme-color" content="#0d0f0e">
+  <meta name="description" content="DLavie Community — public chat, rules verification, roles, feedback, voting, report, file and image sharing.">
   <title>Community — DLavie</title>
-  <link rel="icon" type="image/svg+xml" href="assets/dlavie-mark.svg?v=83">
-  <link rel="stylesheet" href="community-v83.css?v=83">
+  <link rel="icon" type="image/svg+xml" href="assets/dlavie-mark.svg?v=84">
+  <link rel="stylesheet" href="community-v84.css?v=84">
 </head>
 <body>
-<div class="dc-app">
-  <header class="dc-topbar">
-    <button class="dc-icon mobile-only" id="sidebarToggle" type="button" aria-label="Buka navigasi">☰</button>
-    <a class="dc-brand" href="index.html?v=83"><img src="assets/dlavie-mark.svg?v=83" alt=""><strong>DLavie</strong><span>Community</span></a>
-    <div class="dc-top-title"><strong>Community Hub</strong><span>Public chat, forum, roles, dan bantuan DLavie.</span></div>
-    <div class="dc-top-actions">
-      <span class="dc-pill"><i></i><b id="onlineCount">0</b> online</span>
-      <a class="dc-account" id="topAccount" href="account.html?v=83"><span class="dc-account-avatar" id="topAvatar">?</span><span id="topAccountName">Masuk</span></a>
-    </div>
+<div class="c84">
+  <header class="c84-top">
+    <button class="c84-mobile-menu" id="sidebarToggle" type="button" aria-label="Buka channel">☰</button>
+    <a class="c84-brand" href="index.html?v=84"><img src="assets/dlavie-mark.svg?v=84" alt=""><div><strong>DLavie</strong><span>Community</span></div></a>
+    <div class="c84-top-title"><strong>Community Hub</strong><span>Chat, forum, roles, bantuan, dan feedback.</span></div>
+    <div class="c84-top-spacer"></div>
+    <div class="c84-online"><i></i><b id="onlineCount">0</b><span>online</span></div>
+    <a class="c84-account" id="topAccount" href="account.html?v=84"><span class="c84-account-avatar" id="topAvatar">?</span><span id="topAccountName">Masuk</span></a>
   </header>
 
-  <div class="dc-shell">
-    <aside class="dc-sidebar" id="dcSidebar">
-      <section class="dc-server-card"><small>DLAVIE COMMUNITY</small><strong>DLavie Hub</strong><p>Tempat ngobrol, meminta bantuan, membagikan karya, dan ikut menentukan arah project.</p></section>
-      <section class="dc-group">
-        <div class="dc-group-title">Mulai di sini</div>
-        <button class="dc-nav-item" data-view="rules"><span class="dc-nav-icon">✓</span><span class="dc-nav-copy"><strong>rules</strong><span>Aturan & verifikasi</span></span><span class="dc-nav-badge">WAJIB</span></button>
-        <button class="dc-nav-item" data-view="roles"><span class="dc-nav-icon">◆</span><span class="dc-nav-copy"><strong>roles</strong><span>Ambil role komunitas</span></span></button>
+  <div class="c84-body">
+    <aside class="c84-sidebar" id="sidebar">
+      <section class="c84-server"><small>DLAVIE COMMUNITY</small><strong>DLavie Hub</strong><p>Tempat ngobrol, minta bantuan, berbagi karya, dan ikut menentukan arah DLavie.</p></section>
+
+      <section class="c84-group"><div class="c84-group-label">Mulai di sini</div>
+        <button class="c84-nav" data-view="rules"><span class="c84-nav-icon">✓</span><span class="c84-nav-copy"><strong>rules</strong><span>Aturan & verifikasi</span></span><span class="c84-nav-badge">WAJIB</span></button>
+        <button class="c84-nav" data-view="roles"><span class="c84-nav-icon">◆</span><span class="c84-nav-copy"><strong>roles</strong><span>Ambil role komunitas</span></span></button>
       </section>
-      <section class="dc-group">
-        <div class="dc-group-title">Chat</div>
-        <div id="channelNav"></div>
+
+      <section class="c84-group"><div class="c84-group-label">Chat</div><div id="channelList"></div></section>
+
+      <section class="c84-group"><div class="c84-group-label">Forum</div>
+        <button class="c84-nav" data-view="feedback"><span class="c84-nav-icon">▤</span><span class="c84-nav-copy"><strong>feedback</strong><span>Ide dan saran</span></span></button>
+        <button class="c84-nav" data-view="vote"><span class="c84-nav-icon">◉</span><span class="c84-nav-copy"><strong>voting</strong><span>Poll komunitas</span></span></button>
+        <button class="c84-nav" data-view="report"><span class="c84-nav-icon">!</span><span class="c84-nav-copy"><strong>report</strong><span>Laporan privat ke tim</span></span></button>
       </section>
-      <section class="dc-group">
-        <div class="dc-group-title">Forum</div>
-        <button class="dc-nav-item" data-view="feedback"><span class="dc-nav-icon">▤</span><span class="dc-nav-copy"><strong>feedback</strong><span>Ide dan saran</span></span></button>
-        <button class="dc-nav-item" data-view="vote"><span class="dc-nav-icon">◉</span><span class="dc-nav-copy"><strong>voting</strong><span>Poll komunitas</span></span></button>
-        <button class="dc-nav-item" data-view="report"><span class="dc-nav-icon">!</span><span class="dc-nav-copy"><strong>report</strong><span>Laporan privat ke tim</span></span></button>
-      </section>
-      <section class="dc-group">
-        <div class="dc-group-title">DLavie</div>
-        <a class="dc-nav-item" href="index.html?v=83"><span class="dc-nav-icon">⌂</span><span class="dc-nav-copy"><strong>Beranda</strong><span>Kembali ke website</span></span></a>
-        <a class="dc-nav-item" href="app.html?v=83#downloads"><span class="dc-nav-icon">▣</span><span class="dc-nav-copy"><strong>Project</strong><span>Katalog project</span></span></a>
+
+      <section class="c84-group"><div class="c84-group-label">DLavie</div>
+        <a class="c84-nav" href="index.html?v=84"><span class="c84-nav-icon">⌂</span><span class="c84-nav-copy"><strong>Beranda</strong><span>Kembali ke website</span></span></a>
+        <a class="c84-nav" href="app.html?v=84#downloads"><span class="c84-nav-icon">▣</span><span class="c84-nav-copy"><strong>Project</strong><span>Katalog publik</span></span></a>
       </section>
     </aside>
-    <div class="dc-sidebar-scrim" id="sidebarScrim"></div>
+    <div class="c84-scrim" id="sidebarScrim"></div>
 
-    <main class="dc-main">
-      <header class="dc-view-head"><span class="dc-view-hash" id="viewHash">#</span><div><h1 id="viewTitle">global</h1><p id="viewDescription">Obrolan umum komunitas DLavie.</p></div><div class="dc-head-spacer"></div><button class="dc-head-button mobile-only" type="button" data-view="rules">Rules</button></header>
-      <div class="dc-content">
-        <div id="communityBoot"><div class="dc-empty">Menghubungkan ke DLavie Community…</div></div>
+    <main class="c84-main">
+      <header class="c84-head"><span class="c84-head-symbol" id="viewSymbol">#</span><div><h1 id="viewTitle">global</h1><p id="viewDesc">Obrolan umum komunitas DLavie.</p></div><div class="c84-head-spacer"></div><button class="c84-head-action" type="button" data-view="rules">Rules</button></header>
+      <div class="c84-stage">
+        <div class="c84-state" id="bootState">Menyiapkan Community…</div>
 
-        <section class="dc-chat-view" id="chatView" hidden>
-          <div class="dc-messages" id="messageScroller">
-            <div class="dc-welcome"><span class="big-hash">#</span><h2>Selamat datang di <span id="welcomeChannel">DLavie Community</span></h2><p>Chat publik untuk komunitas. Link eksternal diblokir; hanya tautan dari website DLavie yang dapat dikirim.</p></div>
-            <div class="dc-empty" id="messageLoading">Memuat pesan…</div>
+        <section class="c84-view c84-chat" id="chatView" hidden>
+          <div class="c84-scroll" id="messageScroller">
+            <div class="c84-welcome"><span class="c84-welcome-icon">#</span><h2>Selamat datang di <span id="welcomeName">#global</span></h2><p>Chat publik DLavie. Link eksternal diblokir dari server; hanya tautan resmi dari website DLavie yang dapat dikirim.</p></div>
+            <div class="c84-state" id="messageState">Memuat pesan…</div>
             <div id="messageList"></div>
           </div>
-          <div class="dc-composer-wrap">
-            <div class="dc-reply-strip" id="replyStrip" hidden><span id="replyStripText"></span><button class="dc-strip-close" id="clearReply" type="button">×</button></div>
-            <div class="dc-file-strip" id="fileStrip" hidden></div>
-            <div class="dc-locked" id="composerLocked"></div>
-            <form class="dc-composer" id="messageForm" hidden>
+          <div class="c84-composer-shell">
+            <div class="c84-reply-strip" id="replyStrip" hidden></div>
+            <button class="c84-tool" id="clearReply" type="button" hidden>Batalkan balasan</button>
+            <div class="c84-file-strip" id="fileStrip" hidden></div>
+            <div class="c84-locked" id="composerLocked"></div>
+            <form class="c84-compose" id="messageForm" hidden>
               <input id="fileInput" type="file" hidden multiple accept="image/jpeg,image/png,image/webp,image/gif,.pdf,.txt,.json,.zip,.mcpack,.mcaddon">
-              <button class="composer-btn" type="button" onclick="document.getElementById('fileInput').click()" aria-label="Tambah file">＋</button>
-              <textarea id="messageInput" rows="1" maxlength="1200" placeholder="Tulis pesan…"></textarea>
-              <button class="composer-btn send-btn" type="submit" aria-label="Kirim">➜</button>
+              <button type="button" id="fileButton" aria-label="Tambah file">＋</button>
+              <textarea id="messageInput" maxlength="1200" rows="1" placeholder="Tulis pesan…"></textarea>
+              <button class="send" id="sendMessage" type="submit" aria-label="Kirim">➜</button>
             </form>
-            <div class="dc-composer-note"><span>Maks. 4 file · 15 MB/file · foto, PDF, ZIP, MCPACK, MCADDON</span><span id="typingLine">Link eksternal otomatis ditolak.</span></div>
+            <div class="c84-note"><span>Maks. 4 file · 15 MB/file</span><span>Link DLavie only</span></div>
           </div>
         </section>
 
-        <section class="dc-page" id="rulesView" hidden>
-          <article class="dc-hero-card"><span class="dc-eyebrow">COMMUNITY SAFETY</span><h2>Rules & Verify</h2><p>Baca aturan berikut sebelum ikut chat atau forum. Verifikasi ini berlaku untuk akun DLavie kamu dan dapat diperbarui ketika aturan berubah.</p></article>
-          <div class="rules-list" id="rulesList"></div>
-          <div class="verify-card"><div id="rulesState" class="form-note"></div><label class="verify-check" style="margin-top:10px"><input id="rulesAgree" type="checkbox"><span>Saya sudah membaca dan setuju mengikuti seluruh Rules DLavie Community.</span></label><button id="acceptRules" type="button" disabled>Verifikasi & lanjut</button></div>
+        <section class="c84-view c84-page" id="rulesView" hidden>
+          <article class="c84-hero"><span class="c84-eyebrow">COMMUNITY SAFETY</span><h2>Rules & Verify</h2><p>Baca aturan sekali, centang persetujuan, lalu chat, role, feedback, vote, dan report akan terbuka untuk akunmu.</p></article>
+          <div class="c84-rules" id="rulesList"></div>
+          <div class="c84-verify"><div id="rulesStatus" style="font-size:8.5px;color:var(--muted)"></div><label class="c84-check" style="margin-top:10px"><input id="rulesAgree" type="checkbox"><span>Saya sudah membaca dan setuju mengikuti Rules DLavie Community.</span></label><button class="c84-primary" id="acceptRules" type="button" disabled>Verifikasi & lanjut</button></div>
         </section>
 
-        <section class="dc-page" id="rolesView" hidden>
-          <article class="dc-hero-card"><span class="dc-eyebrow">COMMUNITY IDENTITY</span><h2>Ambil Role</h2><p>Pilih role yang menggambarkan platform, minat, atau cara kamu berkontribusi. Role ini tidak memberi akses moderator.</p></article>
-          <div class="roles-grid" id="rolesGrid"></div>
+        <section class="c84-view c84-page" id="rolesView" hidden>
+          <article class="c84-hero"><span class="c84-eyebrow">COMMUNITY IDENTITY</span><h2>Ambil Role</h2><p>Role menunjukkan platform atau minat kamu. Role ini tidak memberi akses moderator atau developer.</p></article>
+          <div class="c84-role-grid" id="roleGrid"></div>
         </section>
 
-        <section class="dc-page" id="forumView" hidden>
-          <article class="dc-hero-card"><span class="dc-eyebrow">COMMUNITY FORUM</span><h2 id="forumTitle">Feedback</h2><p id="forumDescription">Ide dan saran komunitas.</p></article>
-          <div class="forum-toolbar"><button class="forum-filter" type="button">Terbaru</button><span class="spacer"></span><button class="forum-create" id="createForum" type="button">+ Buat post</button></div>
-          <div class="forum-list" id="forumList"></div>
+        <section class="c84-view c84-page" id="forumView" hidden>
+          <article class="c84-hero"><span class="c84-eyebrow">COMMUNITY FORUM</span><h2 id="forumTitle">Feedback</h2><p id="forumDesc">Ide dan saran komunitas.</p></article>
+          <div class="c84-forum-toolbar"><button class="c84-secondary" type="button">Terbaru</button><span></span><button class="c84-create" id="createForum" type="button">+ Buat post</button></div>
+          <div class="c84-forum-list" id="forumList"></div>
         </section>
       </div>
     </main>
 
-    <aside class="dc-info">
-      <section class="info-card"><div class="info-card-title"><strong>Akun kamu</strong><span>DLavie Account</span></div><div id="identityInfo"></div></section>
-      <section class="info-card"><div class="info-card-title"><strong>Role kamu</strong><button class="forum-action" data-view="roles">Atur</button></div><div class="my-role-list" id="myRoles"></div></section>
-      <section class="info-card"><div class="info-card-title"><strong>Keamanan chat</strong><span>Aktif</span></div><div class="info-stat"><b>🔗</b><div><strong>DLavie links only</strong><span>Link eksternal ditolak server.</span></div></div><div class="info-stat"><b>🛡</b><div><strong>Rules verification</strong><span>Wajib sebelum posting.</span></div></div><div class="info-stat"><b>⚑</b><div><strong>Report & moderation</strong><span>Pesan dapat dilaporkan.</span></div></div></section>
-      <section class="info-card"><div class="info-card-title"><strong>Tip</strong><span>Community</span></div><p style="margin:0;color:var(--muted);font-size:9.5px;line-height:1.5">Gunakan <b style="color:var(--text)">#help</b> untuk bantuan dan <b style="color:var(--text)">#showcase</b> untuk screenshot atau karya.</p></section>
+    <aside class="c84-info">
+      <section class="c84-card"><div class="c84-card-head"><strong>Akun kamu</strong><span>DLavie Account</span></div><div id="meCard"></div></section>
+      <section class="c84-card"><div class="c84-card-head"><strong>Role kamu</strong><button class="c84-secondary" data-view="roles" style="margin-left:auto;height:26px">Atur</button></div><div class="c84-role-list" id="myRoles"></div></section>
+      <section class="c84-card"><div class="c84-card-head"><strong>Keamanan</strong><span>Aktif</span></div><div class="c84-safety"><div><b>✓</b><span><strong>Rules verification</strong><span>Wajib sebelum posting.</span></span></div><div><b>↗</b><span><strong>DLavie links only</strong><span>Link eksternal ditolak server.</span></span></div><div><b>⚑</b><span><strong>Report & moderation</strong><span>Laporan masuk privat ke tim.</span></span></div></div></section>
     </aside>
   </div>
 </div>
 
-<div class="dc-modal-backdrop" id="forumModal" hidden>
-  <section class="dc-modal"><div class="dc-modal-head"><div><span class="dc-eyebrow">COMMUNITY FORUM</span><h2 id="forumModalTitle">Buat post</h2><p>Posting menggunakan identitas akun DLavie kamu.</p></div><button class="modal-x" type="button" data-close-modal>×</button></div>
-    <form class="dc-form" id="forumForm"><input id="forumModalKind" type="hidden"><label><span>Judul</span><input id="forumPostTitle" maxlength="120" required placeholder="Judul yang jelas"></label><label><span>Isi</span><textarea id="forumPostBody" maxlength="4000" required placeholder="Jelaskan dengan lengkap…"></textarea></label><label id="forumOptionsWrap" hidden><span>Pilihan voting — satu per baris</span><textarea id="forumOptions" maxlength="700" placeholder="Pilihan A&#10;Pilihan B"></textarea><small class="form-note">2–6 pilihan.</small></label><div class="report-private" id="forumPrivacyNote" hidden>Report bersifat privat. User lain tidak dapat membacanya.</div><small class="form-note">Link hanya boleh berasal dari https://drmacze.github.io/DLavie-Shader/</small><button type="submit">Kirim</button></form>
-  </section>
-</div>
+<div class="c84-modal-backdrop" id="forumModal" hidden><section class="c84-modal"><div class="c84-modal-head"><div><span class="c84-eyebrow">COMMUNITY FORUM</span><h2>Buat post</h2><p>Posting memakai identitas akun DLavie.</p></div><button class="c84-x" type="button" data-close-modal>×</button></div><form class="c84-form" id="forumForm"><input id="forumKind" type="hidden"><label><span>Judul</span><input id="forumPostTitle" maxlength="120" required placeholder="Judul yang jelas"></label><label><span>Isi</span><textarea id="forumPostBody" maxlength="4000" required placeholder="Jelaskan dengan lengkap…"></textarea></label><label id="forumOptionsWrap" hidden><span>Pilihan voting — satu per baris</span><textarea id="forumOptions" maxlength="700" placeholder="Pilihan A&#10;Pilihan B"></textarea><small>2–6 pilihan.</small></label><small id="forumPrivacy" hidden>Report bersifat privat. User lain tidak dapat membacanya.</small><small>Link hanya boleh berasal dari website DLavie.</small><button class="c84-primary" type="submit">Kirim</button></form></section></div>
 
-<div class="dc-modal-backdrop" id="messageReportModal" hidden>
-  <section class="dc-modal"><div class="dc-modal-head"><div><span class="dc-eyebrow">COMMUNITY SAFETY</span><h2>Report pesan</h2><p>Laporan hanya dapat dilihat tim moderasi DLavie.</p></div><button class="modal-x" type="button" data-close-modal>×</button></div>
-    <form class="dc-form" id="messageReportForm"><input id="reportMessageId" type="hidden"><label><span>Alasan</span><select id="messageReportReason"><option value="spam">Spam</option><option value="harassment">Harassment</option><option value="hate">Hate</option><option value="privacy">Privacy</option><option value="other">Lainnya</option></select></label><label><span>Detail</span><textarea id="messageReportDetails" maxlength="500" placeholder="Tambahkan konteks jika diperlukan"></textarea></label><button type="submit">Kirim report</button></form>
-  </section>
-</div>
+<div class="c84-modal-backdrop" id="messageReportModal" hidden><section class="c84-modal"><div class="c84-modal-head"><div><span class="c84-eyebrow">COMMUNITY SAFETY</span><h2>Report pesan</h2><p>Laporan hanya dapat dilihat tim DLavie.</p></div><button class="c84-x" type="button" data-close-modal>×</button></div><form class="c84-form" id="messageReportForm"><input id="reportMessageId" type="hidden"><label><span>Alasan</span><select id="messageReportReason"><option value="spam">Spam</option><option value="harassment">Harassment</option><option value="hate">Hate</option><option value="privacy">Privacy</option><option value="other">Lainnya</option></select></label><label><span>Detail</span><textarea id="messageReportDetails" maxlength="500" placeholder="Tambahkan konteks jika perlu"></textarea></label><button class="c84-primary" type="submit">Kirim report</button></form></section></div>
 
-<div class="dc-toast" id="dcToast" role="status" aria-live="polite"></div>
+<div class="c84-toast" id="c84Toast" role="status" aria-live="polite"></div>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script src="community-v83.js?v=83"></script>
+<script src="community-v84.js?v=84"></script>
+<script>document.getElementById('fileButton').onclick=()=>document.getElementById('fileInput').click();const r=document.getElementById('replyStrip'),c=document.getElementById('clearReply');new MutationObserver(()=>{c.hidden=r.hidden}).observe(r,{attributes:true,attributeFilter:['hidden']});</script>
 </body>
 </html>
