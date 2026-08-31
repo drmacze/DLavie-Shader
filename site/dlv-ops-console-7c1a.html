@@ -1,0 +1,125 @@
+<!doctype html>
+<html lang="id" data-theme="light">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <meta name="theme-color" content="#f5f8f6">
+  <meta name="robots" content="noindex,nofollow,noarchive,nosnippet">
+  <meta name="referrer" content="no-referrer">
+  <title>DLavie Developer Console</title>
+  <link rel="icon" type="image/svg+xml" href="assets/dlavie-mark.svg?v=76">
+  <script>(function(){try{var t=localStorage.getItem('dlavie.theme.v1')||'light';if(t==='system')t=matchMedia('(prefers-color-scheme:dark)').matches?'dark':'light';document.documentElement.dataset.theme=t}catch(e){}})()</script>
+  <link rel="stylesheet" href="developer.css?v=76">
+  <link rel="stylesheet" href="developer-fix-v70.css?v=76">
+  <link rel="stylesheet" href="developer-pin-v76.css?v=76">
+</head>
+<body>
+  <header class="dev-topbar">
+    <a class="dev-brand" href="index.html" aria-label="DLavie home">
+      <img src="assets/dlavie-mark.svg?v=76" alt="">
+      <span><strong>DLavie</strong><small>Developer Console</small></span>
+    </a>
+    <div class="top-actions">
+      <span class="pin-session-badge">PIN Console</span>
+      <a href="app.html?v=70#downloads" class="ghost-link">Lihat website</a>
+      <button id="lockConsole" class="lock-console" type="button">Kunci</button>
+    </div>
+  </header>
+
+  <main>
+    <section id="accessGate" class="access-gate">
+      <div class="gate-card pin-gate-card">
+        <div class="pin-lock"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="5" y="10" width="14" height="10" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3M12 14v2"/></svg></div>
+        <p class="eyebrow">DLAVIE TEAM</p>
+        <h1>Developer Console</h1>
+        <p id="gateMessage">Masukkan PIN tim DLavie.</p>
+        <form id="pinForm" class="pin-form" autocomplete="off">
+          <label class="pin-field"><span>PIN AKSES</span><input id="consolePin" type="password" inputmode="numeric" pattern="[0-9]*" maxlength="12" autocomplete="off" aria-label="PIN akses developer" required></label>
+          <button id="pinSubmit" class="pin-submit" type="submit">Masuk ke Console</button>
+          <p class="pin-hint">Tidak membutuhkan login akun DLavie.</p>
+        </form>
+      </div>
+    </section>
+
+    <section id="consoleApp" class="console-shell" hidden>
+      <aside class="console-nav">
+        <div class="nav-user"><span class="user-dot"></span><div><strong id="devDisplay">DLavie Team</strong><small id="devRole">PIN ACCESS</small></div></div>
+        <nav aria-label="Developer console">
+          <button type="button" class="nav-item active" data-panel="overview"><svg viewBox="0 0 24 24"><path d="M4 4h6v6H4zM14 4h6v10h-6zM4 14h6v6H4zM14 18h6v2h-6z"/></svg><span>Ringkasan</span></button>
+          <button type="button" class="nav-item" data-panel="projects"><svg viewBox="0 0 24 24"><path d="M4 6h16v13H4zM8 6V4h8v2M8 11h8M8 15h5"/></svg><span>Project</span></button>
+          <button type="button" class="nav-item" data-new-project><svg viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg><span>Project baru</span></button>
+        </nav>
+        <div class="nav-foot"><span>Supabase</span><b></b><span>PIN v76</span></div>
+      </aside>
+
+      <div class="console-main">
+        <section class="console-panel active" data-console-panel="overview">
+          <div class="panel-head"><div><p class="eyebrow">WORKSPACE</p><h1>Selamat datang, <span id="welcomeName">Tim DLavie</span>.</h1><p>Kelola katalog project DLavie tanpa login akun.</p></div><button class="primary-btn button" type="button" data-new-project>+ Project baru</button></div>
+          <div class="metric-grid">
+            <article><span>Published</span><strong id="metricPublished">0</strong><small>Project yang tampil publik</small></article>
+            <article><span>Draft</span><strong id="metricDraft">0</strong><small>Belum dipublish</small></article>
+            <article><span>Total</span><strong id="metricTotal">0</strong><small>Semua project</small></article>
+            <article><span>Featured</span><strong id="metricFeatured">0</strong><small>Project unggulan</small></article>
+          </div>
+          <div class="surface-block recent-block"><div class="block-head"><div><h2>Project terbaru</h2><p>Edit metadata atau lanjutkan draft.</p></div><button class="text-btn" type="button" data-panel="projects">Lihat semua →</button></div><div id="recentProjects" class="project-admin-list"></div></div>
+        </section>
+
+        <section class="console-panel" data-console-panel="projects">
+          <div class="panel-head compact"><div><p class="eyebrow">CATALOG</p><h1>Project</h1><p>Semua project yang dikelola dari Developer Console.</p></div><button class="primary-btn button" type="button" data-new-project>+ Project baru</button></div>
+          <div class="list-toolbar"><label class="admin-search"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="m20 20-4-4"/></svg><input id="projectAdminSearch" type="search" placeholder="Cari project..."></label><select id="projectStatusFilter"><option value="all">Semua status</option><option value="published">Published</option><option value="draft">Draft</option><option value="archived">Archived</option></select></div>
+          <div id="allProjects" class="project-admin-list large"></div>
+        </section>
+
+        <section class="console-panel" data-console-panel="editor">
+          <div class="editor-top"><button class="back-btn" type="button" data-panel="projects"><svg viewBox="0 0 24 24"><path d="m15 18-6-6 6-6"/></svg>Project</button><div class="editor-actions"><span id="saveState" class="save-state">Belum disimpan</span><button id="saveDraft" class="secondary-btn button" type="button">Simpan draft</button><button id="publishProject" class="primary-btn button" type="button">Publish</button></div></div>
+          <form id="projectForm" autocomplete="off"><input id="projectId" type="hidden">
+            <div class="editor-grid">
+              <div class="editor-fields">
+                <section class="form-section">
+                  <div class="section-title"><span>01</span><div><h2>Identitas project</h2><p>Informasi utama yang tampil di website.</p></div></div>
+                  <div class="field-grid two"><label class="field"><span>Nama project</span><input id="projectName" required maxlength="80" placeholder="Contoh: DLavie Shader"></label><label class="field"><span>Slug URL</span><div class="prefix-input"><span>/project/</span><input id="projectSlug" required maxlength="80" pattern="[a-z0-9]+(?:-[a-z0-9]+)*" placeholder="dlavie-shader"></div></label></div>
+                  <label class="field"><span>Deskripsi singkat</span><input id="projectSummary" required maxlength="180" placeholder="Satu kalimat ringkas"><small><b id="summaryCount">0</b>/180</small></label>
+                  <label class="field"><span>Deskripsi lengkap</span><textarea id="projectDescription" required rows="8" placeholder="Jelaskan project, fitur utama, penggunaan, dan informasi penting lainnya."></textarea></label>
+                </section>
+
+                <section class="form-section">
+                  <div class="section-title"><span>02</span><div><h2>Minecraft & versi</h2><p>Tentukan edition dan versi Minecraft.</p></div></div>
+                  <div class="field-grid two"><label class="field"><span>Versi project</span><input id="projectVersion" placeholder="0.1.2"></label><label class="field"><span>Versi Minecraft</span><input id="minecraftVersions" required placeholder="1.21.120+, 1.21.130"><small>Pisahkan dengan koma.</small></label></div>
+                  <div class="field"><span>Platform / edition</span><div class="choice-grid"><label class="choice"><input id="platformBedrock" type="checkbox" value="bedrock"><span class="choice-icon block-icon"><img src="assets/icon-minecraft-block.svg?v=76" alt="Minecraft Bedrock"></span><span><b>Bedrock</b><small>iOS, Android, Windows, console</small></span><i></i></label><label class="choice"><input id="platformJava" type="checkbox" value="java"><span class="choice-icon"><svg viewBox="0 0 24 24"><path d="M8 18h8M9 14c-3-3 5-3 2-7M13 14c-2-2 4-3 2-6M7 21h10"/></svg></span><span><b>Java</b><small>Minecraft Java Edition</small></span><i></i></label></div></div>
+                  <label class="field"><span>Tag</span><input id="projectTags" placeholder="Shader, PBR, Mobile, Visuals"><small>Pisahkan tag dengan koma.</small></label>
+                </section>
+
+                <section class="form-section">
+                  <div class="section-title"><span>03</span><div><h2>GitHub source</h2><p>Hubungkan project ke repository dan branch.</p></div></div>
+                  <div class="field-grid repo-grid"><label class="field"><span>Repository</span><div class="icon-input"><img src="assets/icon-github.svg?v=76" alt="GitHub"><input id="githubRepo" required placeholder="owner/repository atau URL GitHub"></div></label><label class="field"><span>Branch</span><input id="githubBranch" required value="main" placeholder="main"></label><button id="checkBranch" type="button" class="check-btn">Cek branch</button></div>
+                  <div id="branchState" class="branch-state" hidden></div>
+                </section>
+
+                <section class="form-section">
+                  <div class="section-title"><span>04</span><div><h2>Publish</h2><p>Atur posisi project di katalog publik.</p></div></div>
+                  <div class="field-grid two"><label class="toggle-field"><input id="projectFeatured" type="checkbox"><span class="switch"></span><span><b>Featured project</b><small>Tandai sebagai project unggulan.</small></span></label><label class="field"><span>Urutan katalog</span><input id="projectSort" type="number" value="100" min="0" max="9999"></label></div>
+                </section>
+              </div>
+
+              <aside class="media-column"><section class="media-card sticky-card">
+                <div class="media-head"><div><h2>Thumbnail</h2><p>PNG, JPG, WebP, atau GIF. Maks. 8 MB.</p></div></div>
+                <label class="thumbnail-drop" id="thumbnailDrop"><input id="thumbnailFile" type="file" accept="image/png,image/jpeg,image/webp,image/gif"><span id="thumbnailEmpty"><svg viewBox="0 0 24 24"><path d="M4 5h16v14H4zM8 13l2-2 3 3 2-2 3 3M9 9h.01"/></svg><b>Pilih thumbnail</b><small>atau drag & drop ke sini</small></span><img id="thumbnailPreview" alt="Preview thumbnail" hidden></label>
+                <button id="removeThumbnail" class="text-btn danger" type="button" hidden>Hapus thumbnail</button>
+                <div class="preview-divider"></div>
+                <div class="live-preview"><span>Preview kartu</span><article><img id="cardPreviewImage" src="assets/dlavie-mark.svg?v=76" alt=""><div><strong id="cardPreviewName">Nama project</strong><p id="cardPreviewSummary">Deskripsi singkat project akan tampil di sini.</p><div id="cardPreviewTags" class="mini-tags"><i>Project</i></div></div></article></div>
+                <div class="preview-divider"></div>
+                <div class="gallery-head"><div><h3>Foto tambahan</h3><p>Opsional, maksimal 8 gambar.</p></div><label class="mini-upload">+ Tambah<input id="galleryFiles" type="file" accept="image/png,image/jpeg,image/webp,image/gif" multiple></label></div>
+                <div id="galleryPreview" class="gallery-preview"></div>
+              </section></aside>
+            </div>
+          </form>
+        </section>
+      </div>
+    </section>
+  </main>
+
+  <div id="devToast" class="dev-toast" role="status"></div>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="developer-pin-v76.js?v=76"></script>
+</body>
+</html>
