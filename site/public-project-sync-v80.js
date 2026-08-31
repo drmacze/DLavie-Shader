@@ -6,7 +6,7 @@
   const $=(s,r=document)=>r.querySelector(s);
   const $$=(s,r=document)=>[...r.querySelectorAll(s)];
   const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-  const img=u=>u?(/^https?:\/\//.test(u)?u:u.replace(/^\//,'')):'assets/dlavie-mark.svg?v=80';
+  const img=u=>u?(/^https?:\/\//.test(u)?u:u.replace(/^\//,'')):'assets/dlavie-mark.svg?v=81';
 
   async function api(path){
     const r=await fetch(`${API}/rest/v1/${path}`,{cache:'no-store',headers:{apikey:KEY,Authorization:`Bearer ${KEY}`}});
@@ -43,8 +43,8 @@
   }
   function bindSearch(){
     const input=$('#projectSearch');
-    if(!input||input.dataset.sync80)return;
-    input.dataset.sync80='1';
+    if(!input||input.dataset.sync81)return;
+    input.dataset.sync81='1';
     input.addEventListener('input',()=>{
       const q=input.value.trim().toLowerCase();
       $$('#projectList [data-project-name]').forEach(el=>el.hidden=!!q&&!el.dataset.projectName.includes(q));
@@ -93,7 +93,7 @@
 
   function homeResult(p){
     const tags=(p.tags||[]).slice(0,2);
-    return `<a class="result" href="app.html?v=80#project/${esc(p.slug)}"><img src="${esc(img(p.thumbnail_url))}" alt=""><div><h3>${esc(p.name)}</h3><p>${esc(p.summary)}</p><div class="tag-row">${tags.map(x=>`<span class="tag">${esc(x)}</span>`).join('')}</div></div><span class="version">${esc(p.version?`v${String(p.version).replace(/^v/i,'')}`:'—')}</span></a>`;
+    return `<a class="result" href="app.html?v=81#project/${esc(p.slug)}"><img src="${esc(img(p.thumbnail_url))}" alt=""><div><h3>${esc(p.name)}</h3><p>${esc(p.summary)}</p><div class="tag-row">${tags.map(x=>`<span class="tag">${esc(x)}</span>`).join('')}</div></div><span class="version">${esc(p.version?`v${String(p.version).replace(/^v/i,'')}`:'—')}</span></a>`;
   }
   function populateHomeFeatured(p){
     const visual=$('.hero .visual');
@@ -102,7 +102,7 @@
     document.body.classList.remove('home-no-public-projects');
     const card=$('.project-card',visual),note=$('.release-note',visual);
     if(card){
-      card.href=`app.html?v=80#project/${encodeURIComponent(p.slug)}`;
+      card.href=`app.html?v=81#project/${encodeURIComponent(p.slug)}`;
       const image=$('.project-top img',card),name=$('.project-top strong',card),desc=$('.project-top p',card),tags=$('.tag-row',card),version=$('.release-row b',card),release=$('.release-row p',card);
       if(image){image.src=img(p.thumbnail_url);image.alt=p.name||''}
       if(name)name.textContent=p.name||p.slug;
@@ -112,11 +112,11 @@
       if(release)release.textContent=p.summary||'';
     }
     if(note){
-      note.href=`app.html?v=80#project/${encodeURIComponent(p.slug)}?tab=versions`;
+      note.href=`app.html?v=81#project/${encodeURIComponent(p.slug)}?tab=versions`;
       const b=$('b',note),s=$('span',note);if(b)b.textContent=p.version?`v${String(p.version).replace(/^v/i,'')}`:'Latest';if(s)s.textContent='Project publik';
     }
     const secondary=$$('.hero .cta a').find(a=>a.href.includes('#project/'));
-    if(secondary){secondary.hidden=false;secondary.href=`app.html?v=80#project/${encodeURIComponent(p.slug)}`;secondary.textContent=`Lihat ${p.name}`}
+    if(secondary){secondary.hidden=false;secondary.href=`app.html?v=81#project/${encodeURIComponent(p.slug)}`;secondary.textContent=`Lihat ${p.name}`}
   }
   async function syncHome(){
     const visual=$('.hero .visual'),discover=$('.discover .wrap');
