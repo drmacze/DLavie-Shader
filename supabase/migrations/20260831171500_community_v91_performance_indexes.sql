@@ -1,0 +1,17 @@
+create index if not exists dlavie_forum_options_post_idx on public.dlavie_community_forum_options(post_id);
+create index if not exists dlavie_forum_posts_member_idx on public.dlavie_community_forum_posts(member_id,created_at desc);
+create index if not exists dlavie_forum_reactions_member_idx on public.dlavie_community_forum_reactions(member_id,created_at desc);
+create index if not exists dlavie_forum_settings_updated_by_idx on public.dlavie_community_forum_settings(updated_by);
+create index if not exists dlavie_forum_votes_member_idx on public.dlavie_community_forum_votes(member_id,created_at desc);
+create index if not exists dlavie_forum_votes_option_idx on public.dlavie_community_forum_votes(option_id);
+create index if not exists dlavie_member_roles_role_idx on public.dlavie_community_member_roles(role_id,member_id);
+create index if not exists dlavie_message_attachments_member_idx on public.dlavie_community_message_attachments(member_id,created_at desc);
+create index if not exists dlavie_message_attachments_message_idx on public.dlavie_community_message_attachments(message_id);
+create index if not exists dlavie_messages_pinned_by_idx on public.dlavie_community_messages(pinned_by) where pinned_by is not null;
+create index if not exists dlavie_messages_reply_to_idx on public.dlavie_community_messages(reply_to) where reply_to is not null;
+create index if not exists dlavie_moderation_actor_idx on public.dlavie_community_moderation_actions(actor_member_id,created_at desc);
+create index if not exists dlavie_pins_pinned_by_idx on public.dlavie_community_pins(pinned_by,created_at desc);
+create index if not exists dlavie_reports_reporter_idx on public.dlavie_community_reports(reporter_member_id,created_at desc);
+create index if not exists dlavie_sessions_member_idx on public.dlavie_community_sessions(member_id,last_seen desc);
+create index if not exists dlavie_settings_updated_by_idx on public.dlavie_community_settings(updated_by);
+create index if not exists dlavie_typing_channel_idx on public.dlavie_community_typing(channel_id,updated_at desc);
