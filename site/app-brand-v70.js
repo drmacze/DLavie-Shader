@@ -1,8 +1,8 @@
 (() => {
   'use strict';
   const $=(s,r=document)=>r.querySelector(s), $$=(s,r=document)=>[...r.querySelectorAll(s)];
-  const GH_MARK='assets/icon-github.svg?v=82';
-  const GH_LOCKUP='assets/logo-github-official.svg?v=82';
+  const GH_MARK='assets/icon-github.svg?v=83';
+  const GH_LOCKUP='assets/logo-github-official.svg?v=83';
   const MC_BEDROCK='https://www.minecraft.net/content/dam/minecraftnet/games/minecraft/logos/icon_bedrock.jpg';
   function github(){
     $$('.project-page img[src*="icon-github.svg"]').forEach(img=>{img.src=GH_MARK;img.alt='GitHub';img.classList.add('github-mark')});
@@ -17,28 +17,13 @@
     const compat=$$('.project-sidebar .side-card').find(card=>/kompatibilitas|compatibility/i.test($('h3',card)?.textContent||''));
     if(!compat||$('.minecraft-official-card',compat))return;
     const label=$('.mc-brand-row span:last-child',compat)?.textContent||'Minecraft';
-    const card=document.createElement('a');
-    card.className='minecraft-official-card';card.href='https://www.minecraft.net/';card.target='_blank';card.rel='noreferrer';
-    card.innerHTML=`<img src="${MC_BEDROCK}" alt="Minecraft" loading="lazy" decoding="async" fetchpriority="low"><span><strong>${label}</strong><span>minecraft.net ↗</span></span>`;
-    compat.appendChild(card);
+    const card=document.createElement('a');card.className='minecraft-official-card';card.href='https://www.minecraft.net/';card.target='_blank';card.rel='noreferrer';
+    card.innerHTML=`<img src="${MC_BEDROCK}" alt="Minecraft" loading="lazy" decoding="async" fetchpriority="low"><span><strong>${label}</strong><span>minecraft.net ↗</span></span>`;compat.appendChild(card);
   }
   function contextMenu(){const menu=$('#projectMenu');if(menu)$$('a[href*="github.com"] img',menu).forEach(img=>{img.src=GH_MARK;img.alt=''})}
   function centerBrand(){$$('.brand-logo,.hero-project-icon,.project-icon,.brand-icon,.round-action img').forEach(el=>{el.style.objectPosition='50% 50%';el.style.transform='none'})}
-  function accountLinks(){
-    $$('a[href^="account.html"]').forEach(a=>{
-      const signed=(()=>{try{const v=JSON.parse(localStorage.getItem('dlavie.auth.state.v1')||'null');return !!(v===true||v?.signedIn||v?.userId)}catch{return false}})();
-      a.setAttribute('href',signed?'account.html?v=82#profile':'account.html?v=82');
-    });
-  }
-  function publicProjectSync(){
-    if(document.querySelector('script[data-public-project-sync]'))return;
-    const s=document.createElement('script');s.src='public-project-sync-v82.js?v=82';s.dataset.publicProjectSync='1';document.body.appendChild(s);
-  }
-  function market(){
-    if(document.querySelector('script[data-dlv-market-v82]'))return;
-    const s=document.createElement('script');s.src='marketplace-v82.js?v=82';s.dataset.dlvMarketV82='1';document.body.appendChild(s);
-  }
-  function run(){github();minecraft();contextMenu();centerBrand();accountLinks();publicProjectSync();market()}
+  function accountLinks(){$$('a[href*="account.html"]').forEach(a=>{const signed=(()=>{try{const v=JSON.parse(localStorage.getItem('dlavie.auth.state.v1')||'null');return !!(v===true||v?.signedIn||v?.userId)}catch{return false}})();a.setAttribute('href',signed?'account.html?v=83#profile':'account.html?v=83')})}
+  function run(){github();minecraft();contextMenu();centerBrand();accountLinks()}
   if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',run,{once:true});else run();
   window.addEventListener('hashchange',()=>setTimeout(run,0),{passive:true});
 })();
