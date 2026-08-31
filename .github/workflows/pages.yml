@@ -38,11 +38,12 @@ jobs:
           cp brand/dlavie-logo.svg _site/brand/dlavie-logo.svg
           touch _site/.nojekyll
 
-          # Routed application. Only one catalog loader is used in v83.
+          # Routed application v84. Community routing is direct and no longer
+          # boots the legacy in-app community landing route first.
           for root in _site _site/site; do
             cp "$root/index.html" "$root/app.html"
-            cat "$root/modrinth.css" "$root/modrinth-v2.css" "$root/light-vibrant.css" "$root/app-lite-v65.css" "$root/app-polish-v66.css" "$root/app-brand-v67.css" "$root/app-fix-v69.css" "$root/app-fix-v70.css" > "$root/dlavie-app-shell-v83.css"
-            cat "$root/app-router-v65.js" "$root/app-polish-v66.js" "$root/app-brand-v67.js" "$root/app-projects-v69.js" "$root/app-brand-v70.js" > "$root/app-router-v83.js"
+            cat "$root/modrinth.css" "$root/modrinth-v2.css" "$root/light-vibrant.css" "$root/app-lite-v65.css" "$root/app-polish-v66.css" "$root/app-brand-v67.css" "$root/app-fix-v69.css" "$root/app-fix-v70.css" > "$root/dlavie-app-shell-v84.css"
+            cat "$root/app-router-v65.js" "$root/app-polish-v66.js" "$root/app-brand-v67.js" "$root/app-projects-v69.js" "$root/app-brand-v70.js" "$root/community-route-v84.js" > "$root/app-router-v84.js"
           done
 
           for html in _site/app.html _site/site/app.html; do
@@ -66,72 +67,76 @@ jobs:
           text=re.sub(r'\s*<link[^>]+href="marketplace-v\d+\.css(?:\?v=\d+)?"[^>]*>', '', text)
           text=re.sub(r'\s*<link[^>]+href="app-v\d+\.css(?:\?v=\d+)?"[^>]*>', '', text)
           text=re.sub(r'\s*<script[^>]+src="app-router-v\d+\.js(?:\?v=\d+)?"[^>]*></script>', '', text)
-          text=text.replace('../pack_icon.png','assets/dlavie-mark.svg?v=83')
-          text=text.replace('href="#home"','href="index.html?v=83"')
-          text=re.sub(r'assets/dlavie-mark\.svg(?:\?v=\d+)?','assets/dlavie-mark.svg?v=83',text)
-          text=re.sub(r'app\.html\?v=\d+','app.html?v=83',text)
-          text=re.sub(r'account\.html(?:\?v=\d+)?(?:#\w+)?','account.html?v=83#profile',text)
+          text=text.replace('../pack_icon.png','assets/dlavie-mark.svg?v=84')
+          text=text.replace('href="#home"','href="index.html?v=84"')
+          text=text.replace('href="#community"','href="community.html?v=84#global"')
+          text=re.sub(r'assets/dlavie-mark\.svg(?:\?v=\d+)?','assets/dlavie-mark.svg?v=84',text)
+          text=re.sub(r'app\.html\?v=\d+','app.html?v=84',text)
+          text=re.sub(r'account\.html(?:\?v=\d+)?(?:#\w+)?','account.html?v=84#profile',text)
           theme="""<script data-dlavie-theme-boot>(function(){try{var t=localStorage.getItem('dlavie.theme.v1');if(!['light','dark','system'].includes(t))t='dark';document.documentElement.dataset.theme=t==='system'?(matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light'):t}catch(e){document.documentElement.dataset.theme='dark'}})();</script>"""
-          guard="""<script data-dlavie-app-guard>(function(){var h=(location.hash||'').replace(/^#\\/?/,'');if(!h||h==='home')location.replace('index.html?v=83')})();</script>"""
-          head=f'<link rel="icon" type="image/svg+xml" href="assets/dlavie-mark.svg?v=83">\n{theme}\n{guard}\n<link rel="stylesheet" href="dlavie-app-shell-v83.css?v=83">\n<link rel="stylesheet" href="marketplace-v82.css?v=83">\n<link rel="stylesheet" href="app-v83.css?v=83">\n'
+          guard="""<script data-dlavie-app-guard>(function(){var h=(location.hash||'').replace(/^#\\/?/,'');if(!h||h==='home')location.replace('index.html?v=84')})();</script>"""
+          head=f'<link rel="icon" type="image/svg+xml" href="assets/dlavie-mark.svg?v=84">\n{theme}\n{guard}\n<link rel="stylesheet" href="dlavie-app-shell-v84.css?v=84">\n<link rel="stylesheet" href="marketplace-v82.css?v=84">\n<link rel="stylesheet" href="app-v83.css?v=84">\n'
           text=text.replace('</head>',head+'</head>',1)
-          scripts='''<script src="app-router-v83.js?v=83"></script>
-          <script src="marketplace-v82.js?v=83"></script>
-          <script src="public-project-sync-v82.js?v=83"></script>
-          <script src="session-nav-v81.js?v=83"></script>
-          <script src="app-v83.js?v=83"></script>'''
+          scripts='''<script src="app-router-v84.js?v=84"></script>
+          <script src="marketplace-v82.js?v=84"></script>
+          <script src="public-project-sync-v82.js?v=84"></script>
+          <script src="session-nav-v81.js?v=84"></script>
+          <script src="app-v83.js?v=84"></script>'''
           text=text.replace('</body>',scripts+'\n</body>',1)
           path.write_text(text)
           PY
           done
 
-          # Account keeps the stable auth implementation and current public links.
           for html in _site/account.html _site/site/account.html; do
             python3 - "$html" <<'PY'
           import pathlib,re,sys
           path=pathlib.Path(sys.argv[1]); text=path.read_text()
-          text=re.sub(r'assets/dlavie-mark\.svg(?:\?v=\d+)?','assets/dlavie-mark.svg?v=83',text)
-          text=re.sub(r'app\.html\?v=\d+','app.html?v=83',text)
-          text=re.sub(r'community\.html(?:\?v=\d+)?','community.html?v=83',text)
+          text=re.sub(r'assets/dlavie-mark\.svg(?:\?v=\d+)?','assets/dlavie-mark.svg?v=84',text)
+          text=re.sub(r'app\.html\?v=\d+','app.html?v=84',text)
+          text=re.sub(r'community\.html(?:\?v=\d+)?','community.html?v=84',text)
           path.write_text(text)
           PY
           done
 
-          # Lightweight Home with deterministic v83 catalog + Marketplace UX.
+          # Lightweight Home with direct Community route.
           cp _site/home-static.html _site/index.html
           cp _site/site/home-static.html _site/site/index.html
           for html in _site/index.html _site/site/index.html; do
             python3 - "$html" <<'PY'
           import pathlib,re,sys
           path=pathlib.Path(sys.argv[1]); text=path.read_text(); root=path.parent
-          text=re.sub(r'app\.html\?v=\d+','app.html?v=83',text)
-          text=re.sub(r'account\.html(?:\?v=\d+)?(?:#\w+)?','account.html?v=83#profile',text)
-          text=re.sub(r'assets/dlavie-mark\.svg(?:\?v=\d+)?','assets/dlavie-mark.svg?v=83',text)
-          text=re.sub(r'<script data-v(?:70|81|82|83)-brand>.*?</script>','',text,flags=re.S)
+          text=re.sub(r'app\.html\?v=\d+','app.html?v=84',text)
+          text=text.replace('app.html?v=84#community','community.html?v=84#global')
+          text=re.sub(r'account\.html(?:\?v=\d+)?(?:#\w+)?','account.html?v=84#profile',text)
+          text=re.sub(r'assets/dlavie-mark\.svg(?:\?v=\d+)?','assets/dlavie-mark.svg?v=84',text)
+          text=re.sub(r'<script data-v(?:70|81|82|83|84)-brand>.*?</script>','',text,flags=re.S)
           text=re.sub(r'<link[^>]+href="marketplace-v\d+\.css(?:\?v=\d+)?"[^>]*>','',text)
-          boot="""<style data-v83-project-boot>html.dlv-project-sync-pending .hero .visual,html.dlv-project-sync-pending .discover .result,html.dlv-project-sync-pending .hero .cta a[href*='#project/']{display:none!important}</style><script>document.documentElement.classList.add('dlv-project-sync-pending')</script>"""
-          if 'data-v83-project-boot' not in text:text=text.replace('</head>',boot+'</head>',1)
+          boot="""<style data-v84-project-boot>html.dlv-project-sync-pending .hero .visual,html.dlv-project-sync-pending .discover .result,html.dlv-project-sync-pending .hero .cta a[href*='#project/']{display:none!important}</style><script>document.documentElement.classList.add('dlv-project-sync-pending')</script>"""
+          if 'data-v84-project-boot' not in text:text=text.replace('</head>',boot+'</head>',1)
           css=root/'home-brand-v67.css'
-          if css.exists(): text=text.replace('</head>','<style data-v83-brand-css>\n'+css.read_text()+'\n</style><link rel="stylesheet" href="marketplace-v82.css?v=83"></head>',1)
+          if css.exists(): text=text.replace('</head>','<style data-v84-brand-css>\n'+css.read_text()+'\n</style><link rel="stylesheet" href="marketplace-v82.css?v=84"></head>',1)
           js=root/'home-brand-v67.js'
-          inject='<script data-v83-brand>\n'+js.read_text()+'\n</script>' if js.exists() else ''
-          inject+='''\n<script src="marketplace-v82.js?v=83"></script>
-          <script src="public-project-sync-v82.js?v=83"></script>
-          <script src="session-nav-v81.js?v=83"></script>
-          <script src="app-v83.js?v=83"></script>'''
+          inject='<script data-v84-brand>\n'+js.read_text()+'\n</script>' if js.exists() else ''
+          inject+='''\n<script src="marketplace-v82.js?v=84"></script>
+          <script src="community-route-v84.js?v=84"></script>
+          <script src="public-project-sync-v82.js?v=84"></script>
+          <script src="session-nav-v81.js?v=84"></script>
+          <script src="app-v83.js?v=84"></script>'''
           text=text.replace('</body>',inject+'\n</body>',1)
           path.write_text(text)
           PY
           done
 
-          # Community v83 is a dedicated page copied directly from site/.
+          # Community v84: one HTML, one first-party stylesheet and one runtime.
           for html in _site/community.html _site/site/community.html; do
             python3 - "$html" <<'PY'
           import pathlib,re,sys
           path=pathlib.Path(sys.argv[1]); text=path.read_text()
-          text=re.sub(r'assets/dlavie-mark\.svg(?:\?v=\d+)?','assets/dlavie-mark.svg?v=83',text)
-          text=re.sub(r'app\.html\?v=\d+','app.html?v=83',text)
-          text=re.sub(r'account\.html\?v=\d+','account.html?v=83',text)
+          text=re.sub(r'assets/dlavie-mark\.svg(?:\?v=\d+)?','assets/dlavie-mark.svg?v=84',text)
+          text=re.sub(r'app\.html\?v=\d+','app.html?v=84',text)
+          text=re.sub(r'account\.html\?v=\d+','account.html?v=84',text)
+          text=re.sub(r'community-v\d+\.css\?v=\d+','community-v84.css?v=84',text)
+          text=re.sub(r'community-v\d+\.js\?v=\d+','community-v84.js?v=84',text)
           path.write_text(text)
           PY
           done
@@ -141,17 +146,18 @@ jobs:
           import pathlib,re,sys
           path=pathlib.Path(sys.argv[1]); text=path.read_text()
           if 'name="robots"' not in text:text=text.replace('<head>','<head><meta name="robots" content="noindex,nofollow,noarchive,nosnippet">',1)
-          text=re.sub(r'dlv-ops-console-7c1a\.html\?v=\d+','dlv-ops-console-7c1a.html?v=83',text)
+          text=re.sub(r'dlv-ops-console-7c1a\.html\?v=\d+','dlv-ops-console-7c1a.html?v=84',text)
           path.write_text(text)
           PY
           done
 
-          # Syntax check the first-party JS shipped in this release.
-          node --check _site/community-v83.js
+          # Fail the deploy when first-party JS has a syntax error.
+          node --check _site/community-v84.js
+          node --check _site/community-route-v84.js
           node --check _site/app-v83.js
           node --check _site/public-project-sync-v82.js
           node --check _site/marketplace-v82.js
-          node --check _site/app-router-v83.js
+          node --check _site/app-router-v84.js
 
       - uses: actions/upload-pages-artifact@v3
         with:
