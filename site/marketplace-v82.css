@@ -1,0 +1,213 @@
+/* DLavie Store UI v82 — marketplace-inspired interaction model, DLavie visual identity */
+:root{
+  --store-bg:#f3f5f3;--store-surface:#ffffff;--store-soft:#e9eeea;--store-ink:#151916;
+  --store-muted:#68716b;--store-line:#d5ddd7;--store-head:#171a18;--store-head2:#202420;
+  --store-green:#47cf78;--store-green-strong:#1c9b50;--store-green-soft:#e4f8eb;
+  --store-yellow:#f1c94e;--store-danger:#d45762;--store-radius:14px;--store-shadow:0 16px 38px rgba(17,28,20,.09)
+}
+html[data-theme="dark"]{
+  --store-bg:#101310;--store-surface:#191d1a;--store-soft:#232924;--store-ink:#f4f7f4;
+  --store-muted:#9aa49c;--store-line:#323a34;--store-head:#0c0f0d;--store-head2:#151916;
+  --store-green:#54df87;--store-green-strong:#54df87;--store-green-soft:#173520;
+  --store-shadow:0 18px 44px rgba(0,0,0,.3)
+}
+body.dlv-store-v82{background:var(--store-bg)!important;color:var(--store-ink)!important}
+body.dlv-store-v82 a{text-decoration:none}
+body.dlv-store-v82 button,body.dlv-store-v82 input,body.dlv-store-v82 select{font-family:inherit}
+
+/* Header */
+body.dlv-store-v82 .top,body.dlv-store-v82 .desktop-header{
+  background:var(--store-head)!important;border:0!important;color:#fff!important;box-shadow:0 1px 0 rgba(255,255,255,.06);z-index:80
+}
+body.dlv-store-v82 .top{height:72px!important}
+body.dlv-store-v82 .top .wrap{gap:16px}
+body.dlv-store-v82 .desktop-header{position:sticky!important;top:0!important}
+body.dlv-store-v82 .header-shell{min-height:72px!important;max-width:1180px!important}
+body.dlv-store-v82 .brand,body.dlv-store-v82 .account-brand{color:#fff!important;gap:10px!important}
+body.dlv-store-v82 .brand strong{font-size:20px!important;letter-spacing:-.035em!important}
+body.dlv-store-v82 .brand img,body.dlv-store-v82 .brand-logo{width:38px!important;height:38px!important;border-radius:10px!important;background:#0e1110!important}
+body.dlv-store-v82 .desktop-links{gap:4px!important}
+body.dlv-store-v82 .desktop-links a{color:#b9c1bb!important;padding:10px 12px!important;border-radius:8px!important;font-size:12px!important;font-weight:760!important}
+body.dlv-store-v82 .desktop-links a:hover,body.dlv-store-v82 .desktop-links a.active{color:#fff!important;background:rgba(255,255,255,.07)!important}
+body.dlv-store-v82 .icon-button,body.dlv-store-v82 .quiet-button,body.dlv-store-v82 .icon-btn,body.dlv-store-v82 .nav-btn{
+  border:1px solid rgba(255,255,255,.14)!important;background:#242824!important;color:#fff!important;border-radius:8px!important;box-shadow:none!important
+}
+body.dlv-store-v82 .quiet-button{min-height:40px!important;padding:0 14px!important}
+
+/* Category strip */
+body.dlv-store-v82 .cats{position:sticky;top:72px;z-index:70;background:var(--store-head2)!important;border:0!important;border-top:1px solid rgba(255,255,255,.05)!important}
+body.dlv-store-v82 .cats .wrap{padding:8px 0!important;gap:6px!important}
+body.dlv-store-v82 .cats a{height:38px!important;padding:0 14px!important;color:#b7c0b9!important;border-radius:7px!important;font-weight:760!important}
+body.dlv-store-v82 .cats a:hover{background:rgba(255,255,255,.07)!important;color:#fff!important}
+body.dlv-store-v82 .cats a.active,body.dlv-store-v82 .cats a.is-filtered{background:var(--store-green)!important;color:#0d2415!important}
+
+/* Home */
+body.dlv-store-v82 .hero{padding:46px 0 34px!important;background:linear-gradient(180deg,var(--store-head2) 0,var(--store-head2) 34%,var(--store-bg) 34%)!important}
+body.dlv-store-v82 .hero-grid{gap:34px!important;align-items:stretch!important}
+body.dlv-store-v82 .hero-copy{padding:28px 0 10px!important}
+body.dlv-store-v82 .hero h1{font-size:clamp(42px,5.8vw,68px)!important;line-height:.96!important;letter-spacing:-.055em!important}
+body.dlv-store-v82 .hero h1 em{color:var(--store-green)!important}
+body.dlv-store-v82 .lead{font-size:15px!important;max-width:620px!important}
+body.dlv-store-v82 .eyebrow{color:var(--store-green-strong)!important;letter-spacing:.15em!important}
+body.dlv-store-v82 .eyebrow:before{background:var(--store-green)!important}
+body.dlv-store-v82 .cta .primary{background:var(--store-green)!important;color:#102115!important;border-color:var(--store-green)!important}
+body.dlv-store-v82 .cta a{border-radius:8px!important;min-height:46px!important;font-size:12px!important}
+body.dlv-store-v82 .visual{min-height:350px!important}
+body.dlv-store-v82 .glow{border-radius:14px!important;background:linear-gradient(135deg,#1f2721,#29352d)!important;border:1px solid rgba(255,255,255,.06)!important}
+body.dlv-store-v82 .project-card{border-radius:12px!important;border:1px solid var(--store-line)!important;box-shadow:var(--store-shadow)!important}
+body.dlv-store-v82 .release-note{border-radius:9px!important;transform:none!important}
+body.dlv-store-v82 .trust{background:var(--store-surface)!important;border-color:var(--store-line)!important}
+body.dlv-store-v82 .trust article+article{border-color:var(--store-line)!important}
+body.dlv-store-v82 .discover{padding:52px 0 96px!important}
+body.dlv-store-v82 .section-head{align-items:center!important}
+body.dlv-store-v82 .section-head h2{font-size:clamp(31px,4.1vw,46px)!important}
+body.dlv-store-v82 .section-head>a{height:38px;padding:0 12px;background:var(--store-green-soft);border-radius:7px;color:var(--store-green-strong)!important}
+body.dlv-store-v82 .section-copy{max-width:760px!important}
+body.dlv-store-v82 .search-link{border-radius:8px!important;background:var(--store-surface)!important;border-color:var(--store-line)!important}
+body.dlv-store-v82 .discover .wrap{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+body.dlv-store-v82 .discover .section-head,body.dlv-store-v82 .discover .section-copy,body.dlv-store-v82 .discover .search-link,body.dlv-store-v82 .discover .public-empty-state,body.dlv-store-v82 .discover .dlv-market-tools{grid-column:1/-1}
+body.dlv-store-v82 .result{margin:0!important;grid-template-columns:88px minmax(0,1fr) auto!important;min-height:118px;border-radius:10px!important;border:1px solid var(--store-line)!important;background:var(--store-surface)!important;padding:14px!important;box-shadow:none!important}
+body.dlv-store-v82 .result:hover{transform:translateY(-2px)!important;box-shadow:var(--store-shadow)!important}
+body.dlv-store-v82 .result>img{width:88px!important;height:88px!important;border-radius:9px!important;object-fit:cover}
+body.dlv-store-v82 .result h3{font-size:19px!important}
+body.dlv-store-v82 .version{background:var(--store-green-soft)!important;color:var(--store-green-strong)!important;border:0!important;border-radius:6px!important}
+body.dlv-store-v82 .public-empty-state{border:1px dashed var(--store-line)!important;background:var(--store-surface)!important;border-radius:10px!important;padding:42px 22px!important}
+
+/* Marketplace filters */
+.dlv-market-tools{display:flex;align-items:center;gap:8px;overflow:auto;padding:3px 0 8px;scrollbar-width:none}
+.dlv-market-tools::-webkit-scrollbar{display:none}
+.dlv-market-chip{flex:0 0 auto;height:38px;padding:0 14px;border:1px solid var(--store-line);border-radius:7px;background:var(--store-surface);color:var(--store-muted);font-size:11px;font-weight:790;cursor:pointer;transition:.16s ease}
+.dlv-market-chip:hover{border-color:var(--store-green);color:var(--store-ink)}
+.dlv-market-chip.active{border-color:var(--store-green);background:var(--store-green);color:#102115}
+.dlv-market-chip svg{width:16px;height:16px;vertical-align:-3px;margin-right:6px;fill:none;stroke:currentColor;stroke-width:1.8}
+.dlv-store-section-title{display:flex;align-items:center;justify-content:space-between;gap:16px;margin:30px 0 14px}
+.dlv-store-section-title h2{margin:0;font-size:26px;letter-spacing:-.035em}
+.dlv-store-section-title span{color:var(--store-muted);font-size:11px}
+
+/* App / catalog */
+body.dlv-store-v82 #app{background:var(--store-bg)!important}
+body.dlv-store-v82 .page-head{padding-top:48px!important;padding-bottom:26px!important}
+body.dlv-store-v82 .page-head h1{font-size:clamp(42px,7vw,72px)!important;letter-spacing:-.055em!important}
+body.dlv-store-v82 .page-head p{max-width:700px!important;color:var(--store-muted)!important}
+body.dlv-store-v82 .discover-tools{display:grid;grid-template-columns:minmax(0,1fr);gap:10px!important;padding-bottom:12px!important}
+body.dlv-store-v82 .search-field{border-radius:8px!important;border:1px solid var(--store-line)!important;background:var(--store-surface)!important;min-height:52px!important}
+body.dlv-store-v82 .project-list{display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px!important;padding-bottom:100px!important}
+body.dlv-store-v82 .project-row{display:grid!important;grid-template-columns:104px minmax(0,1fr)!important;gap:15px!important;align-items:center!important;padding:14px!important;border:1px solid var(--store-line)!important;border-radius:10px!important;background:var(--store-surface)!important;box-shadow:none!important;min-height:132px!important;position:relative}
+body.dlv-store-v82 .project-row:hover{transform:translateY(-2px)!important;box-shadow:var(--store-shadow)!important;border-color:color-mix(in srgb,var(--store-green) 55%,var(--store-line))!important}
+body.dlv-store-v82 .project-row .project-icon{width:104px!important;height:104px!important;border-radius:9px!important;object-fit:cover!important}
+body.dlv-store-v82 .project-row-copy h2{font-size:20px!important;line-height:1.1!important;margin:0 0 6px!important}
+body.dlv-store-v82 .project-row-copy p{font-size:11.5px!important;line-height:1.45!important;color:var(--store-muted)!important;margin:0!important}
+body.dlv-store-v82 .project-row-meta{position:absolute!important;right:12px!important;bottom:12px!important;display:flex!important;gap:6px!important;align-items:center!important}
+body.dlv-store-v82 .project-row-meta strong{padding:6px 8px!important;border-radius:6px!important;background:var(--store-green-soft)!important;color:var(--store-green-strong)!important;font-size:10px!important}
+body.dlv-store-v82 .project-row-meta span{font-size:9px!important;color:var(--store-muted)!important}
+
+/* Project detail */
+body.dlv-store-v82 .project-shell{max-width:1160px!important;padding-top:34px!important}
+body.dlv-store-v82 .project-summary{background:var(--store-surface)!important;border:1px solid var(--store-line)!important;border-radius:12px!important;padding:22px!important;display:grid!important;grid-template-columns:128px minmax(0,1fr)!important;gap:20px!important;align-items:center!important}
+body.dlv-store-v82 .hero-project-icon{width:128px!important;height:128px!important;border-radius:10px!important;object-fit:cover!important}
+body.dlv-store-v82 .project-identity h1{font-size:clamp(34px,5vw,54px)!important;letter-spacing:-.05em!important;margin:4px 0 10px!important}
+body.dlv-store-v82 .project-identity>p:last-child{max-width:760px!important;color:var(--store-muted)!important;font-size:14px!important;line-height:1.55!important}
+body.dlv-store-v82 .project-action-row{display:grid!important;grid-template-columns:minmax(0,1fr) 52px 52px 52px!important;gap:8px!important;margin-top:12px!important}
+body.dlv-store-v82 .project-action-row .round-action{height:52px!important;width:52px!important;border-radius:8px!important;border:1px solid var(--store-line)!important;background:var(--store-surface)!important}
+body.dlv-store-v82 .project-action-row .round-action.primary{width:100%!important;background:var(--store-green)!important;border-color:var(--store-green)!important;color:#102115!important}
+body.dlv-store-v82 .project-stats{background:var(--store-surface)!important;border:1px solid var(--store-line)!important;border-radius:9px!important;margin-top:10px!important;padding:12px 16px!important}
+body.dlv-store-v82 .tabbar{position:sticky!important;top:72px!important;z-index:45!important;background:var(--store-bg)!important;margin-top:22px!important;padding-top:8px!important;border-bottom:1px solid var(--store-line)!important;overflow:auto!important;scrollbar-width:none}
+body.dlv-store-v82 .tabbar button{min-height:44px!important;padding:0 16px!important;border:0!important;border-bottom:3px solid transparent!important;background:transparent!important;color:var(--store-muted)!important;border-radius:0!important;white-space:nowrap!important}
+body.dlv-store-v82 .tabbar button.active{color:var(--store-ink)!important;border-bottom-color:var(--store-green)!important}
+body.dlv-store-v82 .project-content-layout{gap:14px!important;margin-top:14px!important}
+body.dlv-store-v82 .content-card,body.dlv-store-v82 .side-card,body.dlv-store-v82 .version-card{background:var(--store-surface)!important;border:1px solid var(--store-line)!important;border-radius:10px!important;box-shadow:none!important}
+body.dlv-store-v82 .content-card{padding:22px!important}
+body.dlv-store-v82 .project-sidebar{gap:10px!important}
+body.dlv-store-v82 .side-card h3{font-size:13px!important;text-transform:uppercase!important;letter-spacing:.08em!important}
+body.dlv-store-v82 .chip-row span,body.dlv-store-v82 .tag{border-radius:5px!important;background:var(--store-soft)!important;border-color:transparent!important}
+
+.dlv-detail-gallery{display:grid;grid-template-columns:minmax(0,1.8fr) minmax(220px,.8fr);gap:10px;margin:14px 0 0}
+.dlv-detail-gallery-main{aspect-ratio:16/9;border-radius:10px;overflow:hidden;background:#0b0d0b;border:1px solid var(--store-line)}
+.dlv-detail-gallery-main img{width:100%;height:100%;object-fit:cover}
+.dlv-detail-gallery-thumbs{display:grid;grid-template-columns:repeat(2,1fr);gap:8px;align-content:start}
+.dlv-detail-thumb{padding:0;border:1px solid var(--store-line);background:var(--store-surface);border-radius:8px;overflow:hidden;aspect-ratio:16/10;cursor:pointer}
+.dlv-detail-thumb.active{outline:2px solid var(--store-green);outline-offset:1px}
+.dlv-detail-thumb img{width:100%;height:100%;object-fit:cover}
+.dlv-detail-meta{display:flex;gap:7px;flex-wrap:wrap;margin-top:10px}
+.dlv-detail-meta span{padding:7px 9px;border-radius:6px;background:var(--store-soft);font-size:10px;font-weight:760;color:var(--store-muted)}
+
+/* Search overlay */
+body.dlv-store-v82 .search-overlay,.dlv-store-search{position:fixed!important;inset:0!important;z-index:150!important;background:rgba(8,10,9,.72)!important;backdrop-filter:blur(8px)!important;padding:0!important}
+body.dlv-store-v82 .search-dialog,.dlv-store-search-panel{width:min(760px,100%)!important;min-height:100svh!important;margin:0 0 0 auto!important;border:0!important;border-left:1px solid rgba(255,255,255,.08)!important;border-radius:0!important;background:var(--store-head)!important;color:#fff!important;padding:22px!important;box-shadow:-18px 0 50px rgba(0,0,0,.24)!important}
+body.dlv-store-v82 .search-dialog-head{gap:8px!important}
+body.dlv-store-v82 .search-dialog .search-field,.dlv-store-search-panel input{background:#0d100e!important;border:1px solid #363d38!important;color:#fff!important;border-radius:8px!important}
+body.dlv-store-v82 .search-results,.dlv-store-search-results{display:grid;gap:8px;margin-top:18px}
+.dlv-search-result{display:grid;grid-template-columns:58px minmax(0,1fr) auto;gap:12px;align-items:center;padding:10px;border:1px solid #303632;border-radius:8px;color:#fff;background:#1b1f1c}
+.dlv-search-result:hover{border-color:var(--store-green)}
+.dlv-search-result img{width:58px;height:58px;object-fit:cover;border-radius:7px}
+.dlv-search-result strong{display:block;font-size:14px}.dlv-search-result small{display:block;margin-top:4px;color:#9da69f;font-size:10px;line-height:1.4}.dlv-search-result b{color:var(--store-green);font-size:11px}
+
+/* Mobile navigation drawer */
+body.dlv-store-v82 .sheet-backdrop{background:rgba(7,9,8,.58)!important;backdrop-filter:blur(5px)!important}
+body.dlv-store-v82 .mobile-sheet.ui-sheet-v5,body.dlv-store-v82 .mobile-sheet{
+  position:fixed!important;inset:0 0 0 auto!important;left:auto!important;right:0!important;bottom:0!important;top:0!important;width:min(420px,100%)!important;max-width:none!important;max-height:none!important;transform:translateX(0)!important;border:0!important;border-left:1px solid rgba(255,255,255,.08)!important;border-radius:0!important;background:var(--store-head)!important;color:#fff!important;padding:84px 18px calc(100px + env(safe-area-inset-bottom))!important;overflow:auto!important;box-shadow:-18px 0 44px rgba(0,0,0,.28)!important;backdrop-filter:none!important
+}
+body.dlv-store-v82 .mobile-sheet[aria-hidden="true"]{transform:translateX(105%)!important;pointer-events:none!important;opacity:1!important}
+body.dlv-store-v82 .mobile-sheet[aria-hidden="false"]{transform:translateX(0)!important}
+body.dlv-store-v82 .mobile-sheet .sheet-handle,body.dlv-store-v82 .ui-sheet-heading{display:none!important}
+body.dlv-store-v82 .mobile-sheet .sheet-action{min-height:58px!important;border-radius:7px!important;color:#fff!important;background:transparent!important;border-bottom:1px solid #303632!important;font-size:16px!important;font-weight:760!important;padding:0 12px!important}
+body.dlv-store-v82 .mobile-sheet .sheet-action:hover,body.dlv-store-v82 .mobile-sheet .sheet-action.primary{background:#222722!important;color:var(--store-green)!important}
+.dlv-drawer-head{position:absolute;left:18px;right:18px;top:20px;display:flex;align-items:center;justify-content:space-between;padding-bottom:16px;border-bottom:1px solid #303632}
+.dlv-drawer-brand{display:flex;align-items:center;gap:10px;font-weight:820;font-size:18px}.dlv-drawer-brand img{width:36px;height:36px;border-radius:9px}
+.dlv-drawer-close{width:42px;height:42px;border:1px solid #353c37;border-radius:8px;background:#242824;color:#fff;font-size:24px}
+.dlv-drawer-label{margin:18px 12px 5px;color:#7f8a82;font-size:9px;font-weight:850;letter-spacing:.14em;text-transform:uppercase}
+.dlv-drawer-row{display:flex;align-items:center;gap:12px;min-height:56px;padding:0 12px;border-bottom:1px solid #2e342f;color:#fff;font-weight:760}
+.dlv-drawer-row svg{width:19px;height:19px;fill:none;stroke:currentColor;stroke-width:1.8}.dlv-drawer-row span{flex:1}.dlv-drawer-row small{color:#7f8a82}.dlv-drawer-row:hover{color:var(--store-green)}
+
+/* Home floating menu */
+body.dlv-store-v82 .float,body.dlv-store-v82 .ui-site-menu-toggle{background:var(--store-head)!important;border-radius:10px!important;width:58px!important;height:52px!important;border:1px solid rgba(255,255,255,.12)!important}
+body.dlv-store-v82 .panel{background:var(--store-head)!important;color:#fff!important;border:1px solid #303632!important;border-radius:10px!important;padding:8px!important}
+body.dlv-store-v82 .panel a,body.dlv-store-v82 .panel button{color:#fff!important;border-radius:7px!important}
+body.dlv-store-v82 .panel a:hover,body.dlv-store-v82 .panel button:hover{background:#252a26!important;color:var(--store-green)!important}
+
+@media(max-width:900px){
+  body.dlv-store-v82 .discover .wrap,body.dlv-store-v82 .project-list{grid-template-columns:1fr!important}
+  body.dlv-store-v82 .desktop-links{display:none!important}
+  .dlv-detail-gallery{grid-template-columns:1fr}.dlv-detail-gallery-thumbs{grid-template-columns:repeat(4,1fr)}
+}
+@media(max-width:760px){
+  body.dlv-store-v82 .top{height:62px!important}.cats{top:62px!important}
+  body.dlv-store-v82 .brand img{width:34px!important;height:34px!important}
+  body.dlv-store-v82 .hero{padding:32px 0 24px!important;background:var(--store-bg)!important}
+  body.dlv-store-v82 .hero-grid{text-align:left!important;gap:18px!important}
+  body.dlv-store-v82 .hero-copy{padding:12px 0!important}
+  body.dlv-store-v82 .eyebrow{justify-content:flex-start!important}
+  body.dlv-store-v82 .hero h1{font-size:42px!important;max-width:520px!important}
+  body.dlv-store-v82 .lead{margin-left:0!important;font-size:13px!important}
+  body.dlv-store-v82 .cta{justify-content:flex-start!important}
+  body.dlv-store-v82 .visual{min-height:270px!important;width:100%!important}
+  body.dlv-store-v82 .project-card{left:0!important;right:0!important;top:30px!important;padding:15px!important}
+  body.dlv-store-v82 .release-note{display:none!important}
+  body.dlv-store-v82 .trust .wrap{display:flex!important;overflow:auto!important;scroll-snap-type:x mandatory!important}
+  body.dlv-store-v82 .trust article{min-width:82vw!important;scroll-snap-align:start!important;border:0!important;border-right:1px solid var(--store-line)!important}
+  body.dlv-store-v82 .discover{padding:38px 0 92px!important}
+  body.dlv-store-v82 .discover .wrap{display:block!important}
+  body.dlv-store-v82 .section-head{align-items:flex-end!important}
+  body.dlv-store-v82 .section-head h2{font-size:31px!important}
+  body.dlv-store-v82 .result{grid-template-columns:78px minmax(0,1fr)!important;margin-top:10px!important;min-height:106px!important}
+  body.dlv-store-v82 .result>img{width:78px!important;height:78px!important}
+  body.dlv-store-v82 .result .version{position:absolute;right:10px;top:10px}
+  body.dlv-store-v82 .page-head{padding-top:32px!important}
+  body.dlv-store-v82 .page-head h1{font-size:48px!important}
+  body.dlv-store-v82 .project-list{display:block!important}
+  body.dlv-store-v82 .project-row{grid-template-columns:90px minmax(0,1fr)!important;margin-bottom:10px!important;min-height:116px!important}
+  body.dlv-store-v82 .project-row .project-icon{width:90px!important;height:90px!important}
+  body.dlv-store-v82 .project-row-meta{right:10px!important;bottom:9px!important}
+  body.dlv-store-v82 .project-summary{grid-template-columns:86px minmax(0,1fr)!important;padding:15px!important;gap:13px!important}
+  body.dlv-store-v82 .hero-project-icon{width:86px!important;height:86px!important}
+  body.dlv-store-v82 .project-identity h1{font-size:32px!important}
+  body.dlv-store-v82 .project-identity>p:last-child{font-size:11.5px!important}
+  body.dlv-store-v82 .project-action-row{grid-template-columns:minmax(0,1fr) 46px 46px 46px!important}
+  body.dlv-store-v82 .project-action-row .round-action{width:46px!important;height:46px!important}
+  body.dlv-store-v82 .project-stats{overflow:auto!important;white-space:nowrap!important}
+  body.dlv-store-v82 .tabbar{top:0!important}
+  body.dlv-store-v82 .project-content-layout{display:block!important}
+  body.dlv-store-v82 .project-sidebar{margin-top:10px!important}
+  .dlv-detail-gallery{margin-top:10px}.dlv-detail-gallery-thumbs{grid-template-columns:repeat(4,1fr);gap:5px}.dlv-detail-thumb{border-radius:5px}
+  body.dlv-store-v82 .search-dialog,.dlv-store-search-panel{width:100%!important;padding:calc(18px + env(safe-area-inset-top)) 14px 20px!important}
+}
