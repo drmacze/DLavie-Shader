@@ -39,4 +39,8 @@
     s.dataset.dlvSessionNav='1';
     document.body.appendChild(s);
   }
+
+  // The stale project is already hidden/removed above. Release the first-paint
+  // guard now so a live public project can be revealed by the database sync.
+  document.documentElement.classList.remove('dlv-project-sync-pending');
 })();
