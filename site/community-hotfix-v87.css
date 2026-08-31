@@ -1,11 +1,7 @@
 /* DLavie Community v87 hotfix — iOS visibility, loading states and professional icon polish */
 
-/* Safari/iOS can let author display rules override the HTML hidden attribute. */
-.community-v86 .c84-view[hidden],
-.community-v86 #bootState[hidden],
-.community-v86 #messageState[hidden],
-.community-v86 .c84-page[hidden],
-.community-v86 .c84-chat[hidden]{display:none!important}
+/* Safari/iOS can let author display rules override the HTML hidden attribute. Respect it everywhere. */
+body [hidden]{display:none!important}
 
 .community-v86 .c87-icon{width:18px;height:18px;display:block;flex:0 0 auto;stroke:currentColor;stroke-width:1.9;stroke-linecap:round;stroke-linejoin:round;fill:none}
 .community-v86 .c84-nav-icon{display:grid;place-items:center;width:24px;height:24px;font-size:0}
