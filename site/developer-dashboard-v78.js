@@ -311,7 +311,7 @@
           const repo = cleanRepo(p?.github_repo); if (repo.includes('/')) window.open(`https://github.com/${repo}/tree/${encodeURIComponent(p.github_branch || 'main')}`, '_blank', 'noopener');
         }
       } catch (err) { toast(err.message || 'Aksi gagal'); }
-    });
+    }, true);
     $('#healthFilter')?.addEventListener('change', renderHealth);
     $('#activitySearch')?.addEventListener('input', renderActivity);
   }
