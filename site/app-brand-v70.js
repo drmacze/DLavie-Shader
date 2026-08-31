@@ -1,5 +1,18 @@
 (() => {
   'use strict';
+  const COMMUNITY='community.html?v=83#global';
+  const active=(location.hash||'').replace(/^#\/?/,'').split('?')[0];
+  if(active==='community'){location.replace(COMMUNITY);return}
+
+  document.addEventListener('click',event=>{
+    const el=event.target instanceof Element?event.target.closest('a[href="#community"],a[href*="#community"],[data-route-link="community"]'):null;
+    if(!el)return;
+    event.preventDefault();
+    event.stopPropagation();
+    event.stopImmediatePropagation?.();
+    location.href=COMMUNITY;
+  },true);
+
   const $=(s,r=document)=>r.querySelector(s), $$=(s,r=document)=>[...r.querySelectorAll(s)];
   const GH_MARK='assets/icon-github.svg?v=83';
   const GH_LOCKUP='assets/logo-github-official.svg?v=83';
@@ -23,7 +36,8 @@
   function contextMenu(){const menu=$('#projectMenu');if(menu)$$('a[href*="github.com"] img',menu).forEach(img=>{img.src=GH_MARK;img.alt=''})}
   function centerBrand(){$$('.brand-logo,.hero-project-icon,.project-icon,.brand-icon,.round-action img').forEach(el=>{el.style.objectPosition='50% 50%';el.style.transform='none'})}
   function accountLinks(){$$('a[href*="account.html"]').forEach(a=>{const signed=(()=>{try{const v=JSON.parse(localStorage.getItem('dlavie.auth.state.v1')||'null');return !!(v===true||v?.signedIn||v?.userId)}catch{return false}})();a.setAttribute('href',signed?'account.html?v=83#profile':'account.html?v=83')})}
-  function run(){github();minecraft();contextMenu();centerBrand();accountLinks()}
+  function communityLinks(){$$('a[href="#community"],a[href*="#community"]').forEach(a=>a.setAttribute('href',COMMUNITY))}
+  function run(){github();minecraft();contextMenu();centerBrand();accountLinks();communityLinks()}
   if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',run,{once:true});else run();
-  window.addEventListener('hashchange',()=>setTimeout(run,0),{passive:true});
+  window.addEventListener('hashchange',()=>{const h=(location.hash||'').replace(/^#\/?/,'').split('?')[0];if(h==='community'){location.replace(COMMUNITY);return}setTimeout(run,0)},{passive:true});
 })();
