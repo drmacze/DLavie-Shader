@@ -3,8 +3,7 @@
   const URL='https://ydaeukhqwishlrjyfktk.supabase.co';
   const KEY='sb_publishable_XNXU6SVeM-D477Ymy1ORsw_4hCHOll9';
   const HINT='dlavie.auth.state.v1';
-  const PROFILE='dlavie.profile.cache.v1';
-  let sb=null,loading=null;
+  let sb=null,loading=null,rewriting=false;
   const wait=ms=>new Promise(r=>setTimeout(r,ms));
 
   function hint(){
@@ -12,10 +11,13 @@
   }
   function accountHref(signed){return signed?'account.html?v=81#profile':'account.html?v=81'}
   function rewrite(signed=hint()){
-    document.querySelectorAll('a[href*="account.html"]').forEach(a=>{
-      const href=a.getAttribute('href')||'';
-      if(/account\.html/.test(href))a.setAttribute('href',accountHref(signed));
-    });
+    if(rewriting)return;rewriting=true;
+    try{
+      document.querySelectorAll('a[href*="account.html"]').forEach(a=>{
+        const next=accountHref(signed);
+        if(a.getAttribute('href')!==next)a.setAttribute('href',next);
+      });
+    }finally{rewriting=false}
   }
   function load(){
     if(window.supabase?.createClient)return Promise.resolve(window.supabase);
@@ -62,9 +64,14 @@
       rewrite(true);
     }else if(!hint())rewrite(false);
   }
+  document.addEventListener('click',e=>{
+    const a=e.target.closest('a[href*="account.html"]');
+    if(!a)return;
+    a.setAttribute('href',accountHref(hint()));
+  },true);
   rewrite();
   if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',sync,{once:true});else sync();
-  new MutationObserver(()=>rewrite()).observe(document.documentElement,{childList:true,subtree:true});
+  new MutationObserver(()=>rewrite()).observe(document.documentElement,{childList:true,subtree:true,attributes:true,attributeFilter:['href']});
   window.addEventListener('pageshow',sync,{passive:true});
   window.addEventListener('focus',sync,{passive:true});
 })();
