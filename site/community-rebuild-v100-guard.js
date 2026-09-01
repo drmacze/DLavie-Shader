@@ -8,7 +8,7 @@ ready(()=>{
  const drawerOpen=()=>{const d=$('#c90Drawer');return !!d&&!d.hidden&&d.classList.contains('open')};
  const sheetOpen=()=>!!$('.v100-sheet.open');
  const needsScrim=()=>document.body.classList.contains('v100-sidebar-open')||document.body.classList.contains('v100-context-open')||visible($('#communitySearchPanel'))||drawerOpen()||sheetOpen();
- const sync=()=>{const nav=$('#v100MobileNav');if(nav){const h=(location.hash||'#global').slice(1);let a=document.body.classList.contains('v100-sidebar-open')?'channels':/^dm-/.test(h)||($('#c90DrawerTitle')?.textContent||'').toLowerCase()==='inbox'?'inbox':['feedback','vote','report'].includes(h)?'forum':'chat';$$('[data-v100-nav]').forEach(b=>b.classList.toggle('active',b.dataset.v100Nav===a))}};
+ const sync=()=>{const nav=$('#v100MobileNav');if(nav){const h=(location.hash||'#global').slice(1);let a=document.body.classList.contains('v100-sidebar-open')?'channels':/^dm-/.test(h)||($('#c90DrawerTitle')?.textContent||'').toLowerCase()==='inbox'?'inbox':['feedback','vote','report'].includes(h)?'forum':'chat';$$('[data-v100-nav]').forEach(b=>b.classList.toggle('active',b.dataset.v100Nav===a))}document.body.classList.toggle('v103-has-messages',!!$('#messageList .c84-message'))};
  let reconciling=false;
  const reconcile=()=>{if(reconciling)return;reconciling=true;try{if(innerWidth<=820&&!document.body.classList.contains('v100-sidebar-open'))document.body.classList.remove('c84-menu-open');const scrim=$('#v100Scrim'),on=needsScrim();if(scrim&&scrim.hidden===on)scrim.hidden=!on;sync()}finally{reconciling=false}};
  const closeSidebarHard=()=>{document.body.classList.remove('v100-sidebar-open','c84-menu-open');$('#sidebarToggle')?.setAttribute('aria-expanded','false');reconcile()};
@@ -22,7 +22,7 @@ ready(()=>{
  document.addEventListener('focusin',e=>{if(e.target.closest('#messageForm,#c91DmForm,.c84-composer-shell,.c91-dm-compose'))document.body.classList.add('v100-input-focus')});
  document.addEventListener('focusout',()=>setTimeout(()=>{if(!document.activeElement?.closest?.('#messageForm,#c91DmForm,.c84-composer-shell,.c91-dm-compose'))document.body.classList.remove('v100-input-focus')},80));
  new MutationObserver(()=>queueMicrotask(reconcile)).observe(document.body,{attributes:true,attributeFilter:['class']});
- const observeSurfaces=()=>{for(const el of [$('#v100Scrim'),$('#communitySearchPanel'),$('#c90Drawer'),...$$('.v100-sheet')])if(el&&!el.dataset.v103Observed){el.dataset.v103Observed='1';new MutationObserver(()=>queueMicrotask(reconcile)).observe(el,{attributes:true,attributeFilter:['hidden','class']})}};
+ const observeSurfaces=()=>{for(const el of [$('#v100Scrim'),$('#communitySearchPanel'),$('#c90Drawer'),...$$('.v100-sheet')])if(el&&!el.dataset.v103Observed){el.dataset.v103Observed='1';new MutationObserver(()=>queueMicrotask(reconcile)).observe(el,{attributes:true,attributeFilter:['hidden','class']})}const ml=$('#messageList');if(ml&&!ml.dataset.v103Observed){ml.dataset.v103Observed='1';new MutationObserver(()=>queueMicrotask(sync)).observe(ml,{childList:true,subtree:true})}};
  window.addEventListener('hashchange',()=>{closeSidebarHard();reconcile()});
  window.addEventListener('resize',reconcile);
  window.addEventListener('pageshow',()=>{resetTransient();installCloseControls();observeSurfaces()});
