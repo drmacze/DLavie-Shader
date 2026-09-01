@@ -3,28 +3,25 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-  <meta name="theme-color" content="#0b0d0c">
+  <meta name="theme-color" content="#111214">
   <meta name="description" content="DLavie Community — channels, Direct Messages, Inbox, forum, roles, moderation, dan collaboration workspace.">
   <title>Community — DLavie</title>
-  <link rel="icon" type="image/svg+xml" href="assets/dlavie-mark.svg?v=100">
-  <link rel="stylesheet" href="community-rebuild-v100.css?v=100">
-  <link rel="stylesheet" href="community-rebuild-v100-responsive.css?v=100">
+  <link rel="icon" type="image/svg+xml" href="assets/dlavie-mark.svg?v=101">
+  <link rel="stylesheet" href="community-admin-v89.css?v=101">
+  <link rel="stylesheet" href="community-v101.css?v=101">
 </head>
-<body class="community-v100">
+<body class="community-v101">
 <div class="c84">
   <div class="c84-body">
     <aside class="c84-sidebar" id="sidebar" aria-label="Community navigation">
       <div class="v100-brand">
-        <a href="index.html?v=100"><img src="assets/dlavie-mark.svg?v=100" alt="DLavie"></a>
+        <a href="index.html?v=101"><img src="assets/dlavie-mark.svg?v=101" alt="DLavie"></a>
         <div class="v100-brand-copy"><strong>DLavie</strong><span>Community</span></div>
         <div class="v100-online" title="Member online"><i></i><b id="onlineCount">0</b></div>
       </div>
 
       <section class="c84-server">
-        <small>DLAVIE HUB</small>
-        <strong>Community Space</strong>
-        <p>Ngobrol, minta bantuan, berbagi karya, ikut forum, dan terhubung dengan member DLavie.</p>
-        <div class="c85-server-meta"><span>CHAT</span><span>THREADS</span><span>DM</span><span>FORUM</span></div>
+        <small>DLAVIE HUB</small><strong>Community Space</strong><p>Ngobrol, minta bantuan, berbagi karya, ikut forum, dan terhubung dengan member DLavie.</p>
       </section>
 
       <section class="c84-group">
@@ -44,12 +41,12 @@
 
       <section class="c84-group">
         <div class="c84-group-label">DLavie</div>
-        <a class="c84-nav" href="index.html?v=100"><span class="c84-nav-icon">⌂</span><span class="c84-nav-copy"><strong>Beranda</strong><span>Kembali ke website</span></span></a>
-        <a class="c84-nav" href="app.html?v=100#downloads"><span class="c84-nav-icon">▣</span><span class="c84-nav-copy"><strong>Projects</strong><span>Katalog publik</span></span></a>
+        <a class="c84-nav" href="index.html?v=101"><span class="c84-nav-icon">⌂</span><span class="c84-nav-copy"><strong>Beranda</strong><span>Kembali ke website</span></span></a>
+        <a class="c84-nav" href="app.html?v=101#downloads"><span class="c84-nav-icon">▣</span><span class="c84-nav-copy"><strong>Projects</strong><span>Katalog publik</span></span></a>
       </section>
 
       <div class="v100-sidebar-footer">
-        <a class="c84-account" id="topAccount" href="account.html?v=100">
+        <a class="c84-account" id="topAccount" href="account.html?v=101">
           <span class="c84-account-avatar" id="topAvatar">?</span>
           <span class="v100-account-copy"><strong id="topAccountName">Masuk</strong><span>Account & profile</span></span>
           <span class="v100-account-chevron">›</span>
@@ -71,11 +68,7 @@
 
       <div class="c84-stage">
         <section class="c86-search-panel" id="communitySearchPanel" hidden aria-label="Cari pesan">
-          <div class="c86-search-row">
-            <input class="c86-search-input" id="communitySearchInput" type="search" autocomplete="off" placeholder="Cari pesan di channel ini…">
-            <span class="c86-search-meta" id="communitySearchMeta">Server search</span>
-            <button class="c86-search-clear" id="communitySearchClear" type="button">Bersihkan</button>
-          </div>
+          <div class="c86-search-row"><input class="c86-search-input" id="communitySearchInput" type="search" autocomplete="off" placeholder="Cari pesan…"><span class="c86-search-meta" id="communitySearchMeta">Server search</span><button class="c86-search-clear" id="communitySearchClear" type="button">Bersihkan</button></div>
           <div class="c86-search-hint"><span>Cari pesan tanpa meninggalkan channel.</span><span>⌘/Ctrl K</span></div>
           <div class="c86-search-empty" id="communitySearchEmpty" hidden>Tidak ada pesan yang cocok.</div>
         </section>
@@ -84,11 +77,7 @@
 
         <section class="c84-view c84-chat" id="chatView" hidden>
           <div class="c84-scroll" id="messageScroller">
-            <div class="c84-welcome">
-              <span class="c84-welcome-icon">#</span>
-              <h2>Selamat datang di <span id="welcomeName">#global</span></h2>
-              <p>Ruang percakapan DLavie untuk chat, bantuan, showcase, thread, reaction, mention, dan kolaborasi.</p>
-            </div>
+            <div class="c84-welcome"><span class="c84-welcome-icon">#</span><h2>Selamat datang di <span id="welcomeName">#global</span></h2><p>Ini awal percakapan channel ini.</p></div>
             <div class="c84-state" id="messageState">Memuat pesan…</div>
             <div id="messageList"></div>
           </div>
@@ -113,26 +102,18 @@
         <section class="c84-view c84-page" id="rulesView" hidden>
           <article class="c84-hero"><span class="c84-eyebrow">COMMUNITY SAFETY</span><h2>Rules & Community Verify</h2><p>Baca aturan inti, tandai yang sudah dipahami, lalu verifikasi Community Passport untuk membuka akses penuh.</p></article>
           <div class="c84-rules" id="rulesList"></div>
-          <div class="c84-verify">
-            <div id="rulesStatus"></div>
-            <label class="c84-check"><input id="rulesAgree" type="checkbox"><span>Saya sudah membaca, memahami, dan setuju mengikuti seluruh Rules DLavie Community.</span></label>
-            <button class="c84-primary" id="acceptRules" type="button" disabled>Verifikasi Community</button>
-          </div>
+          <div class="c84-verify"><div id="rulesStatus"></div><label class="c84-check"><input id="rulesAgree" type="checkbox"><span>Saya sudah membaca, memahami, dan setuju mengikuti seluruh Rules DLavie Community.</span></label><button class="c84-primary" id="acceptRules" type="button" disabled>Verifikasi Community</button></div>
         </section>
 
         <section class="c84-view c84-page" id="rolesView" hidden>
-          <article class="c84-hero"><span class="c84-eyebrow">COMMUNITY IDENTITY</span><h2>Role & Identity</h2><p>Pilih role yang relevan untuk menampilkan minat dan platform kamu. Staff role tetap dikelola melalui Community Settings.</p></article>
+          <article class="c84-hero"><span class="c84-eyebrow">COMMUNITY IDENTITY</span><h2>Role & Identity</h2><p>Pilih role yang relevan. Staff role tetap dikelola melalui Community Settings.</p></article>
           <div class="c84-role-grid" id="roleGrid"></div>
         </section>
 
         <section class="c84-view c84-page" id="forumView" hidden>
           <article class="c84-hero"><span class="c84-eyebrow">COMMUNITY FORUM</span><h2 id="forumTitle">Feedback</h2><p id="forumDesc">Ide, saran, voting, dan laporan Community.</p></article>
-          <div class="c84-forum-toolbar">
-            <div class="c86-forum-controls"><input class="c86-forum-search" id="forumSearchInput" type="search" autocomplete="off" placeholder="Cari post…"><select class="c86-forum-sort" id="forumSort" aria-label="Urutkan post"><option value="latest">Terbaru</option><option value="popular">Terpopuler</option></select></div>
-            <button class="c84-create" id="createForum" type="button">Buat post</button>
-          </div>
-          <div class="c84-forum-list" id="forumList"></div>
-          <div class="c86-forum-empty" id="forumEmpty" hidden>Tidak ada post yang cocok.</div>
+          <div class="c84-forum-toolbar"><div class="c86-forum-controls"><input class="c86-forum-search" id="forumSearchInput" type="search" autocomplete="off" placeholder="Cari post…"><select class="c86-forum-sort" id="forumSort" aria-label="Urutkan post"><option value="latest">Terbaru</option><option value="popular">Terpopuler</option></select></div><button class="c84-create" id="createForum" type="button">Buat post</button></div>
+          <div class="c84-forum-list" id="forumList"></div><div class="c86-forum-empty" id="forumEmpty" hidden>Tidak ada post yang cocok.</div>
         </section>
       </div>
     </main>
@@ -145,47 +126,21 @@
   </div>
 </div>
 
-<div id="v100Scrim" class="v100-scrim" hidden></div>
+<div class="c84-modal-backdrop" id="forumModal" hidden><section class="c84-modal"><div class="c84-modal-head"><div><span class="c84-eyebrow">COMMUNITY FORUM</span><h2>Buat post</h2><p>Posting menggunakan identitas akun DLavie.</p></div><button class="c84-x" type="button" data-close-modal>×</button></div><form class="c84-form" id="forumForm"><input id="forumKind" type="hidden"><label><span>Judul</span><input id="forumPostTitle" maxlength="120" required placeholder="Judul yang jelas"></label><label><span>Isi</span><textarea id="forumPostBody" maxlength="4000" required placeholder="Jelaskan dengan lengkap…"></textarea></label><label id="forumOptionsWrap" hidden><span>Pilihan voting — satu per baris</span><textarea id="forumOptions" maxlength="700" placeholder="Pilihan A&#10;Pilihan B"></textarea><small>2–6 pilihan.</small></label><small id="forumPrivacy" hidden>Report bersifat privat.</small><button class="c84-primary" type="submit">Kirim</button></form></section></div>
 
-<div class="c84-modal-backdrop" id="forumModal" hidden>
-  <section class="c84-modal">
-    <div class="c84-modal-head"><div><span class="c84-eyebrow">COMMUNITY FORUM</span><h2>Buat post</h2><p>Posting menggunakan identitas akun DLavie.</p></div><button class="c84-x" type="button" data-close-modal>×</button></div>
-    <form class="c84-form" id="forumForm">
-      <input id="forumKind" type="hidden">
-      <label><span>Judul</span><input id="forumPostTitle" maxlength="120" required placeholder="Judul yang jelas"></label>
-      <label><span>Isi</span><textarea id="forumPostBody" maxlength="4000" required placeholder="Jelaskan dengan lengkap…"></textarea></label>
-      <label id="forumOptionsWrap" hidden><span>Pilihan voting — satu per baris</span><textarea id="forumOptions" maxlength="700" placeholder="Pilihan A&#10;Pilihan B"></textarea><small>2–6 pilihan.</small></label>
-      <small id="forumPrivacy" hidden>Report bersifat privat. User lain tidak dapat membacanya.</small>
-      <small>Link hanya boleh berasal dari website DLavie.</small>
-      <button class="c84-primary" type="submit">Kirim</button>
-    </form>
-  </section>
-</div>
-
-<div class="c84-modal-backdrop" id="messageReportModal" hidden>
-  <section class="c84-modal">
-    <div class="c84-modal-head"><div><span class="c84-eyebrow">COMMUNITY SAFETY</span><h2>Report pesan</h2><p>Laporan hanya dapat dilihat tim DLavie.</p></div><button class="c84-x" type="button" data-close-modal>×</button></div>
-    <form class="c84-form" id="messageReportForm">
-      <input id="reportMessageId" type="hidden">
-      <label><span>Alasan</span><select id="messageReportReason"><option value="spam">Spam</option><option value="harassment">Harassment</option><option value="hate">Hate</option><option value="privacy">Privacy</option><option value="other">Lainnya</option></select></label>
-      <label><span>Detail</span><textarea id="messageReportDetails" maxlength="500" placeholder="Tambahkan konteks jika perlu"></textarea></label>
-      <button class="c84-primary" type="submit">Kirim report</button>
-    </form>
-  </section>
-</div>
+<div class="c84-modal-backdrop" id="messageReportModal" hidden><section class="c84-modal"><div class="c84-modal-head"><div><span class="c84-eyebrow">COMMUNITY SAFETY</span><h2>Report pesan</h2><p>Laporan hanya dapat dilihat tim DLavie.</p></div><button class="c84-x" type="button" data-close-modal>×</button></div><form class="c84-form" id="messageReportForm"><input id="reportMessageId" type="hidden"><label><span>Alasan</span><select id="messageReportReason"><option value="spam">Spam</option><option value="harassment">Harassment</option><option value="hate">Hate</option><option value="privacy">Privacy</option><option value="other">Lainnya</option></select></label><label><span>Detail</span><textarea id="messageReportDetails" maxlength="500" placeholder="Tambahkan konteks jika perlu"></textarea></label><button class="c84-primary" type="submit">Kirim report</button></form></section></div>
 
 <div class="c86-lightbox" id="imageLightbox" hidden><button class="c86-lightbox-close" id="lightboxClose" type="button" aria-label="Tutup gambar">×</button><img id="lightboxImage" alt=""></div>
 <div class="c84-toast" id="c84Toast" role="status" aria-live="polite"></div>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script src="community-app-v88.js?v=100"></script>
-<script src="community-admin-v89.js?v=100"></script>
-<script src="community-admin-patch-v89.js?v=100"></script>
-<script src="community-discord-core-v90.js?v=100"></script>
-<script src="community-discord-chat-v90.js?v=100"></script>
-<script src="community-discord-search-v90.js?v=100"></script>
-<script src="community-discord-v91.js?v=100"></script>
-<script src="community-rebuild-v100.js?v=100"></script>
-<script src="community-rebuild-v100-guard.js?v=100"></script>
+<script src="community-app-v88.js?v=101"></script>
+<script src="community-admin-v89.js?v=101"></script>
+<script src="community-admin-patch-v89.js?v=101"></script>
+<script src="community-discord-core-v90.js?v=101"></script>
+<script src="community-discord-chat-v90.js?v=101"></script>
+<script src="community-discord-search-v90.js?v=101"></script>
+<script src="community-discord-v91.js?v=101"></script>
+<script src="community-v101.js?v=101"></script>
 </body>
 </html>
